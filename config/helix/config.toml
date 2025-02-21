@@ -1,0 +1,8 @@
+theme = "gruvbox"
+
+[editor]
+line-number = "relative"
+
+[keys.normal]
+d = { d = ["extend_to_line_bounds", "delete_selection"] }
+G = ["goto_file_end", "goto_line_end"]
