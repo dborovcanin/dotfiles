@@ -37,10 +37,10 @@ font pango:DejaVu Sans Mono, FontAwesome 12
 # Use Mouse+$mod to drag floating windows to their wanted position
 floating_modifier $mod
 
-# Default borders: 4px for all the windows; no borders for fullscreen
+# Default borders: 5px for all the windows; no borders for fullscreen
 smart_borders on
-default_border pixel 4
-default_floating_border pixel 4
+default_border pixel 5
+default_floating_border pixel 5
 
 # Default gaps
 gaps inner 10

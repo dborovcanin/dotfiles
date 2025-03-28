@@ -10,16 +10,15 @@ separator_fg = "#ebdbb2"
 [icons]
 icons = "material-nf"
 
-[[block]]
-block = "focused_window"
-[block.format]
-full = " $title.str(max_w:15) |"
-short = " $title.str(max_w:10) |"
+# [[block]]
+# block = "focused_window"
+# [block.format]
+# full = " $title.str(max_w:15) |"
+# short = " $title.str(max_w:10) |"
 
 [[block]]
 block = "music"
-format = " $icon {$combo.str(max_w:25)... $play |}"
-format_alt = " format 2 "
+format = " {$play $combo.str(max_w:25)...|} "
 [[block.click]]
 button = "left"
 action = "play_pause"
@@ -86,11 +85,16 @@ format = "$icon {$volume.eng(w:2)|}"
 [[block]]
 block = "time"
 interval = 5
-format = " $icon $timestamp.datetime(f:'%R %a %d. %b') "
+format = " $icon $timestamp.datetime(f:'%R \ueab0 %a %d. %b', l:sr_RS) "
+[[block.click]]
+button = "left"
+cmd = "sh ~/dotfiles/config/i3/scripts/cal.sh"
 
-[[block]]
-block = "pomodoro"
-format = "$icon  {$message|}"
-notify_cmd = "notify-send '{msg}'"
-blocking_cmd = false
+
+
+# [[block]]
+# block = "pomodoro"
+# format = "$icon  {$message|}"
+# notify_cmd = "notify-send '{msg}'"
+# blocking_cmd = false
 
