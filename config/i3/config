@@ -48,7 +48,7 @@ smart_gaps on
 
 # start a terminal
 # bindsym $mod+Return exec WINIT_X11_SCALE_FACTOR=1.0 alacritty -o font.size=12
-bindsym $mod+Return exec st
+bindsym $mod+Return exec st -A 0.8
 bindsym $mod+Shift+Return exec $dotfiles/i3/scripts/sticky_term.sh
 
 set $monitor1 eDP
@@ -127,6 +127,8 @@ set $ws7 "7"
 set $ws8 "8"
 set $ws9 "9"
 set $ws10 "10"
+
+exec --no-startup-id i3-msg "workspace $ws1"
 
 # switch to workspace
 bindsym $mod+1 workspace $ws1
@@ -212,18 +214,6 @@ mode "$mode_system" {
 bindsym $mod+Escape mode "$mode_system"
 # bindsym $mod+Escape exec --no-startup-id $dtofiles/i3/scripts/system.sh
 
-workspace 1 output $monitor1
-workspace 2 output $monitor1
-workspace 3 output $monitor1
-workspace 4 output $monitor1
-workspace 5 output $monitor1
-
-workspace 6 output $monitor2
-workspace 7 output $monitor2
-workspace 8 output $monitor2
-workspace 9 output $monitor2
-workspace 10 output $monitor2
-
 mode "move_workspace" {
     bindsym Up move workspace to output up
     bindsym Down move workspace to output down
@@ -272,7 +262,6 @@ assign [class="vscodium"] $ws2
 assign [class="VSCodium"] $ws2
 assign [class="brave-browser"] $ws3
 assign [class="Brave-browser"] $ws3
-assign [class="Mail"] $ws6
 assign [class="thunderbird"] $ws6
 assign [class="Postman"] $ws4
 assign [class="zoom"] $ws6
@@ -282,12 +271,7 @@ for_window [instance="sticky_*"] floating enable
 for_window [instance="sticky_*"] sticky enable
 for_window [title="Meet*"] sticky enable
 
-# Set dropdown terminal
-# for_window [instance="sticky_term"] resize set 1800 1000
-# for_window [instance="sticky_term"] move position 1635 55
-
 # Scratchpad
-
 bindsym $mod+g exec --no-startup-id brave > /dev/null
 
 ## Move to and from scratchpad
@@ -299,6 +283,7 @@ for_window [class="fzf-menu"] floating enable
 # Startup
 exec --no-startup-id kbdd
 # exec --no-startup-id $dotfiles/polybar/launch.sh > /dev/null # Start Polybar
+exec --no-startup-id xrdb -merge ~/.Xresources
 exec --no-startup-id dunst -config $dotfiles/dunst/dunstrc > /dev/null # Start notification daemon
 exec --no-startup-id $dotfiles/i3/scripts/startup.sh > /dev/null # Startup programs
 
@@ -306,7 +291,7 @@ exec --no-startup-id $dotfiles/i3/scripts/startup.sh > /dev/null # Startup progr
 bindsym $mod+x [urgent=latest] focus
 
 bar {
-    font pango:DejaVu Sans Mono, FontAwesome 14
+    font pango:JetBrainsMono NL, FontAwesome 14
     position top
     status_command i3status-rs $dotfiles/i3/status.toml
     colors {
