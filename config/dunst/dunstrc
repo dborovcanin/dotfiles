@@ -14,12 +14,13 @@
     close_all = ctrl+shift+space
     history = mod1+grave
     context = ctrl+shift+period
-    origin = top-right
+    origin = top-center
     dmenu = rofi -dmenu -p dunst
     separator_color = "#C5C8C6"
 
     # Sort messages by urgency
     sort = yes
+    gap_size = 10
 
     idle_threshold = 120
     font = JetBrains Mono 14

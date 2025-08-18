@@ -67,7 +67,7 @@ format = "$icon {$signal_strength $ssid |Wired connection}"
 [[block]]
 block = "battery"
 driver = "upower"
-format = " $icon $percentage"
+format = " $icon $percentage "
 not_charging_format = " $icon $percentage"
 [block.theme_overrides]
 good_bg = { link = "idle_bg"}
