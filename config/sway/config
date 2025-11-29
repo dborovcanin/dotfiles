@@ -201,25 +201,29 @@ mode "resize" {
         bindsym Escape mode "default"
         bindsym $mod+r mode "default"
 }
-
 bindsym $mod+r mode "resize"
 
+set $bg /home/dusan/Downloads/bg2.jpg
 set $mode_system System (l) lock, (e) logout, (s) suspend, (h) hibernate, (r) reboot, (Shift+s) shutdown
+
 mode "$mode_system" {
-     bindsym l exec --no-startup-id swaylock --image /home/dusan/Downloads/bg2.jpg, mode "default"
-
-     bindsym e exec --no-startup-id i3exit logout, mode "default"
-     bindsym s exec --no-startup-id i3exit suspend, mode "default"
-     bindsym h exec --no-startup-id i3exit hibernate, mode "default"
-     bindsym r exec --no-startup-id i3exit reboot, mode "default"
-     bindsym Shift+s exec --no-startup-id i3exit shutdown, mode "default"
-
-     # back to normal: Enter or Escape
-     bindsym Return mode "default"
-     bindsym Escape mode "default"
+    bindsym l exec swaylock --image $bg, mode "default"
+    bindsym e exec swaymsg exit, mode "default"
+    bindsym s exec systemctl suspend, mode "default"
+    bindsym h exec systemctl hibernate, mode "default"
+    bindsym r exec systemctl reboot, mode "default"
+    bindsym Shift+s exec systemctl poweroff, mode "default"
 }
 bindsym $mod+Escape mode "$mode_system"
-# bindsym $mod+Escape exec --no-startup-id $dtofiles/i3/scripts/system.sh
+
+exec_always {
+    # Lock on suspend
+    swayidle -w \
+        timeout 180 'swaylock --deamonize --image /home/dusan/Downloads/bg2.jpg -f' \
+        timeout 300 'swaymsg "output * dpms off"' \
+        resume 'swaymsg "output * dpms on"' \
+        before-sleep 'swaylock --daemonize --image /home/dusan/Downloads/bg2.jpg'
+}
 
 mode "move_workspace" {
     bindsym Up move workspace to output up
@@ -245,7 +249,7 @@ bindsym $mod+Shift+g mode "gaps_inner"
 mode "gaps_inner" {
         bindsym plus  gaps inner current plus 5
         bindsym minus gaps inner current minus 5
-        bindsym Shift+0     gaps inner current set 0
+        bindsym Shift+0    gaps inner current set 0
 
         bindsym Shift+plus  gaps inner all plus 5
         bindsym Shift+minus gaps inner all minus 5
@@ -256,15 +260,13 @@ mode "gaps_inner" {
 }
 
 # Assign windows to workspaces
-assign [class="Slack"] $ws1
+assign [app_id="Slack"] $ws1
 assign [class="code-oss"] $ws2
 assign [class="code"] $ws2
 assign [class="Code"] $ws2
 assign [class="vscodium"] $ws2
 assign [class="VSCodium"] $ws2
-assign [class="brave-browser"] $ws3
-assign [class="Brave-browser"] $ws3
-assign [class="thunderbird"] $ws6
+assign [app_id="brave-browser"] $ws3
 assign [class="Postman"] $ws4
 assign [class="zoom"] $ws6
 
@@ -289,7 +291,6 @@ exec --no-startup-id xrdb -merge ~/.Xresources
 exec --no-startup-id dunst -config $dotfiles/dunst/dunstrc > /dev/null # Start notification daemon
 exec --no-startup-id $dotfiles/i3/scripts/startup.sh > /dev/null # Startup programs
 exec --no-startup-id foot --server
-exec --no-startup-id swaybg -i /home/dusan/Downloads/bg2.jpg
 
 # Switch to urgent
 bindsym $mod+x [urgent=latest] focus
@@ -314,9 +315,17 @@ input "type:touchpad" {
     tap_button_map lrm
 }
 
-exec_always {
-    swayidle -w \
-        timeout 180 'swaylock -f' \
-        timeout 300 'swaymsg "output * dpms off"' \
-        resume 'swaymsg "output * dpms on"'
+output eDP-1 {
+    resolution 1920x1200
+    position 0 0
+    scale 1
+    bg $bg fill
+}
+
+output DP-1 {
+    resolution 2560x1440
+    position 1920 0
+    scale 1
+    transform normal
+    bg $bg fill
 }
