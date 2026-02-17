@@ -14,10 +14,14 @@ set $disabled #707880
 
 # Set GTK theme
 set $GTK_THEME Adwaita
+set $desktop_env i3
 
 exec --no-startup-id export GTK_THEME=$GTK_THEME
 exec --no-startup-id export GTK2_RC_FILES=$HOME/.gtkrc-2.0
 exec --no-startup-id export GTK3_MODULES=$HOME/.config/gtk-3.0/settings.ini
+exec --no-startup-id env XDG_CURRENT_DESKTOP=$desktop_env /usr/lib/xdg-desktop-portal &
+exec --no-startup-id env XDG_CURRENT_DESKTOP=$desktop_env /usr/lib/xdg-desktop-portal-gtk &
+
 
 
 # Path to dotfiles that holds the config
@@ -50,6 +54,7 @@ smart_gaps on
 # bindsym $mod+Return exec WINIT_X11_SCALE_FACTOR=1.0 alacritty -o font.size=12
 bindsym $mod+Return exec st -A 0.8
 bindsym $mod+Shift+Return exec $dotfiles/i3/scripts/sticky_term.sh
+bindsym $mod+Shift+space exec printf "toggle" | nc -U /run/user/1000/findy.sock
 
 set $monitor1 eDP
 set $monitor2 DisplayPort-0
@@ -161,8 +166,9 @@ bindsym $mod+Shift+r restart
 bindsym $mod+Shift+e exec "i3-nagbar -t error -m 'You pressed the exit shortcut. Do you really want to exit i3? This will end your X session.' -B 'Yes, exit i3' 'i3-msg exit'"
 
 # audio and screen shortcuts
-bindsym XF86MonBrightnessUp exec --no-startup-id echo $(($(cat /sys/class/backlight/amdgpu_bl1/brightness) + 12)) > /sys/class/backlight/amdgpu_bl1/brightness
-bindsym XF86MonBrightnessDown exec --no-startup-id echo $(($(cat /sys/class/backlight/amdgpu_bl1/brightness) - 12)) > /sys/class/backlight/amdgpu_bl1/brightness
+bindsym XF86MonBrightnessUp exec --no-startup-id ~/.local/bin/brightness up
+bindsym XF86MonBrightnessDown exec --no-startup-id ~/.local/bin/brightness down
+
 
 #bindsym XF86AudioRaiseVolume exec --no-startup-id pactl -- set-sink-volume 0 +5% #increase sound volume
 #bindsym XF86AudioLowerVolume exec --no-startup-id pactl -- set-sink-volume 0 -5% #decrease sound volume
@@ -237,7 +243,7 @@ exec --no-startup-id  picom --daemon --config $dotfiles/picom/picom.conf
 # Start KDEConnect to connect to phone
 exec --no-startup-id kdeconnectd > /dev/null
 
-bindsym $mod+c exec "rofi -modi \\"clipboard:greenclip print\\" -show clipboard -theme-str '#window {width: 700; border: 3px solid;}'"
+bindsym $mod+c exec "rofi -modi \\"clipboard:greenclip print\\" -show clipboard -theme-str '#window {width: 700; border: 3px solid; font: \\"JetBrainsMonoNL 12\\";}'"
 
 bindsym $mod+Shift+g mode "gaps_inner"
 mode "gaps_inner" {
