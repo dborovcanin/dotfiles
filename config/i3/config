@@ -107,9 +107,9 @@ bindsym $mod+v split v
 bindsym $mod+f fullscreen toggle
 
 # change container layout (stacked, tabbed, toggle split)
-bindsym $mod+s layout stacking
+# bindsym $mod+s layout stacking
 bindsym $mod+w layout tabbed
-bindsym $mod+e layout toggle split
+bindsym $mod+s layout toggle split
 
 # toggle tiling / floating
 bindsym $mod+t floating toggle
@@ -169,6 +169,8 @@ bindsym $mod+Shift+e exec "i3-nagbar -t error -m 'You pressed the exit shortcut.
 bindsym XF86MonBrightnessUp exec --no-startup-id ~/.local/bin/brightness up
 bindsym XF86MonBrightnessDown exec --no-startup-id ~/.local/bin/brightness down
 
+# emojis
+bindsym $mod+e exec --no-startup-id $dotfiles/i3/scripts/emoji.sh
 
 #bindsym XF86AudioRaiseVolume exec --no-startup-id pactl -- set-sink-volume 0 +5% #increase sound volume
 #bindsym XF86AudioLowerVolume exec --no-startup-id pactl -- set-sink-volume 0 -5% #decrease sound volume
