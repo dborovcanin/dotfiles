@@ -2,7 +2,10 @@
 set -euo pipefail
 
 # ---- pick emoji ----
-choice="$(rofi -dmenu -i -matching fuzzy -p "Emoji" <<'EOF'
+# choice="$(rofi -dmenu -i -matching fuzzy -p "Emoji" <<'EOF'
+choice="$(rofi -dmenu \
+    -i -matching fuzzy -p "Emoji" \
+    -theme-str 'window { width: 400px; } listview { lines: 15; } element-text { font: "JetBrainsMono Nerd Font 16, monospace 16"; }' <<'EOF'
 😀 grinning
 😁 smile eyes
 😂 joy
@@ -17,6 +20,7 @@ choice="$(rofi -dmenu -i -matching fuzzy -p "Emoji" <<'EOF'
 🙃 upside down
 😋 yum
 😎 cool sunglasses
+🤓 nerd
 😍 heart eyes
 😘 kiss
 😗 kiss2
@@ -176,6 +180,10 @@ choice="$(rofi -dmenu -i -matching fuzzy -p "Emoji" <<'EOF'
 🔑 key
 💾 save disk
 🔋 battery
+
+#custom
+󰣇 arch
+ gopher
 EOF
 )"
 
