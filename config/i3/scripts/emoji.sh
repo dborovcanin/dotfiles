@@ -121,6 +121,9 @@ choice="$(rofi -dmenu \
 👩‍🍳 cook woman
 👨‍🚀 astronaut
 👩‍🚀 astronaut woman
+🤦 facepalm
+🤦‍♂️ man facepalm
+🤦‍♀️ woman facepalm
 👮 police
 🕵 detective
 🥷 ninja
@@ -162,6 +165,10 @@ choice="$(rofi -dmenu \
 📎 paperclip
 📅 calendar
 📁 folder
+🧣 scarf
+🧦 socks
+🧤 gloves
+🥊 glove
 📂 open folder
 🗂 files
 📝 note
@@ -180,6 +187,11 @@ choice="$(rofi -dmenu \
 🔑 key
 💾 save disk
 🔋 battery
+💬 message
+🗨 speech bubble
+📢 announcement
+📣 megaphone
+📬 mailbox
 
 #custom
 󰣇 arch

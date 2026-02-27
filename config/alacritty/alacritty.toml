@@ -51,7 +51,7 @@ white   = '#ebdbb2'
 [[hints.enabled]]
 
 # :line  | :line:col | #Lline | #Lline-Lend
-regex = "((?:/|\\./)[^():\\s]+\\.(?:go|rs|py|c|cpp|h|hpp|js|ts|lua|md|mdx|yaml|yml)(?:(?::[0-9]+(?::[0-9]+)?)|(?:#L[0-9]+(?:-L[0-9]+)?)))"
+regex = "((?:(?:\\./)?[^():\\s]+)\\.(?:go|rs|py|c|cpp|h|hpp|js|ts|lua|md|mdx|yaml|yml)(?:(?::[0-9]+(?::[0-9]+)?)|(?:#L[0-9]+(?:-L[0-9]+)?)))"
 
 post_processing = true
 persist = false
