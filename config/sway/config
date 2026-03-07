@@ -22,7 +22,8 @@ exec --no-startup-id export GTK3_MODULES=$HOME/.config/gtk-3.0/settings.ini
 exec --no-startup-id env XDG_CURRENT_DESKTOP=$desktop_env /usr/lib/xdg-desktop-portal &
 exec --no-startup-id env XDG_CURRENT_DESKTOP=$desktop_env /usr/lib/xdg-desktop-portal-gtk &
 
-
+set $XDG_CURRENT_DESKTOP sway
+exec dbus-update-activation-environment --systemd WAYLAND_DISPLAY SWAYSOCK XDG_CURRENT_DESKTOP=sway
 
 # Path to dotfiles that holds the config
 set $dotfiles $HOME/dotfiles/config
@@ -235,8 +236,14 @@ mode "move_workspace" {
 # Workspace mode config
 bindsym $mod+o mode "move_workspace"
 
-exec --no-startup-id setxkbmap -option grp:alt_shift_toggle,grp_led:scroll -layout us,rs,rs -variant ,latin,
+# exec --no-startup-id setxkbmap -option grp:alt_shift_toggle,grp_led:scroll -layout us,rs,rs -variant ,latin,
 bindsym $mod+Shift+c exec --no-startup-id codium $dotfiles
+
+input type:keyboard {
+    xkb_layout us,rs,rs
+    xkb_variant ,latin,
+    xkb_options grp:alt_shift_toggle
+}
 
 # Start KDEConnect to connect to phone
 exec --no-startup-id kdeconnectd > /dev/null
@@ -285,7 +292,6 @@ bindsym $mod+Shift+s exec $dotfiles/sway/screenshot.sh
 for_window [class="fzf-menu"] floating enable
 
 # Startup
-exec --no-startup-id kbdd
 # exec --no-startup-id $dotfiles/polybar/launch.sh > /dev/null # Start Polybar
 exec --no-startup-id xrdb -merge ~/.Xresources
 exec --no-startup-id dunst -config $dotfiles/dunst/dunstrc > /dev/null # Start notification daemon
@@ -298,6 +304,18 @@ bindsym Ctrl+Shift+space exec dunstctl close-all
 bindsym Mod1+grave exec dunstctl history-pop
 bindsym Ctrl+Shift+period exec dunstctl context
 
+# Enable blur
+blur enable
+
+# Very light blur
+blur_radius 3
+blur_passes 2
+
+# Optional: slight grain so blur looks nicer
+blur_noise 0.02
+
+# Slight rounded corners
+corner_radius 5
 
 # Switch to urgent
 bindsym $mod+x [urgent=latest] focus
