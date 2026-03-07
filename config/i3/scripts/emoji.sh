@@ -55,6 +55,81 @@ choice="$(rofi -dmenu \
 🤗 hug
 🤝 handshake
 
+# animals
+🐶 dog
+🐕 dog2
+🐩 poodle
+🐺 wolf
+🦊 fox
+🐱 cat
+🐈 cat2
+🦁 lion
+🐯 tiger
+🐅 tiger2
+🐆 leopard
+🐴 horse
+🫎 moose
+🦌 deer
+🐮 cow
+🐷 pig
+🐽 pig nose
+🐭 mouse
+🐹 hamster
+🐰 rabbit
+🦝 raccoon
+🐻 bear
+🐻‍❄️ polar bear
+🐼 panda
+🐨 koala
+🐸 frog
+🐵 monkey
+🙈 monkey see no evil
+🙉 monkey hear no evil
+🙊 monkey speak no evil
+🦍 gorilla
+🦧 orangutan
+🐾 paw prints
+
+# birds
+🐔 chicken
+🐓 rooster
+🐣 chick
+🐤 baby chick
+🐦 bird
+🐧 penguin
+🦆 duck
+🦅 eagle
+🦉 owl
+🦜 parrot
+
+# reptiles / bugs
+🐍 snake
+🐢 turtle
+🦎 lizard
+🐊 crocodile
+🐉 dragon
+🐲 dragon face
+🐛 bug
+🦋 butterfly
+🐌 snail
+🐞 ladybug
+🦗 cricket
+🕷 spider
+🦂 scorpion
+
+# sea
+🐳 whale
+🐋 whale2
+🐬 dolphin
+🦈 shark
+🐙 octopus
+🦑 squid
+🦀 crab
+🦞 lobster
+🐠 fish
+🐟 fish2
+🐡 blowfish
+
 # symbols
 ✅ check checkbox
 ✔ checkmark
@@ -192,6 +267,16 @@ choice="$(rofi -dmenu \
 📢 announcement
 📣 megaphone
 📬 mailbox
+🪢 rope
+🪝 hook
+🔗 chain
+
+#flags
+🚩 red flag
+🏳 white flag
+🏴 black flag
+⚑ flag
+⚐ flag outline
 
 #custom
 󰣇 arch

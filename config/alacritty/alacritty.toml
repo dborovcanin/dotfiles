@@ -5,7 +5,7 @@ TERM = "xterm-256color"
 normal = { family = "CaskaydiaMono Nerd Font", style = "Regular" }
 bold = { family = "CaskaydiaMono Nerd Font", style = "Bold" }
 italic = { family = "CaskaydiaMono Nerd Font", style = "Italic" }
-size = 8
+size = 12
 
 [window]
 padding.x = 2
@@ -50,8 +50,8 @@ white   = '#ebdbb2'
 
 [[hints.enabled]]
 
-# :line  | :line:col | #Lline | #Lline-Lend
-regex = "((?:(?:\\./)?[^():\\s]+)\\.(?:go|rs|py|c|cpp|h|hpp|js|ts|lua|md|mdx|yaml|yml)(?:(?::[0-9]+(?::[0-9]+)?)|(?:#L[0-9]+(?:-L[0-9]+)?)))"
+# file path optionally followed by :line[:col] or #Lline[-Lend]
+regex = "((?:(?:/|\\./)?[^():\\s]*/)?[^():\\s]+\\.(?:go|rs|py|c|cpp|h|hpp|js|ts|lua|md|mdx|yaml|yml)(?:(?::[0-9]+(?::[0-9]+)?)|(?:#L[0-9]+(?:-L[0-9]+)?))?)"
 
 post_processing = true
 persist = false
@@ -64,25 +64,28 @@ command = { program = "bash", args = [
   '''
 t="$1"
 
-# strip punctuation
-t="${t#(}"
-t="${t%)}"
-t="${t%,}"
-t="${t%.}"
+# trim leading/trailing whitespace (handles tabs from `git status`)
+t="${t#"${t%%[![:space:]]*}"}"
+t="${t%"${t##*[![:space:]]}"}"
 
-# GitHub style: file#L123-L140 -> file#L123
+# strip punctuation often surrounding paths
+t="${t#(}"; t="${t%)}"
+t="${t#,}"; t="${t%.}"
+
+# normalize GitHub range + anchor:
+#   file#L123-L140 -> file#L123
 t="${t%%-L*}"
-
-# file#L123 -> file:123
+#   file#L123 -> file:123
 t="${t//#L/:}"
 
-# file:123:45 -> file:123
-case "$t" in
-  *:*:*) t="${t%:*}" ;;
-esac
+file="$t"
+line="1"
 
-file="${t%:*}"
-line="${t##*:}"
+# If we have file:line or file:line:col, extract line (drop col)
+if [[ "$t" =~ ^(.+):([0-9]+)(:([0-9]+))?$ ]]; then
+  file="${BASH_REMATCH[1]}"
+  line="${BASH_REMATCH[2]}"
+fi
 
 exec alacritty -e vim +"$line" "$file"
 ''',
