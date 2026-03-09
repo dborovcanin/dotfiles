@@ -11,11 +11,6 @@ separator_fg = "#ebdbb2"
 icons = "material-nf"
 
 [[block]]
-block = "sway_workspaces"
-all_outputs = false
-format = "$name"
-
-[[block]]
 block = "weather"
 format = " $icon $weather ($location) $temp, $wind m/s $direction "
 format_alt = " $icon_ffin Forecast (9 hour avg) {$temp_favg ({$temp_fmin}-{$temp_fmax})|Unavailable} "
@@ -23,7 +18,7 @@ format_alt = " $icon_ffin Forecast (9 hour avg) {$temp_favg ({$temp_fmin}-{$temp
 [block.service]
 # name = "metno"
 name = "openweathermap"
-api_key = "b8695695946c5e4ae099441d6bc55b88"
+api_key = ""
 units = "metric"
 coordinates = ["45.2517", "19.8369"] # Novi Sad
 # coordinates = ["44.8161", "20.3948"] # Novi Beograd
@@ -105,6 +100,9 @@ block = "backlight"
 
 [[block]]
 block = "sound"
+driver = "pulseaudio"
+device_kind = "sink"
+device = "@DEFAULT_SINK@"
 headphones_indicator = true
 max_vol = 100
 format = "$icon {$volume.eng(w:2)|}"
