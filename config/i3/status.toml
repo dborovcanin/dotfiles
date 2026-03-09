@@ -18,7 +18,7 @@ format_alt = " $icon_ffin Forecast (9 hour avg) {$temp_favg ({$temp_fmin}-{$temp
 [block.service]
 # name = "metno"
 name = "openweathermap"
-api_key = "b8695695946c5e4ae099441d6bc55b88"
+api_key = ""
 units = "metric"
 coordinates = ["45.2517", "19.8369"] # Novi Sad
 # coordinates = ["44.8161", "20.3948"] # Novi Beograd
