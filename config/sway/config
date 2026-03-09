@@ -48,7 +48,7 @@ default_border pixel 5
 default_floating_border pixel 5
 
 # Default gaps
-gaps inner 10
+gaps inner 15
 smart_gaps on
 
 # start a terminal
@@ -106,8 +106,8 @@ bindsym $mod+v split v
 bindsym $mod+f fullscreen toggle
 
 # change container layout (stacked, tabbed, toggle split)
-bindsym $mod+s layout stacking
 bindsym $mod+w layout tabbed
+bindsym $mod+s layout toggle split
 
 # toggle tiling / floating
 bindsym $mod+t floating toggle
@@ -167,15 +167,12 @@ bindsym $mod+Shift+e exec "i3-nagbar -t error -m 'You pressed the exit shortcut.
 bindsym XF86MonBrightnessUp exec --no-startup-id ~/.local/bin/brightness up
 bindsym XF86MonBrightnessDown exec --no-startup-id ~/.local/bin/brightness down
 
+bindsym XF86AudioRaiseVolume exec pactl set-sink-volume @DEFAULT_SINK@ +5%
+bindsym XF86AudioLowerVolume exec pactl set-sink-volume @DEFAULT_SINK@ -5%
+bindsym XF86AudioMute exec pactl set-sink-mute @DEFAULT_SINK@ toggle
+
 #emoji
 bindsym $mod+e exec --no-startup-id $dotfiles/i3/scripts/emoji.sh
-
-#bindsym XF86AudioRaiseVolume exec --no-startup-id pactl -- set-sink-volume 0 +5% #increase sound volume
-#bindsym XF86AudioLowerVolume exec --no-startup-id pactl -- set-sink-volume 0 -5% #decrease sound volume
-#bindsym XF86AudioMute exec --no-startup-id pactl set-sink-mute 0 toggle # mute sound
-bindsym XF86AudioRaiseVolume exec --no-startup-id pactl -- set-sink-volume 0 +5%
-bindsym XF86AudioLowerVolume exec --no-startup-id pactl -- set-sink-volume 0 -5%
-bindsym XF86AudioMute exec --no-startup-id pactl -- set-sink-mute 0 toggle
 
 # Resize window (you can also use the mouse)
 mode "resize" {
@@ -213,17 +210,22 @@ mode "$mode_system" {
     bindsym h exec systemctl hibernate, mode "default"
     bindsym r exec systemctl reboot, mode "default"
     bindsym Shift+s exec systemctl poweroff, mode "default"
+
+    # back to normal: Enter or Escape
+    bindsym Return mode "default"
+    bindsym Escape mode "default"
 }
 bindsym $mod+Escape mode "$mode_system"
 
-exec_always {
-    # Lock on suspend
-    swayidle -w \
-        timeout 180 'swaylock --deamonize --image /home/dusan/Downloads/bg2.jpg -f' \
-        timeout 300 'swaymsg "output * dpms off"' \
-        resume 'swaymsg "output * dpms on"' \
-        before-sleep 'swaylock --daemonize --image /home/dusan/Downloads/bg2.jpg'
-}
+exec swayidle -w \
+ timeout 180 'swaylock --daemonize --screenshots --effect-blur 7x5' \
+ timeout 300 'swaymsg "output * dpms off"' \
+ resume 'swaymsg "output * dpms on"' \
+ before-sleep 'swaylock --daemonize --screenshots --effect-blur 7x5'
+
+# Prevent idle while meeting/video apps are in use
+for_window [app_id="brave-browser"] inhibit_idle visible
+for_window [title=".*Meet.*"] inhibit_idle visible
 
 mode "move_workspace" {
     bindsym Up move workspace to output up
@@ -272,6 +274,7 @@ assign [class="code"] $ws2
 assign [class="Code"] $ws2
 assign [class="vscodium"] $ws2
 assign [class="VSCodium"] $ws2
+assign [app_id="codium"] $ws2
 assign [app_id="brave-browser"] $ws3
 assign [class="Postman"] $ws4
 assign [class="zoom"] $ws6
@@ -309,7 +312,7 @@ blur enable
 
 # Very light blur
 blur_radius 3
-blur_passes 2
+blur_passes 1
 
 # Optional: slight grain so blur looks nicer
 blur_noise 0.02
@@ -323,7 +326,7 @@ bindsym $mod+x [urgent=latest] focus
 bar {
     font pango:JetBrainsMono NL, FontAwesome 14
     position top
-    status_command i3status-rs $dotfiles/i3/status.toml
+    status_command i3status-rs $dotfiles/sway/status.toml
     colors {
         background $background
         focused_workspace $background $background $primary
@@ -350,7 +353,7 @@ output eDP-1 {
 }
 
 output DP-1 {
-    resolution 2560x1440
+    resolution 3440x1440
     position 1920 0
     scale 1
     transform normal
