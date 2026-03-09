@@ -70,8 +70,10 @@ bindsym $mod+ctrl+Shift+p exec wlr-randr --output $monitor2 --off
 bindsym $mod+Shift+q kill
 
 # start dmenu (a program launcher)
-# bindsym $mod+d exec dmenu_run -fn 'DejaVu Sans Mono Nerd Font:size=16' -nb '$background' -sb '$primary' -i
-bindsym $mod+d exec "rofi -show drun -show-icons -display-drun Run -terminal 'st'"
+bindsym $mod+d exec "rofi -show drun -show-icons -display-drun Run -terminal 'foot' \
+-font 'JetBrainsMono Nerd Font 16' \
+-theme-str 'window {width: 30%;} listview {lines: 10;}'"
+
 bindsym $mod+Shift+d exec $dotfiles/i3/scripts/search.sh
 
 # change focus
@@ -250,8 +252,11 @@ input type:keyboard {
 # Start KDEConnect to connect to phone
 exec --no-startup-id kdeconnectd > /dev/null
 # Used by the clipboard manager
-exec --no-startup-id  wl-paste --watch cliphist store
-bindsym $mod+c exec "cliphist list | rofi -dmenu -display-columns 2 | cliphist decode | wl-copy"
+exec --no-startup-id  wl-paste --watch cliphist store --max-items 5000
+bindsym $mod+c exec "cliphist list | rofi -dmenu -i -matching fuzzy -display-columns 2 \
+-font 'JetBrainsMono Nerd Font 14' \
+-theme-str 'window {width: 30%;} listview {lines: 20;}' \
+| cliphist decode | wl-copy"
 
 bindsym $mod+Shift+g mode "gaps_inner"
 mode "gaps_inner" {
