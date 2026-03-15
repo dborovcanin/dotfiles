@@ -220,14 +220,14 @@ mode "$mode_system" {
 bindsym $mod+Escape mode "$mode_system"
 
 exec swayidle -w \
- timeout 180 'swaylock --daemonize --screenshots --effect-blur 7x5' \
- timeout 300 'swaymsg "output * dpms off"' \
- resume 'swaymsg "output * dpms on"' \
- before-sleep 'swaylock --daemonize --screenshots --effect-blur 7x5'
+ timeout 180 'swaylock -f --screenshots --effect-blur 7x5' \
+ timeout 300 'swaymsg "output * power off"' \
+ resume 'swaymsg "output * power on"' \
+ before-sleep 'swaylock -f --screenshots --effect-blur 7x5'
 
 # Prevent idle while meeting/video apps are in use
-for_window [app_id="brave-browser"] inhibit_idle visible
 for_window [title=".*Meet.*"] inhibit_idle visible
+for_window [title=".*meet.*"] inhibit_idle visible
 
 mode "move_workspace" {
     bindsym Up move workspace to output up
@@ -250,9 +250,11 @@ input type:keyboard {
 }
 
 # Start KDEConnect to connect to phone
-exec --no-startup-id kdeconnectd > /dev/null
+exec kdeconnectd > /dev/null
+
 # Used by the clipboard manager
-exec --no-startup-id  wl-paste --watch cliphist store --max-items 5000
+exec wl-paste --type text --watch cliphist store --max-items=5000
+exec wl-paste --type image --watch cliphist store --max-items=5000
 bindsym $mod+c exec "cliphist list | rofi -dmenu -i -matching fuzzy -display-columns 2 \
 -font 'JetBrainsMono Nerd Font 14' \
 -theme-str 'window {width: 30%;} listview {lines: 20;}' \
@@ -284,7 +286,7 @@ assign [app_id="brave-browser"] $ws3
 assign [class="Postman"] $ws4
 assign [class="zoom"] $ws6
 
-# Dropdown window
+# Floating window
 for_window [app_id="sticky_*"] floating enable
 for_window [app_id="sticky_*"] sticky enable
 for_window [title="Meet*"] sticky enable
