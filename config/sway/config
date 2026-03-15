@@ -253,12 +253,8 @@ input type:keyboard {
 exec kdeconnectd > /dev/null
 
 # Used by the clipboard manager
-exec wl-paste --type text --watch cliphist store --max-items=5000
-exec wl-paste --type image --watch cliphist store --max-items=5000
-bindsym $mod+c exec "cliphist list | rofi -dmenu -i -matching fuzzy -display-columns 2 \
--font 'JetBrainsMono Nerd Font 14' \
--theme-str 'window {width: 30%;} listview {lines: 20;}' \
-| cliphist decode | wl-copy"
+exec wl-paste --watch cliphist store --max-items=5000
+bindsym $mod+c exec $dotfiles/sway/clipboard.sh
 
 bindsym $mod+Shift+g mode "gaps_inner"
 mode "gaps_inner" {
@@ -291,6 +287,7 @@ for_window [app_id="sticky_*"] floating enable
 for_window [app_id="sticky_*"] sticky enable
 for_window [title="Meet*"] sticky enable
 for_window [app_id="satty"] floating enable
+for_window [class="feh"] floating enable, focus
 
 # Scratchpad
 bindsym $mod+g exec --no-startup-id brave > /dev/null
