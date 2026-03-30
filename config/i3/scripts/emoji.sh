@@ -214,6 +214,22 @@ choice="$(rofi -dmenu \
 🏊 swimming
 🛀 bath
 🛌 sleep bed
+💃 dance
+🕺 dance man
+
+# food
+☕ coffee
+🍺 beer
+🍕 pizza
+🍔 burger
+🍎 apple
+🥑 avocado
+🍌 banana
+🎂 cake
+🍰 dessert
+🥕 carrot
+🍆 eggplant
+🥬 lettuce
 
 # objects
 💡 idea
@@ -225,15 +241,6 @@ choice="$(rofi -dmenu \
 🌧 rain
 ❄ snow
 ⚡ lightning
-☕ coffee
-🍺 beer
-🍕 pizza
-🍔 burger
-🍎 apple
-🥑 avocado
-🍌 banana
-🎂 cake
-🍰 dessert
 🎁 gift
 📌 pin
 📍 location
