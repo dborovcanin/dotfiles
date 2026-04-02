@@ -9,24 +9,19 @@ touch "$HISTORY_FILE"
 initial_query="${1:-}"
 
 get_history() {
-  tac "$HISTORY_FILE" | awk '!seen[$0]++' | head -n 5
+  tac "$HISTORY_FILE" | awk '!seen[$0]++' | grep -v "^$HOME$" | head -n 5
 }
 
 save_dir() {
   local dir="$1"
+
+  # do not store HOME
+  [ "$dir" = "$HOME" ] && return
+
   grep -vxF "$dir" "$HISTORY_FILE" 2>/dev/null > "${HISTORY_FILE}.tmp" || true
   printf '%s\n' "$dir" >> "${HISTORY_FILE}.tmp"
   tail -n 50 "${HISTORY_FILE}.tmp" > "$HISTORY_FILE"
   rm -f "${HISTORY_FILE}.tmp"
-}
-
-get_project_dir() {
-  local git_root
-  if git_root="$(git rev-parse --show-toplevel 2>/dev/null)"; then
-    printf '%s\n' "$git_root"
-  else
-    printf '%s\n' "$PWD"
-  fi
 }
 
 choose_search_dir() {
