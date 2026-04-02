@@ -9,13 +9,11 @@ touch "$HISTORY_FILE"
 initial_query="${1:-}"
 
 get_history() {
-  tac "$HISTORY_FILE" | awk '!seen[$0]++' | grep -v "^$HOME$" | head -n 5
+  tac "$HISTORY_FILE" | awk '!seen[$0]++' | grep -Fvx "$HOME" | head -n 5
 }
 
 save_dir() {
   local dir="$1"
-
-  # do not store HOME
   [ "$dir" = "$HOME" ] && return
 
   grep -vxF "$dir" "$HISTORY_FILE" 2>/dev/null > "${HISTORY_FILE}.tmp" || true
@@ -77,7 +75,6 @@ search_dir="$(choose_search_dir)" || exit 0
 save_dir "$search_dir"
 cd "$search_dir"
 
-# Reset terminal state between the two fzf sessions
 printf '\033c' >/dev/tty 2>/dev/null || true
 
 selected="$(
@@ -94,30 +91,17 @@ selected="$(
     --preview='
       file={1}
       line={2}
-      q={q}
 
-      if [ -n "$file" ] && [ -f "$file" ]; then
-        if [ -n "$q" ]; then
-          rg \
-            --color=always \
-            --ignore-case \
-            -F \
-            --line-number \
-            --context 6 \
-            --heading \
-            -- "$q" "$file" 2>/dev/null
-        elif [ -n "$line" ]; then
-          start=$(( line > 40 ? line - 40 : 1 ))
-          end=$(( line + 40 ))
-          bat --style=numbers --color=always --highlight-line "$line" --line-range "${start}:${end}" "$file" 2>/dev/null \
-            || sed -n "${start},${end}p" "$file"
-        else
-          bat --style=numbers --color=always --line-range :200 "$file" 2>/dev/null \
-            || sed -n "1,200p" "$file"
-        fi
+      if [ -n "$file" ] && [ -f "$file" ] && [ -n "$line" ]; then
+        bat \
+          --style=full \
+          --color=always \
+          --theme="gruvbox-dark" \
+          --highlight-line "$line" \
+          "$file" 2>/dev/null
       fi
     ' \
-    --preview-window='right:70%:wrap' \
+    --preview-window='right:70%:wrap,+{2}/3' \
     --bind='start:reload:rg --color=never --ignore-case -F --hidden --follow --line-number --no-heading --glob "!.git" --glob "!**/.git/**" --glob "!vendor" --glob "!**/vendor/**" --glob "!node_modules" --glob "!**/node_modules/**" -- {q} 2>/dev/null || true' \
     --bind='change:reload:rg --color=never --ignore-case -F --hidden --follow --line-number --no-heading --glob "!.git" --glob "!**/.git/**" --glob "!vendor" --glob "!**/vendor/**" --glob "!node_modules" --glob "!**/node_modules/**" -- {q} 2>/dev/null || true'
 )"
