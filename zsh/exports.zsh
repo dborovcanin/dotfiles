@@ -1,10 +1,10 @@
 # set editor and pager
 export LESS='--ignore-case --raw-control-chars'
 export PAGER='less'
-export EDITOR=$VISUAL
 export GIT_EDITOR=nvim
 export EDITOR=vim
 export VISUAL=nvim
+export EDITOR=$VISUAL
 
 export TERM=st-256color
 export TERMINAL=st-256color
@@ -29,6 +29,9 @@ export PATH=$PATH:/usr/local/go/bin
 
 # Rust env
 export PATH=$PATH:$HOME/.cargo/bin
+
+# Add local to PATH
+export PATH=$PATH:$HOME/.local/bin/
 
 # ZSH config
 export DOTFILES=$HOME/dotfiles
