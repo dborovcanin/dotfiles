@@ -204,11 +204,13 @@ mode "resize" {
 }
 bindsym $mod+r mode "resize"
 
-set $bg /home/dusan/Downloads/bg2.jpg
+set $bg /home/dusan/Downloads/bg.jpg
+set $lockbg /home/dusan/Downloads/bg-blur.jpg
+
 set $mode_system System (l) lock, (e) logout, (s) suspend, (h) hibernate, (r) reboot, (Shift+s) shutdown
 
 mode "$mode_system" {
-    bindsym l exec swaylock --image $bg, mode "default"
+    bindsym l exec swaylock --image $lockbg, mode "default"
     bindsym e exec swaymsg exit, mode "default"
     bindsym s exec systemctl suspend, mode "default"
     bindsym h exec systemctl hibernate, mode "default"
@@ -221,17 +223,17 @@ mode "$mode_system" {
 }
 bindsym $mod+Escape mode "$mode_system"
 
-# exec swayidle -w \
-#  timeout 300 "$dotfiles/scripts/sway_lock.sh" \
-#  timeout 600 'swaymsg "output * dpms off"' \
-#  resume 'swaymsg "output * dpms on"' \
-#  before-sleep "$dotfiles/scripts/sway_lock.sh"
-
 exec swayidle -w \
- timeout 180 'swaylock -f -c 000000' \
- timeout 300 'swaymsg "output * dpms off"' \
- resume 'swaymsg "output * dpms on"' \
- before-sleep 'swaylock -f -c 000000'
+    timeout 300 'swaylock -f -i $lockbg' \
+    timeout 600 'swaymsg "output * dpms off"' \
+    resume 'swaymsg "output * dpms on"' \
+    before-sleep 'swaylock -f -i $lockbg'
+
+# exec swayidle -w \
+#  timeout 180 'swaylock -f -c 000000' \
+#  timeout 300 'swaymsg "output * dpms off"' \
+#  resume 'swaymsg "output * dpms on"' \
+#  before-sleep 'swaylock -f -c 000000'
 
 
 
