@@ -1,13 +1,23 @@
 #!/usr/bin/env bash
-set -e
+set -euo pipefail
 
-IMG="/tmp/lock.png"
+IMG="$(mktemp /tmp/lock-XXXXXX.png)"
+BLUR="$(mktemp /tmp/lock-blur-XXXXXX.png)"
 
-# Take screenshot
-grim "$IMG"
+cleanup() {
+    rm -f "$IMG" "$BLUR"
+}
+trap cleanup EXIT
 
-# Blur it (fast + decent quality)
-magick "$IMG" -filter Gaussian -blur 0x6 "$IMG"
+swaymsg 'output * dpms on' >/dev/null 2>&1 || true
+sleep 0.2
 
-# Lock
-exec swaylock -f -i "$IMG"
+if grim "$IMG"; then
+    if magick "$IMG" -filter Gaussian -blur 0x6 "$BLUR"; then
+        exec swaylock -f -i "$BLUR"
+    else
+        exec swaylock -f -i "$IMG"
+    fi
+else
+    exec swaylock -f -c 000000
+fi
