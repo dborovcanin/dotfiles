@@ -15,6 +15,7 @@ set $disabled #707880
 # Set GTK theme
 set $GTK_THEME Adwaita
 set $desktop_env sway
+seat seat0 xcursor_theme BreezeX-Light
 
 exec --no-startup-id export GTK_THEME=$GTK_THEME
 exec --no-startup-id export GTK2_RC_FILES=$HOME/.gtkrc-2.0
@@ -175,7 +176,7 @@ bindsym XF86AudioMute exec pactl set-sink-mute @DEFAULT_SINK@ toggle
 bindsym $mod+e exec --no-startup-id $dotfiles/scripts/emoji.sh
 
 # search
-bindsym $mod+Shift+f exec foot --app-id project-search sh -c "$dotfiles/scripts/search.sh"
+bindsym $mod+Shift+f exec foot --app-id project-search sh -c "$dotfiles/scripts/sway_search.sh"
 for_window [app_id="project-search"] floating enable, resize set 1500 950, move position center
 
 # Resize window (you can also use the mouse)
@@ -307,14 +308,13 @@ bindsym $mod+g exec --no-startup-id brave > /dev/null
 ## Move to and from scratchpad
 bindsym $mod+Shift+m move scratchpad
 bindsym $mod+m scratchpad show
-bindsym $mod+Shift+s exec $dotfiles/sway/screenshot.sh
+bindsym $mod+Shift+s exec $dotfiles/scripts/sway_screenshot.sh
 for_window [class="fzf-menu"] floating enable
 
 # Startup
-# exec --no-startup-id $dotfiles/polybar/launch.sh > /dev/null # Start Polybar
 exec --no-startup-id xrdb -merge ~/.Xresources
-exec --no-startup-id dunst -config $dotfiles/dunst/dunstrc > /dev/null # Start notification daemon
-exec --no-startup-id $dotfiles/i3/scripts/startup.sh > /dev/null # Startup programs
+exec --no-startup-id dunst -config $dotfiles/config/dunst/dunstrc > /dev/null # Start notification daemon
+exec --no-startup-id $dotfiles/scripts/startup.sh > /dev/null # Startup programs
 exec --no-startup-id foot --server
 
 # Notification bindings
