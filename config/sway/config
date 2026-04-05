@@ -176,8 +176,11 @@ bindsym XF86AudioMute exec pactl set-sink-mute @DEFAULT_SINK@ toggle
 bindsym $mod+e exec --no-startup-id $dotfiles/scripts/emoji.sh
 
 # search
-bindsym $mod+Shift+f exec foot --app-id project-search sh -c "$dotfiles/scripts/sway_search.sh"
-for_window [app_id="project-search"] floating enable, resize set 1500 950, move position center
+bindsym $mod+Shift+f exec foot --app-id content-search sh -c "$dotfiles/scripts/sway_content_search.sh"
+for_window [app_id="content-search"] floating enable, resize set 1500 950, move position center
+
+bindsym $mod+Ctrl+f exec foot --app-id file-search sh -c "$dotfiles/scripts/sway_file_search.sh"
+for_window [app_id="file-search"] floating enable, resize set 1500 950, move position center
 
 # Resize window (you can also use the mouse)
 mode "resize" {

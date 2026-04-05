@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-STATE_DIR="${XDG_STATE_HOME:-$HOME/.local/state}/project-search"
+STATE_DIR="${XDG_STATE_HOME:-$HOME/.local/state}/content_search"
 HISTORY_FILE="$STATE_DIR/history"
 mkdir -p "$STATE_DIR"
 touch "$HISTORY_FILE"
@@ -136,6 +136,16 @@ else
   '
 fi
 
+if command -v wl-copy >/dev/null 2>&1; then
+  COPY_SELECTION_CMD='wl-copy'
+elif command -v xclip >/dev/null 2>&1; then
+  COPY_SELECTION_CMD='xclip -selection clipboard'
+elif command -v xsel >/dev/null 2>&1; then
+  COPY_SELECTION_CMD='xsel --clipboard --input'
+else
+  COPY_SELECTION_CMD='cat >/dev/null'
+fi
+
 selected="$(
   fzf \
     --ansi \
@@ -145,12 +155,13 @@ selected="$(
     --height=100% \
     --layout=reverse \
     --prompt='Search > ' \
-    --header="Dir: $search_dir" \
+    --header="Dir: $search_dir | Enter: open file | Ctrl+Y: copy selection" \
     --delimiter=':' \
     --preview="$PREVIEW_CMD" \
     --preview-window='right:70%:wrap,+{2}/3' \
     --bind="start:reload:$RG_RELOAD_CMD" \
-    --bind="change:reload:$RG_RELOAD_CMD"
+    --bind="change:reload:$RG_RELOAD_CMD" \
+    --bind="ctrl-y:execute-silent(printf '%s:%s\n' {1} {2} | $COPY_SELECTION_CMD)+abort"
 )"
 
 [ -z "$selected" ] && exit 0
