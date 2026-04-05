@@ -18,6 +18,14 @@ const (
 	imgExtRe = `\.(svg|png|jpg|jpeg|gif|bmp|webp|tif|tiff|ico|avif|heic)$`
 )
 
+var docExts = []string{
+	"pdf", "txt", "md", "markdown", "doc", "docx", "odt", "rtf", "ppt", "pptx", "odp", "xls", "xlsx", "ods", "csv", "epub",
+}
+
+var imgExts = []string{
+	"svg", "png", "jpg", "jpeg", "gif", "bmp", "webp", "tif", "tiff", "ico", "avif", "heic",
+}
+
 var excludedDirs = []string{
 	".git",
 	"node_modules",
@@ -37,9 +45,8 @@ type app struct {
 	initialQ  string
 	effective string
 
-	searchDir           string
-	startupPrefixQuery  string
-	prefixFromDirPrompt bool
+	searchDir          string
+	startupPrefixQuery string
 }
 
 type indexPaths struct {
@@ -141,9 +148,8 @@ func (a *app) runInteractive() error {
 	if isKnownModeQuery(a.effective) {
 		a.startupPrefixQuery = a.effective
 		a.searchDir = defaultDir
-		a.prefixFromDirPrompt = false
 	} else {
-		dir, prefix, fromPrompt, ok, err := a.chooseSearchDir()
+		dir, prefix, ok, err := a.chooseSearchDir()
 		if err != nil {
 			return err
 		}
@@ -153,7 +159,6 @@ func (a *app) runInteractive() error {
 
 		a.searchDir = dir
 		a.startupPrefixQuery = prefix
-		a.prefixFromDirPrompt = fromPrompt
 	}
 
 	if a.startupPrefixQuery != "" {
@@ -205,23 +210,32 @@ func (a *app) runInteractive() error {
 	}
 }
 
-func (a *app) chooseSearchDir() (dir string, prefix string, fromPrompt bool, ok bool, err error) {
+func (a *app) chooseSearchDir() (dir string, prefix string, ok bool, err error) {
 	defaultDir := preferredStartDir(a.history, a.home)
 	dirReload := fmt.Sprintf("%s __dir_reload {q}", shellQuote(a.exe))
-	homeIndexes, cleanupIndexes, err := createIndexes(a.stateDir)
+	prefixIndexes, cleanupIndexes, err := createIndexes(a.stateDir)
 	if err != nil {
-		return "", "", false, false, err
+		return "", "", false, err
 	}
 	defer cleanupIndexes()
 
-	readyMarker, err := os.CreateTemp(a.stateDir, "dirprefix.ready.*")
+	docReadyMarker, err := os.CreateTemp(a.stateDir, "dirprefix.doc.ready.*")
 	if err != nil {
-		return "", "", false, false, fmt.Errorf("create dir-prefix marker: %w", err)
+		return "", "", false, fmt.Errorf("create dir-prefix doc marker: %w", err)
 	}
-	readyPath := readyMarker.Name()
-	_ = readyMarker.Close()
-	_ = os.Remove(readyPath)
-	defer os.Remove(readyPath)
+	docReadyPath := docReadyMarker.Name()
+	_ = docReadyMarker.Close()
+	_ = os.Remove(docReadyPath)
+	defer os.Remove(docReadyPath)
+
+	imgReadyMarker, err := os.CreateTemp(a.stateDir, "dirprefix.img.ready.*")
+	if err != nil {
+		return "", "", false, fmt.Errorf("create dir-prefix img marker: %w", err)
+	}
+	imgReadyPath := imgReadyMarker.Name()
+	_ = imgReadyMarker.Close()
+	_ = os.Remove(imgReadyPath)
+	defer os.Remove(imgReadyPath)
 
 	out, ok, err := runFZF(
 		[]string{
@@ -242,18 +256,18 @@ func (a *app) chooseSearchDir() (dir string, prefix string, fromPrompt bool, ok 
 		[]string{
 			"HISTORY_FILE=" + a.history,
 			"DIR_PREFIX_SEARCH_DIR=" + defaultDir,
-			"DIR_PREFIX_INDEX_ALL=" + homeIndexes.All,
-			"DIR_PREFIX_INDEX_DOC=" + homeIndexes.Doc,
-			"DIR_PREFIX_INDEX_IMG=" + homeIndexes.Img,
-			"DIR_PREFIX_INDEX_READY=" + readyPath,
+			"DIR_PREFIX_INDEX_DOC=" + prefixIndexes.Doc,
+			"DIR_PREFIX_INDEX_IMG=" + prefixIndexes.Img,
+			"DIR_PREFIX_DOC_READY=" + docReadyPath,
+			"DIR_PREFIX_IMG_READY=" + imgReadyPath,
 			"DIR_PREFIX_HAS_FD=" + boolString(a.hasFD),
 		},
 	)
 	if err != nil {
-		return "", "", false, false, err
+		return "", "", false, err
 	}
 	if !ok {
-		return "", "", false, false, nil
+		return "", "", false, nil
 	}
 
 	query, choice := parseFZFQueryAndSelection(out)
@@ -262,55 +276,51 @@ func (a *app) chooseSearchDir() (dir string, prefix string, fromPrompt bool, ok 
 	if isKnownModeQuery(query) {
 		handled, err := handlePrefixSelection(query, choice)
 		if err != nil {
-			return "", "", false, false, err
+			return "", "", false, err
 		}
 		if handled {
-			return "", "", false, false, nil
+			return "", "", false, nil
 		}
-		return defaultDir, query, true, true, nil
+		return defaultDir, query, true, nil
 	}
 
 	// Defensive fallback: sometimes query can be empty while the selected
 	// dynamic row already indicates prefix mode.
 	switch {
-	case choice == "Document search in HOME":
-		return defaultDir, "d:", true, true, nil
-	case choice == "Image search in HOME":
-		return defaultDir, "i:", true, true, nil
 	case strings.HasPrefix(choice, "Web search: "):
 		term := strings.TrimSpace(strings.TrimPrefix(choice, "Web search: "))
-		return defaultDir, "w:" + term, true, true, nil
+		return defaultDir, "w:" + term, true, nil
 	case choice == "Type query after w: to search the web":
-		return defaultDir, "w:", true, true, nil
+		return defaultDir, "w:", true, nil
 	case strings.HasPrefix(choice, "ChatGPT: "):
 		term := strings.TrimSpace(strings.TrimPrefix(choice, "ChatGPT: "))
-		return defaultDir, "c:" + term, true, true, nil
+		return defaultDir, "c:" + term, true, nil
 	case choice == "Type query after c: to open ChatGPT":
-		return defaultDir, "c:", true, true, nil
+		return defaultDir, "c:", true, nil
 	}
 
 	if choice == "" {
 		// No explicit directory chosen: behave as if recent dir was chosen
 		// (HOME fallback). Preserve any typed query so main search starts immediately.
-		return defaultDir, query, false, true, nil
+		return defaultDir, query, true, nil
 	}
 
 	switch {
 	case strings.HasPrefix(choice, "Recent: "):
-		return strings.TrimPrefix(choice, "Recent: "), "", false, true, nil
+		return strings.TrimPrefix(choice, "Recent: "), "", true, nil
 	case strings.HasPrefix(choice, "Home: "):
-		return strings.TrimPrefix(choice, "Home: "), "", false, true, nil
+		return strings.TrimPrefix(choice, "Home: "), "", true, nil
 	case choice == "Choose other directory":
 		picked, ok, err := a.chooseOtherDirectory()
 		if err != nil {
-			return "", "", false, false, err
+			return "", "", false, err
 		}
 		if !ok {
-			return "", "", false, false, nil
+			return "", "", false, nil
 		}
-		return picked, "", false, true, nil
+		return picked, "", true, nil
 	default:
-		return "", "", false, false, nil
+		return "", "", false, nil
 	}
 }
 
@@ -475,43 +485,44 @@ func internalDirReload(query string) error {
 
 func reloadDirPrefixFiles(mode, term string) error {
 	searchDir := os.Getenv("DIR_PREFIX_SEARCH_DIR")
-	all := os.Getenv("DIR_PREFIX_INDEX_ALL")
 	doc := os.Getenv("DIR_PREFIX_INDEX_DOC")
 	img := os.Getenv("DIR_PREFIX_INDEX_IMG")
-	ready := os.Getenv("DIR_PREFIX_INDEX_READY")
+	docReady := os.Getenv("DIR_PREFIX_DOC_READY")
+	imgReady := os.Getenv("DIR_PREFIX_IMG_READY")
 	hasFD := os.Getenv("DIR_PREFIX_HAS_FD") == "1"
 
-	if searchDir == "" || all == "" || doc == "" || img == "" {
-		return nil
-	}
-
-	indexes := indexPaths{
-		All: all,
-		Doc: doc,
-		Img: img,
-	}
-	if err := ensureDirPrefixIndexes(searchDir, indexes, ready, hasFD); err != nil {
+	if searchDir == "" || doc == "" || img == "" {
 		return nil
 	}
 
 	source := doc
-	if mode == "i" {
+	if mode == "d" {
+		if err := ensureDirPrefixIndex(searchDir, doc, "d", docReady, hasFD); err != nil {
+			return nil
+		}
+	} else if mode == "i" {
+		if err := ensureDirPrefixIndex(searchDir, img, "i", imgReady, hasFD); err != nil {
+			return nil
+		}
 		source = img
+	} else {
+		return nil
 	}
+
 	if term == "" {
 		return copyFileToStdout(source)
 	}
 	return rgFilterToStdout(term, source)
 }
 
-func ensureDirPrefixIndexes(searchDir string, indexes indexPaths, readyMarker string, hasFD bool) error {
+func ensureDirPrefixIndex(searchDir, outPath, mode, readyMarker string, hasFD bool) error {
 	if readyMarker != "" {
 		if _, err := os.Stat(readyMarker); err == nil {
 			return nil
 		}
 	}
 
-	if err := buildIndexes(searchDir, indexes, hasFD); err != nil {
+	if err := writeModeIndex(searchDir, outPath, mode, hasFD); err != nil {
 		return err
 	}
 
@@ -619,6 +630,44 @@ func buildIndexes(searchDir string, indexes indexPaths, hasFD bool) error {
 	return nil
 }
 
+func writeModeIndex(root, outPath, mode string, hasFD bool) error {
+	pattern := docExtRe
+	exts := docExts
+	if mode == "i" {
+		pattern = imgExtRe
+		exts = imgExts
+	}
+
+	if hasFD {
+		out, err := os.Create(outPath)
+		if err != nil {
+			return fmt.Errorf("open %s: %w", outPath, err)
+		}
+		defer out.Close()
+
+		cmd := listFilesByExtCmd(root, exts)
+		cmd.Stdout = out
+		cmd.Stderr = io.Discard
+		if err := cmd.Run(); err != nil {
+			return fmt.Errorf("build %s index: %w", mode, err)
+		}
+		return nil
+	}
+
+	tmpAll, err := os.CreateTemp(filepath.Dir(outPath), "files.mode.all.*")
+	if err != nil {
+		return fmt.Errorf("create temp all index: %w", err)
+	}
+	tmpAllPath := tmpAll.Name()
+	_ = tmpAll.Close()
+	defer os.Remove(tmpAllPath)
+
+	if err := writeAllFilesIndex(root, tmpAllPath, false); err != nil {
+		return err
+	}
+	return writeFilteredIndex(tmpAllPath, outPath, pattern)
+}
+
 func writeAllFilesIndex(root, outPath string, hasFD bool) error {
 	out, err := os.Create(outPath)
 	if err != nil {
@@ -712,6 +761,22 @@ func listFilesCmd(root string, hasFD bool) *exec.Cmd {
 	}
 	args = append(args, ")", "-prune", "-o", "-type", "f", "-print")
 	return exec.Command("find", args...)
+}
+
+func listFilesByExtCmd(root string, exts []string) *exec.Cmd {
+	args := []string{
+		"--hidden",
+		"--type", "f",
+		"--absolute-path",
+	}
+	for _, ex := range excludedDirs {
+		args = append(args, "--exclude", ex)
+	}
+	for _, ext := range exts {
+		args = append(args, "-e", ext)
+	}
+	args = append(args, ".", root)
+	return exec.Command("fd", args...)
 }
 
 func readRecent(historyFile, home string, limit int) []string {
