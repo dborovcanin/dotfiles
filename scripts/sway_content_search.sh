@@ -67,6 +67,7 @@ choose_search_dir() {
       fzf \
         --height=50% \
         --layout=reverse \
+        --cycle \
         --prompt='Directory > ' \
         --border \
         --exit-0
@@ -87,6 +88,7 @@ choose_search_dir() {
           fzf \
             --height=80% \
             --layout=reverse \
+            --cycle \
             --prompt='Find dir > ' \
             --header='Type to filter, arrows to move, TAB to copy selection to query, Enter to choose' \
             --border \
@@ -154,6 +156,7 @@ selected="$(
     --query="$initial_query" \
     --height=100% \
     --layout=reverse \
+    --cycle \
     --prompt='Search > ' \
     --header="Dir: $search_dir | Enter: open file | Ctrl+Y: copy selection" \
     --delimiter=':' \
@@ -161,7 +164,7 @@ selected="$(
     --preview-window='right:70%:wrap,+{2}/3' \
     --bind="start:reload:$RG_RELOAD_CMD" \
     --bind="change:reload:$RG_RELOAD_CMD" \
-    --bind="ctrl-y:execute-silent(printf '%s:%s\n' {1} {2} | $COPY_SELECTION_CMD)+abort"
+    --bind="ctrl-y:execute-silent(printf '%q:%s\n' {1} {2} | $COPY_SELECTION_CMD)+abort"
 )"
 
 [ -z "$selected" ] && exit 0
