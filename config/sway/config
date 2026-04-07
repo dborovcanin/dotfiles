@@ -20,8 +20,6 @@ seat seat0 xcursor_theme BreezeX-Light
 exec --no-startup-id export GTK_THEME=$GTK_THEME
 exec --no-startup-id export GTK2_RC_FILES=$HOME/.gtkrc-2.0
 exec --no-startup-id export GTK3_MODULES=$HOME/.config/gtk-3.0/settings.ini
-exec --no-startup-id env XDG_CURRENT_DESKTOP=$desktop_env /usr/lib/xdg-desktop-portal &
-exec --no-startup-id env XDG_CURRENT_DESKTOP=$desktop_env /usr/lib/xdg-desktop-portal-gtk &
 
 set $XDG_CURRENT_DESKTOP sway
 exec dbus-update-activation-environment --systemd WAYLAND_DISPLAY SWAYSOCK XDG_CURRENT_DESKTOP=sway
@@ -32,9 +30,9 @@ set $dotfiles $HOME/dotfiles
 # Set some nice colors      border           background         text	           indicator           child_border
 client.focused              $background      $background        $primary           $primary            $primary
 client.unfocused            $background_alt  $background_alt    $foreground        $background_alt     $background_alt
-client.focused_inactive     $disabled        $disabled          $secondary         $background         $background_alt
-client.urgent               $alert           $alert             $foreground        $alert              $background_alt
-client.placeholder          $alert           $alert             $foreground        $alert              $background_alt
+client.focused_inactive     $disabled        $disabled          $secondary         $background_alt     $background_alt
+client.urgent               $alert           $alert             $foreground        $background_alt     $background_alt
+client.placeholder          $alert           $alert             $foreground        $background_alt     $background_alt
 
 
 # Font for window titles
@@ -179,8 +177,12 @@ bindsym $mod+e exec --no-startup-id $dotfiles/scripts/emoji.sh
 bindsym $mod+Shift+f exec foot --app-id content-search sh -c "$dotfiles/scripts/sway_content_search.sh"
 for_window [app_id="content-search"] floating enable, resize set 1500 950, move position center
 
-bindsym $mod+Ctrl+f exec foot --app-id file-search sh -c "$dotfiles/scripts/sway_file_search.sh"
+bindsym $mod+Ctrl+f exec foot --app-id file-search sh -c "$dotfiles/bin/search"
 for_window [app_id="file-search"] floating enable, resize set 1500 950, move position center
+
+# system monitor
+bindsym $mod+b exec foot --app-id system-monitor btop
+for_window [app_id="system-monitor"] floating enable, resize set 1920 1080, move position center
 
 # Resize window (you can also use the mouse)
 mode "resize" {
@@ -196,10 +198,10 @@ mode "resize" {
         bindsym semicolon resize grow width 10 px or 10 ppt
 
         # same bindings, but for the arrow keys
-        bindsym Left resize shrink width 10 px or 10 ppt
-        bindsym Down resize grow height 10 px or 10 ppt
-        bindsym Up resize shrink height 10 px or 10 ppt
-        bindsym Right resize grow width 10 px or 10 ppt
+        bindsym Left resize grow width 10 px or 10 ppt
+        bindsym Right resize shrink width 10 px or 10 ppt
+        bindsym Up resize grow height 10 px or 10 ppt
+        bindsym Down resize shrink height 10 px or 10 ppt
 
         # back to normal: Enter or Escape or $mod+r
         bindsym Return mode "default"
@@ -306,7 +308,7 @@ for_window [app_id="satty"] floating enable
 for_window [class="feh"] floating enable, focus
 
 # Scratchpad
-bindsym $mod+g exec --no-startup-id brave > /dev/null
+bindsym $mod+g exec brave > /dev/null
 
 ## Move to and from scratchpad
 bindsym $mod+Shift+m move scratchpad
@@ -315,10 +317,10 @@ bindsym $mod+Shift+s exec $dotfiles/scripts/sway_screenshot.sh
 for_window [class="fzf-menu"] floating enable
 
 # Startup
-exec --no-startup-id xrdb -merge ~/.Xresources
-exec --no-startup-id dunst -config $dotfiles/config/dunst/dunstrc > /dev/null # Start notification daemon
-exec --no-startup-id $dotfiles/scripts/startup.sh > /dev/null # Startup programs
-exec --no-startup-id foot --server
+exec xrdb -merge ~/.Xresources
+exec dunst -config $dotfiles/config/dunst/dunstrc > /dev/null # Start notification daemon
+exec $dotfiles/scripts/startup.sh > /dev/null # Startup programs
+exec foot --server
 
 # Notification bindings
 bindsym Ctrl+space exec dunstctl close

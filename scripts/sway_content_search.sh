@@ -7,6 +7,12 @@ mkdir -p "$STATE_DIR"
 touch "$HISTORY_FILE"
 
 initial_query="${1:-}"
+DIR_SEARCH_ROOT="${CONTENT_SEARCH_DIR_ROOT:-/}"
+
+if [ ! -d "$DIR_SEARCH_ROOT" ]; then
+  printf 'Invalid CONTENT_SEARCH_DIR_ROOT: %s\n' "$DIR_SEARCH_ROOT" >&2
+  exit 1
+fi
 
 require_cmd() {
   local cmd="$1"
@@ -21,7 +27,7 @@ require_cmd rg
 require_cmd swaymsg
 
 get_history() {
-  tac "$HISTORY_FILE" | awk '!seen[$0]++' | grep -Fvx "$HOME" | head -n 5
+  tac "$HISTORY_FILE" | awk '!seen[$0]++' | grep -Fvx "$HOME" | head -n 10
 }
 
 save_dir() {
@@ -47,9 +53,9 @@ list_dirs() {
       --exclude .cargo \
       --exclude target \
       --exclude .venv \
-      . "$HOME" 2>/dev/null
+      . "$DIR_SEARCH_ROOT" 2>/dev/null
   else
-    find "$HOME" -type d \
+    find "$DIR_SEARCH_ROOT" -type d \
       \( -name .git -o -name node_modules -o -name vendor -o -name .cache -o -name .cargo -o -name target -o -name .venv \) -prune -o \
       -type d -print 2>/dev/null
   fi
@@ -90,7 +96,7 @@ choose_search_dir() {
             --layout=reverse \
             --cycle \
             --prompt='Find dir > ' \
-            --header='Type to filter, arrows to move, TAB to copy selection to query, Enter to choose' \
+            --header="Root: $DIR_SEARCH_ROOT | Type to filter, arrows to move, TAB to copy selection to query, Enter to choose" \
             --border \
             --scheme=path \
             --bind='tab:replace-query' \

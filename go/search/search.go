@@ -6,6 +6,7 @@ import (
 	"errors"
 	"fmt"
 	"io"
+	"net"
 	"net/url"
 	"os"
 	"os/exec"
@@ -14,7 +15,7 @@ import (
 )
 
 const (
-	docExtRe = `\.(pdf|txt|md|markdown|doc|docx|odt|rtf|ppt|pptx|odp|xls|xlsx|ods|csv|epub)$`
+	docExtRe = `\.(pdf|txt|md|mdx|markdown|doc|docx|odt|rtf|ppt|pptx|odp|xls|xlsx|ods|csv|epub)$`
 	imgExtRe = `\.(svg|png|jpg|jpeg|gif|bmp|webp|tif|tiff|ico|avif|heic)$`
 )
 
@@ -38,6 +39,7 @@ var excludedDirs = []string{
 
 type app struct {
 	home      string
+	otherRoot string
 	stateDir  string
 	history   string
 	exe       string
@@ -80,6 +82,8 @@ func runInternal(action string, args []string) error {
 	switch action {
 	case "__dir_reload":
 		return internalDirReload(query)
+	case "__other_dir_reload":
+		return internalOtherDirReload(query)
 	case "__main_reload":
 		return internalMainReload(query)
 	case "__rebuild":
@@ -103,6 +107,10 @@ func newApp(args []string) (*app, error) {
 	home, err := os.UserHomeDir()
 	if err != nil {
 		return nil, fmt.Errorf("resolve home dir: %w", err)
+	}
+	otherRoot, err := resolveOtherDirRoot()
+	if err != nil {
+		return nil, err
 	}
 
 	stateHome := os.Getenv("XDG_STATE_HOME")
@@ -132,12 +140,13 @@ func newApp(args []string) (*app, error) {
 	}
 
 	return &app{
-		home:     home,
-		stateDir: stateDir,
-		history:  history,
-		exe:      exe,
-		hasFD:    commandExists("fd"),
-		initialQ: initial,
+		home:      home,
+		otherRoot: otherRoot,
+		stateDir:  stateDir,
+		history:   history,
+		exe:       exe,
+		hasFD:     commandExists("fd"),
+		initialQ:  initial,
 	}, nil
 }
 
@@ -197,7 +206,7 @@ func (a *app) runInteractive() error {
 		if term == "" {
 			return nil
 		}
-		return openWebPopup(googleURL(term))
+		return openWebPopup(webTarget(term))
 	case "c":
 		if term == "" {
 			return nil
@@ -244,6 +253,8 @@ func (a *app) chooseSearchDir() (dir string, prefix string, ok bool, err error) 
 			"--cycle",
 			"--phony",
 			"--disabled",
+			"--preview", ":",
+			"--preview-window=hidden",
 			"--exit-0",
 			"--prompt=Directory > ",
 			"--header=Enter: choose dir | Type d:/i:/w:/c:<query> to switch mode, then Enter to continue",
@@ -325,26 +336,43 @@ func (a *app) chooseSearchDir() (dir string, prefix string, ok bool, err error) 
 }
 
 func (a *app) chooseOtherDirectory() (string, bool, error) {
-	input, err := listDirsOutput(a.home, a.hasFD)
+	dirCmd := listDirsCmd(a.otherRoot, a.hasFD)
+	dirPipe, err := dirCmd.StdoutPipe()
 	if err != nil {
-		return "", false, err
+		return "", false, fmt.Errorf("list dirs pipe: %w", err)
 	}
+	dirCmd.Stderr = io.Discard
+	if err := dirCmd.Start(); err != nil {
+		return "", false, fmt.Errorf("start dir listing: %w", err)
+	}
+	waitDone := make(chan struct{})
+	go func() {
+		_ = dirCmd.Wait()
+		close(waitDone)
+	}()
 
 	out, ok, err := runFZF(
 		[]string{
 			"--height=80%",
 			"--layout=reverse",
 			"--cycle",
+			"--preview", ":",
+			"--preview-window=hidden",
 			"--prompt=Find dir > ",
-			"--header=Type to filter, arrows to move, TAB to copy selection to query, Enter to choose",
+			"--header=Root: " + a.otherRoot + " | Type to filter, arrows to move, TAB to copy selection to query, Enter to choose",
 			"--border",
 			"--scheme=path",
 			"--bind=tab:replace-query",
 			"--exit-0",
 		},
-		bytes.NewReader(input),
+		dirPipe,
 		nil,
 	)
+	if dirCmd.Process != nil {
+		_ = dirCmd.Process.Kill()
+	}
+	<-waitDone
+
 	if err != nil {
 		return "", false, err
 	}
@@ -357,6 +385,49 @@ func (a *app) chooseOtherDirectory() (string, bool, error) {
 		return "", false, nil
 	}
 	return picked, true, nil
+}
+
+func resolveOtherDirRoot() (string, error) {
+	root := strings.TrimSpace(os.Getenv("CONTENT_SEARCH_DIR_ROOT"))
+	if root == "" {
+		return "/", nil
+	}
+	if !filepath.IsAbs(root) {
+		absRoot, err := filepath.Abs(root)
+		if err != nil {
+			return "", fmt.Errorf("resolve CONTENT_SEARCH_DIR_ROOT %q: %w", root, err)
+		}
+		root = absRoot
+	}
+	info, err := os.Stat(root)
+	if err != nil {
+		return "", fmt.Errorf("stat CONTENT_SEARCH_DIR_ROOT %q: %w", root, err)
+	}
+	if !info.IsDir() {
+		return "", fmt.Errorf("CONTENT_SEARCH_DIR_ROOT %q is not a directory", root)
+	}
+	return root, nil
+}
+
+func internalOtherDirReload(query string) error {
+	term := trimLeadingSpace(query)
+	if term == "" {
+		// Keep the list empty until user starts typing.
+		return nil
+	}
+
+	root := os.Getenv("OTHER_DIR_ROOT")
+	index := os.Getenv("OTHER_DIR_INDEX")
+	ready := os.Getenv("OTHER_DIR_READY")
+	hasFD := os.Getenv("OTHER_DIR_HAS_FD") == "1"
+	if root == "" || index == "" {
+		return nil
+	}
+
+	if err := ensureOtherDirIndex(root, index, ready, hasFD); err != nil {
+		return nil
+	}
+	return rgFilterToStdout(term, index)
 }
 
 func (a *app) runMainFZF(indexes indexPaths) (query string, selection string, ok bool, err error) {
@@ -454,7 +525,12 @@ func internalDirReload(query string) error {
 		switch mode {
 		case "w":
 			if term != "" {
-				fmt.Printf("Web search: %s\n", term)
+				target, isURL := detectWebURL(term)
+				if isURL {
+					fmt.Printf("Open URL: %s\n", target)
+				} else {
+					fmt.Printf("Web search: %s\n", term)
+				}
 			} else {
 				fmt.Println("Type query after w: to search the web")
 			}
@@ -474,7 +550,7 @@ func internalDirReload(query string) error {
 
 	home, _ := os.UserHomeDir()
 	history := os.Getenv("HISTORY_FILE")
-	recents := readRecent(history, home, 5)
+	recents := readRecent(history, home, 10)
 	for _, dir := range recents {
 		fmt.Printf("Recent: %s\n", dir)
 	}
@@ -534,6 +610,25 @@ func ensureDirPrefixIndex(searchDir, outPath, mode, readyMarker string, hasFD bo
 	return nil
 }
 
+func ensureOtherDirIndex(root, outPath, readyMarker string, hasFD bool) error {
+	if readyMarker != "" {
+		if _, err := os.Stat(readyMarker); err == nil {
+			return nil
+		}
+	}
+
+	if err := writeAllDirsIndex(root, outPath, hasFD); err != nil {
+		return err
+	}
+
+	if readyMarker != "" {
+		if err := os.WriteFile(readyMarker, []byte("ok\n"), 0o644); err != nil {
+			return err
+		}
+	}
+	return nil
+}
+
 func internalMainReload(query string) error {
 	mode, term := parseMode(query)
 	all := os.Getenv("FILE_INDEX_ALL")
@@ -548,7 +643,12 @@ func internalMainReload(query string) error {
 		source = img
 	case "w":
 		if term != "" {
-			fmt.Printf("Web search: %s\n", term)
+			target, isURL := detectWebURL(term)
+			if isURL {
+				fmt.Printf("Open URL: %s\n", target)
+			} else {
+				fmt.Printf("Web search: %s\n", term)
+			}
 		} else {
 			fmt.Println("Type query after w: to search the web")
 		}
@@ -680,6 +780,22 @@ func writeAllFilesIndex(root, outPath string, hasFD bool) error {
 	cmd.Stderr = io.Discard
 	if err := cmd.Run(); err != nil {
 		return fmt.Errorf("build all index: %w", err)
+	}
+	return nil
+}
+
+func writeAllDirsIndex(root, outPath string, hasFD bool) error {
+	out, err := os.Create(outPath)
+	if err != nil {
+		return fmt.Errorf("open %s: %w", outPath, err)
+	}
+	defer out.Close()
+
+	cmd := listDirsCmd(root, hasFD)
+	cmd.Stdout = out
+	cmd.Stderr = io.Discard
+	if err := cmd.Run(); err != nil {
+		return fmt.Errorf("build dirs index: %w", err)
 	}
 	return nil
 }
@@ -897,6 +1013,44 @@ func googleURL(query string) string {
 	return "https://www.google.com/search?q=" + url.QueryEscape(query)
 }
 
+func webTarget(term string) string {
+	if target, ok := detectWebURL(term); ok {
+		return target
+	}
+	return googleURL(term)
+}
+
+func detectWebURL(term string) (string, bool) {
+	term = strings.TrimSpace(term)
+	if term == "" || strings.ContainsAny(term, " \t\r\n") {
+		return "", false
+	}
+
+	lower := strings.ToLower(term)
+	if strings.HasPrefix(lower, "http://") || strings.HasPrefix(lower, "https://") {
+		u, err := url.Parse(term)
+		if err != nil || u.Host == "" {
+			return "", false
+		}
+		return u.String(), true
+	}
+
+	candidate := "https://" + term
+	u, err := url.Parse(candidate)
+	if err != nil || u.Host == "" {
+		return "", false
+	}
+
+	host := u.Hostname()
+	if host == "" {
+		return "", false
+	}
+	if host == "localhost" || net.ParseIP(host) != nil || strings.Contains(host, ".") {
+		return candidate, true
+	}
+	return "", false
+}
+
 func chatGPTURL(query string) string {
 	return "https://chatgpt.com/?q=" + url.QueryEscape(query)
 }
@@ -1082,7 +1236,7 @@ func handlePrefixSelection(query, choice string) (bool, error) {
 		if term == "" {
 			return true, nil
 		}
-		return true, openWebPopup(googleURL(term))
+		return true, openWebPopup(webTarget(term))
 	case "c":
 		if term == "" {
 			return true, nil
