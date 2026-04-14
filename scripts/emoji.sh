@@ -155,6 +155,25 @@ choice="$(rofi -dmenu \
 🕷 spider
 🦂 scorpion
 
+# arrows
+➡️ right arrow
+⬅️ left arrow
+⬆️ up arrow
+⬇️ down arrow
+↗️ up-right arrow
+↘️ down-right arrow
+↙️ down-left arrow
+↖️ up-left arrow
+↔️ left-right arrow
+↕️ up-down arrow
+➜ rightwards arrow
+➝ right arrow
+➞ rightwards arrow
+🔙 back arrow
+🔝 top arrow
+🔚 end arrow
+🔜 soon arrow
+
 # sea
 🐳 whale
 🐋 whale2

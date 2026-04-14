@@ -184,7 +184,7 @@ for_window [app_id="file-search"] floating enable, resize set 1500 950, move pos
 
 # notes
 bindsym $mod+n exec footclient --app-id notes /home/dusan/.local/bin/note --terminal
-for_window [app_id="notes"] floating enable, sticky enable, resize set 1280 1080, move position center
+for_window [app_id="notes"] floating enable, sticky enable, resize set 1400 950, move position center
 
 # system monitor
 bindsym $mod+b exec footclient --app-id system-monitor btop
