@@ -19,6 +19,9 @@ alias ..='cd ..'
 alias ...='cd ../..'
 alias ....='cd ../../..'
 alias 'bk=cd $OLDPWD'
+alias 'm=cd ~/go/src/github.com/absmach/magistrala'
+alias 'mui=cd ~/magistrala-ui'
+alias 'fx=cd ~/go/src/github.com/absmach/fluxmq'
 
 # -------------------------------------------------------------------
 # directory information

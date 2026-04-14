@@ -15,7 +15,7 @@ set $disabled #707880
 # Set GTK theme
 set $GTK_THEME Adwaita
 set $desktop_env sway
-seat seat0 xcursor_theme BreezeX-Light
+seat seat0 xcursor_theme BreezeX-Light 28
 
 exec --no-startup-id export GTK_THEME=$GTK_THEME
 exec --no-startup-id export GTK2_RC_FILES=$HOME/.gtkrc-2.0
@@ -52,7 +52,9 @@ smart_gaps on
 
 # start a terminal
 bindsym $mod+Return exec footclient
-bindsym $mod+Shift+Return exec $dotfiles/scripts/sway_sticky_term.sh
+
+bindsym $mod+Shift+Return exec footclient --app-id sticky_term
+for_window [app_id="sticky_term"] floating enable, sticky enable, resize set 1400 1000, move position center
 
 set $monitor1 eDP-1
 set $monitor2 DP-1
@@ -174,15 +176,19 @@ bindsym XF86AudioMute exec pactl set-sink-mute @DEFAULT_SINK@ toggle
 bindsym $mod+e exec --no-startup-id $dotfiles/scripts/emoji.sh
 
 # search
-bindsym $mod+Shift+f exec foot --app-id content-search sh -c "$dotfiles/scripts/sway_content_search.sh"
+bindsym $mod+Shift+f exec footclient --app-id content-search sh -c "$dotfiles/scripts/sway_content_search.sh"
 for_window [app_id="content-search"] floating enable, resize set 1500 950, move position center
 
-bindsym $mod+Ctrl+f exec foot --app-id file-search sh -c "$dotfiles/bin/search"
+bindsym $mod+Ctrl+f exec footclient --app-id file-search sh -c "$dotfiles/bin/search"
 for_window [app_id="file-search"] floating enable, resize set 1500 950, move position center
 
+# notes
+bindsym $mod+n exec footclient --app-id notes /home/dusan/.local/bin/note --terminal
+for_window [app_id="notes"] floating enable, sticky enable, resize set 1280 1080, move position center
+
 # system monitor
-bindsym $mod+b exec foot --app-id system-monitor btop
-for_window [app_id="system-monitor"] floating enable, resize set 1920 1080, move position center
+bindsym $mod+b exec footclient --app-id system-monitor btop
+for_window [app_id="system-monitor"] floating enable, resize set 1800 900, move position center
 
 # Resize window (you can also use the mouse)
 mode "resize" {
@@ -301,8 +307,6 @@ assign [class="Postman"] $ws4
 assign [class="zoom"] $ws6
 
 # Floating window
-for_window [app_id="sticky_*"] floating enable
-for_window [app_id="sticky_*"] sticky enable
 for_window [title="Meet*"] sticky enable
 for_window [app_id="satty"] floating enable
 for_window [class="feh"] floating enable, focus
@@ -378,5 +382,12 @@ output DP-1 {
     position 1920 0
     scale 1
     transform normal
+    bg $bg fill
+}
+
+output HDMI-A-1 {
+    resolution 1920x1080
+    position 1920 0
+    scale 1
     bg $bg fill
 }

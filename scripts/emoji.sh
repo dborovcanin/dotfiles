@@ -1,6 +1,27 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
+copy_emoji() {
+    local emoji="$1"
+
+    if [[ -n "${WAYLAND_DISPLAY:-}" || -n "${SWAYSOCK:-}" ]]; then
+        if command -v wl-copy >/dev/null 2>&1; then
+            printf "%s" "$emoji" | wl-copy --trim-newline
+            printf "%s" "$emoji" | wl-copy --trim-newline --primary || true
+            return
+        fi
+    fi
+
+    if command -v xclip >/dev/null 2>&1; then
+        printf "%s" "$emoji" | xclip -selection clipboard
+        printf "%s" "$emoji" | xclip -selection primary
+        return
+    fi
+
+    printf "emoji.sh: no supported clipboard tool found\n" >&2
+    exit 1
+}
+
 # ---- pick emoji ----
 # choice="$(rofi -dmenu -i -matching fuzzy -p "Emoji" <<'EOF'
 choice="$(rofi -dmenu \
@@ -54,6 +75,23 @@ choice="$(rofi -dmenu \
 😓 sweat
 🤗 hug
 🤝 handshake
+
+#health
+🥶 cold face
+🧊 ice
+❄️ snowflake
+🌬️ wind face
+🤧 sneezing face
+🤒 face with thermometer
+🤕 face with head-bandage
+😷 face with medical mask
+🤢 nauseated face
+🤮 face vomiting
+😵 dizzy face
+🛌 person in bed
+🩺 stethoscope
+💊 pill
+🌡️ thermometer
 
 # animals
 🐶 dog
@@ -177,6 +215,8 @@ choice="$(rofi -dmenu \
 💪 muscle workout strong
 🦾 mechanical arm
 🖕 middle finger
+👉 right pointing finger
+👈 left pointing finger
 
 # people
 👨 man
@@ -296,8 +336,7 @@ EOF
 emoji="${choice%% *}"
 
 # copy to clipboard
-printf "%s" "$emoji" | xclip -selection clipboard
-printf "%s" "$emoji" | xclip -selection primary
+copy_emoji "$emoji"
 
 # notification
 notify-send "Emoji copied" "$emoji"
