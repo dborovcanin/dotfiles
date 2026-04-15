@@ -73,7 +73,6 @@ choice="$(rofi -dmenu \
 😰 anxious
 😥 relief
 😓 sweat
-🤗 hug
 🤝 handshake
 
 #health
@@ -88,7 +87,6 @@ choice="$(rofi -dmenu \
 🤢 nauseated face
 🤮 face vomiting
 😵 dizzy face
-🛌 person in bed
 🩺 stethoscope
 💊 pill
 🌡️ thermometer
@@ -192,6 +190,32 @@ choice="$(rofi -dmenu \
 ⏲️ timer clock
 🕰️ mantelpiece clock
 ⌚ watch
+
+#spooky
+👻 ghost
+🧛 vampire
+🧛‍♂️ man vampire
+🧛‍♀️ woman vampire
+🧟 zombie
+🧟‍♂️ man zombie
+🧟‍♀️ woman zombie
+🧙 mage
+🧙‍♂️ man mage
+🧙‍♀️ woman mage
+🧹 broom
+🕸️ spider web
+🕷️ spider
+🦇 bat
+☠️ skull and crossbones
+💀 skull
+🎃 jack-o-lantern
+🪦 headstone
+🩸 drop of blood
+🌕 full moon
+🌑 new moon
+🌫️ fog
+🕯️ candle
+🔮 crystal ball
 
 # sea
 🐳 whale
