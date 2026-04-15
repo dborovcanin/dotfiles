@@ -174,6 +174,25 @@ choice="$(rofi -dmenu \
 🔚 end arrow
 🔜 soon arrow
 
+# clock
+🕐 one o’clock
+🕑 two o’clock
+🕒 three o’clock
+🕓 four o’clock
+🕔 five o’clock
+🕕 six o’clock
+🕖 seven o’clock
+🕗 eight o’clock
+🕘 nine o’clock
+🕙 ten o’clock
+🕚 eleven o’clock
+🕛 twelve o’clock
+⏰ alarm clock
+⏱️ stopwatch
+⏲️ timer clock
+🕰️ mantelpiece clock
+⌚ watch
+
 # sea
 🐳 whale
 🐋 whale2
