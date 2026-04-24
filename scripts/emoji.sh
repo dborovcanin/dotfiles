@@ -206,7 +206,6 @@ choice="$(rofi -dmenu \
 🕸️ spider web
 🕷️ spider
 🦇 bat
-☠️ skull and crossbones
 💀 skull
 🎃 jack-o-lantern
 🪦 headstone
@@ -229,6 +228,36 @@ choice="$(rofi -dmenu \
 🐠 fish
 🐟 fish2
 🐡 blowfish
+
+# weapons
+🔪 kitchen knife
+🗡️ dagger
+⚔️ crossed swords
+🏹 bow and arrow
+🛡️ shield
+🪓 axe
+🔨 hammer
+⛏️ pick
+🪚 saw
+🔱 trident emblem
+💣 bomb
+🔫 gun
+🪖 military helmet
+🎖️ military medal
+🏅 medal
+🥇 gold medal
+🚁 helicopter
+✈️ airplane
+🛩️ small airplane
+🚢 warship ship
+⛴️ ferry ship
+🚨 siren
+📯 horn
+🚧 barricade
+🏴‍☠️ pirate flag
+☠️ skull and crossbones
+💥 collision explosion
+🧨 firecracker
 
 # symbols
 ✅ check checkbox
