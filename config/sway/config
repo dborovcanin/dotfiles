@@ -183,8 +183,8 @@ bindsym $mod+Ctrl+f exec footclient --app-id file-search sh -c "$dotfiles/bin/se
 for_window [app_id="file-search"] floating enable, resize set 1500 950, move position center
 
 # notes
-bindsym $mod+n exec footclient --app-id slate /home/dusan/.local/bin/slate --terminal
-for_window [app_id="slate"] floating enable, sticky enable, resize set 1400 950, move position center
+bindsym $mod+n exec footclient -w 1400x950 --app-id slight /home/dusan/.local/bin/slight
+for_window [app_id="slight"] floating enable, sticky enable, resize set 1400 950, move position center
 
 # system monitor
 bindsym $mod+b exec footclient --app-id system-monitor btop
