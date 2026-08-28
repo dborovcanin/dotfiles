@@ -62,6 +62,7 @@ choice="$(rofi -dmenu \
 😲 shocked
 😳 flushed
 🥺 pleading
+🫡 salute
 😢 cry
 😭 sob
 😤 frustrated
