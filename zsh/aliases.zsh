@@ -80,6 +80,7 @@ alias gmt='git mergetool'
 # -------------------------------------------------------------------
 alias dps="docker ps"
 alias dl="docker logs"
+alias drma="docker rm \$(docker ps -a -q) -f"
 
 # -------------------------------------------------------------------
 # Other
