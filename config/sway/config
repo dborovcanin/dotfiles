@@ -17,9 +17,10 @@ set $GTK_THEME Adwaita
 set $desktop_env sway
 seat seat0 xcursor_theme BreezeX-Light 28
 
-exec --no-startup-id export GTK_THEME=$GTK_THEME
-exec --no-startup-id export GTK2_RC_FILES=$HOME/.gtkrc-2.0
-exec --no-startup-id export GTK3_MODULES=$HOME/.config/gtk-3.0/settings.ini
+exec export GTK_THEME=$GTK_THEME
+exec export GTK2_RC_FILES=$HOME/.gtkrc-2.0
+exec export GTK3_MODULES=$HOME/.config/gtk-3.0/settings.ini
+exec dbar -c /home/dusan/dbar/examples/advanced.toml
 
 set $XDG_CURRENT_DESKTOP sway
 exec dbus-update-activation-environment --systemd WAYLAND_DISPLAY SWAYSOCK XDG_CURRENT_DESKTOP=sway
@@ -51,9 +52,12 @@ gaps inner 15
 smart_gaps on
 
 # start a terminal
-bindsym $mod+Return exec footclient
+bindsym $mod+Return exec footclient -T "term"
 
-bindsym $mod+Shift+Return exec footclient --app-id sticky_term
+bindsym $mod+Shift+Return exec footclient -T "term" --app-id float_term
+for_window [app_id="float_term"] floating enable, resize set 1400 1000, move position center
+
+bindsym $mod+ctrl+Shift+Return exec footclient --app-id sticky_term
 for_window [app_id="sticky_term"] floating enable, sticky enable, resize set 1400 1000, move position center
 
 set $monitor1 eDP-1
@@ -122,7 +126,7 @@ bindsym $mod+a focus parent
 # Define names for default workspaces for which we configure key bindings later on.
 # We use variables to avoid repeating the names in multiple places.
 set $ws1 "1 "
-set $ws2 "2 "
+set $ws2 "2 󰅩"
 set $ws3 "3 "
 set $ws4 "4"
 set $ws5 "5"
@@ -348,18 +352,18 @@ corner_radius 5
 # Switch to urgent
 bindsym $mod+x [urgent=latest] focus
 
-bar {
-    font pango:JetBrainsMono NL, FontAwesome 14
-    position top
-    status_command i3status-rs $dotfiles/config/sway/status.toml
-    colors {
-        background $background
-        focused_workspace $background $background $primary
-        active_workspace  $background $background $primary
-        inactive_workspace $background_alt $background_alt $foreground
-        urgent_workspace $alert $alert $primary
-    }
-}
+# bar {
+#     font pango:JetBrainsMono NL, FontAwesome 14
+#     position top
+#     status_command i3status-rs $dotfiles/config/sway/status.toml
+#     colors {
+#         background $background
+#         focused_workspace $background $background $primary
+#         active_workspace  $background $background $primary
+#         inactive_workspace $background_alt $background_alt $foreground
+#         urgent_workspace $alert $alert $primary
+#     }
+# }
 
 input "type:touchpad" {
     dwt enabled
