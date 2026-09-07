@@ -6,9 +6,12 @@
     mouse_left_click = do_action, close_current
     indicate_hidden = yes
     separator_height = 2
-    padding = 1
-    horizontal_padding = 8
-    frame_color = "#F0C674"
+    padding = 10
+    horizontal_padding = 12
+    frame_width = 3
+    corner_radius = 10
+    frame_color = "#dbc291"
+    separator_color = "#504945"
     close = ctrl+space
     close_all = ctrl+shift+space
     history = mod1+grave
@@ -17,7 +20,6 @@
     enable_recursive_icon_lookup = false
 #   max_icon_size = 64
 #   icon_position = off
-    show_indicators = no
     icon_theme = Papirus
     icon_path = /usr/share/icons/Papirus/16x16/status:/usr/share/icons/Papirus/16x16/devices:/usr/share/icons/hicolor/48x48/apps
     enable_recursive_icon_lookup = true
@@ -35,18 +37,18 @@
 
 [urgency_low]
     background = "#282828"
-    foreground = "#928374"
-    timeout = 5
+    foreground = "#a89984"
+    timeout = 20
 
 [urgency_normal]
-    background = "#8ABEB7"
-    foreground = "#373B41"
-    timeout = 5
+    background = "#282828"
+    foreground = "#ebdbb2"
+    timeout = 20
 
 [urgency_critical]
-    background = "#cc2421"
+    background = "#1d2021"
     foreground = "#ebdbb2"
-    frame_color = "#fabd2f"
+    frame_color = "#fb4934"
     timeout = 0
 
 [slack]
