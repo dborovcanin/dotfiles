@@ -223,13 +223,13 @@ bindsym $mod+r mode "resize"
 set $bg /home/dusan/Downloads/bg.jpg
 set $lockbg /home/dusan/Downloads/bg-blur.jpg
 
-set $mode_system System (l) lock, (e) logout, (s) suspend, (h) hibernate, (r) reboot, (Shift+s) shutdown
+set $mode_system System (l) lock, (t) travel lock, (e) logout, (s) suspend, (h) hibernate, (r) reboot, (Shift+s) shutdown
 
 mode "$mode_system" {
     bindsym l exec swaylock --image $lockbg, mode "default"
+    bindsym t exec $dotfiles/scripts/sway_travel_lock.sh, mode "default"
     bindsym e exec swaymsg exit, mode "default"
     bindsym s exec systemctl suspend, mode "default"
-    bindsym h exec systemctl hibernate, mode "default"
     bindsym r exec systemctl reboot, mode "default"
     bindsym Shift+s exec systemctl poweroff, mode "default"
 
@@ -240,10 +240,10 @@ mode "$mode_system" {
 bindsym $mod+Escape mode "$mode_system"
 
 exec swayidle -w \
-    timeout 300 'swaylock -f -i $lockbg' \
+    timeout 300 'pgrep -x swaylock >/dev/null || swaylock -f -i $lockbg' \
     timeout 600 'swaymsg "output * dpms off"' \
     resume 'swaymsg "output * dpms on"' \
-    before-sleep 'swaylock -f -i $lockbg'
+    before-sleep 'pgrep -x swaylock >/dev/null || swaylock -f -i $lockbg'
 
 # exec swayidle -w \
 #  timeout 180 'swaylock -f -c 000000' \
