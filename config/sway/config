@@ -196,6 +196,13 @@ for_window [app_id="slight"] floating enable, sticky enable, resize set 1400 950
 bindsym $mod+b exec footclient --app-id system-monitor btop
 for_window [app_id="system-monitor"] floating enable, resize set 1800 900, move position center
 
+# calendar (opened from the bar clock, so it hangs under the middle of the bar)
+# Sway re-centres the window once foot reports its size, which is after this
+# rule has run, so the script has to place itself from inside. It is born
+# transparent to hide the hop from the centre of the screen up to the bar, and
+# turns itself opaque in the same breath as the move.
+for_window [app_id="calendar_script"] floating enable, opacity 0
+
 # Resize window (you can also use the mouse)
 mode "resize" {
         # These bindings trigger as soon as you enter the resize mode
