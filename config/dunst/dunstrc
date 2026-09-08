@@ -5,6 +5,9 @@
     # Invoke the notification's default action (e.g. open the Slack discussion).
     mouse_left_click = do_action, close_current
     indicate_hidden = yes
+    # Hide the (A)/(U)/(AU) actions and URLs markers dunst prepends to summaries.
+    # Purely cosmetic: mouse_left_click still triggers the default action.
+    show_indicators = no
     separator_height = 2
     padding = 10
     horizontal_padding = 12
