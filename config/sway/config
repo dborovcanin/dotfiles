@@ -20,7 +20,6 @@ seat seat0 xcursor_theme BreezeX-Light 28
 exec export GTK_THEME=$GTK_THEME
 exec export GTK2_RC_FILES=$HOME/.gtkrc-2.0
 exec export GTK3_MODULES=$HOME/.config/gtk-3.0/settings.ini
-exec dbar -c /home/dusan/dbar/examples/advanced.toml
 
 set $XDG_CURRENT_DESKTOP sway
 exec dbus-update-activation-environment --systemd WAYLAND_DISPLAY SWAYSOCK XDG_CURRENT_DESKTOP=sway
@@ -50,6 +49,9 @@ default_floating_border pixel 5
 # Default gaps
 gaps inner 15
 smart_gaps on
+
+
+exec dbar -c $dotfiles/config/sway/dbar.toml
 
 # start a terminal
 bindsym $mod+Return exec footclient -T "term"
@@ -180,7 +182,7 @@ bindsym XF86AudioMute exec pactl set-sink-mute @DEFAULT_SINK@ toggle
 bindsym $mod+e exec --no-startup-id $dotfiles/scripts/emoji.sh
 
 # search
-bindsym $mod+Shift+f exec footclient --app-id content-search sh -c "$dotfiles/scripts/sway_content_search.sh"
+bindsym $mod+Shift+f exec footclient --app-id content-search sh -c "$dotfiles/scripts/sway/content_search.sh"
 for_window [app_id="content-search"] floating enable, resize set 1500 950, move position center
 
 bindsym $mod+Ctrl+f exec footclient --app-id file-search sh -c "$dotfiles/bin/search"
@@ -227,7 +229,7 @@ set $mode_system System (l) lock, (t) travel lock, (e) logout, (s) suspend, (h) 
 
 mode "$mode_system" {
     bindsym l exec swaylock --image $lockbg, mode "default"
-    bindsym t exec $dotfiles/scripts/sway_travel_lock.sh, mode "default"
+    bindsym t exec $dotfiles/scripts/sway/travel_lock.sh, mode "default"
     bindsym e exec swaymsg exit, mode "default"
     bindsym s exec systemctl suspend, mode "default"
     bindsym r exec systemctl reboot, mode "default"
@@ -282,7 +284,7 @@ exec kdeconnectd > /dev/null
 
 # Used by the clipboard manager
 exec wl-paste --watch cliphist store --max-items=5000
-bindsym $mod+c exec $dotfiles/scripts/sway_clipboard.sh
+bindsym $mod+c exec $dotfiles/scripts/sway/clipboard.sh
 
 bindsym $mod+Shift+g mode "gaps_inner"
 mode "gaps_inner" {
@@ -321,7 +323,7 @@ bindsym $mod+g exec brave > /dev/null
 ## Move to and from scratchpad
 bindsym $mod+Shift+m move scratchpad
 bindsym $mod+m scratchpad show
-bindsym $mod+Shift+s exec $dotfiles/scripts/sway_screenshot.sh
+bindsym $mod+Shift+s exec $dotfiles/scripts/sway/screenshot.sh
 for_window [class="fzf-menu"] floating enable
 
 # Startup
