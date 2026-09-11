@@ -23,7 +23,7 @@ position = "top"
 # the exclusive zone keeps the strip to itself.
 layer = "bottom"
 margin = 3
-gap = 3
+gap = 5
 font = "Noto Sans 18"
 
 # What to draw a character the bar's own font has no glyph for.
@@ -363,6 +363,9 @@ right = "round"
 source = "sway:workspaces"
 style = "dim"
 min_width = 30
+format = "$name"
+icons = { "10" = "$arch", "1" = "$slack", "2" = "$code", "3" = "$chrome" }
+
 
 [module.workspaces.states.focused]
 focused = true
@@ -439,6 +442,7 @@ icon = "keyboard"
 source = "sway:window"
 style = "panel"
 max_width = 420
+format = " $title "
 
 [module.cpu]
 source = "cpu"
