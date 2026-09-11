@@ -16,7 +16,7 @@
 # to look, not where they make a screenshot colourful.
 
 [bar]
-height = 34
+height = 30
 position = "top"
 # The bar sits under floating windows, so one dragged across the top of the
 # screen passes over it rather than behind it. Tiled windows never reach it -
@@ -256,6 +256,7 @@ right = "round"
 [group.system]
 # Right click anywhere in this island to fold it; right click Tux to expand again.
 collapsible = true
+collapse_animation = "180ms"
 collapse_button = "right"
 modules = ["cpu", "memory", "temperature"]
 radius = 16
@@ -264,6 +265,8 @@ radius = 16
 [group.system.collapsed]
 style = "tile"
 icon = "tux"
+background = "83a598"
+foreground = "282828"
 
 [group.system.separator]
 shape = "curve"
@@ -295,6 +298,9 @@ right = "round"
 [group.power]
 modules = ["volume", "brightness", "battery"]
 radius = 16
+collapsible = true
+collapse_animation = "180ms"
+collapse_button = "right"
 # opacity = 0.8
 
 [group.power.separator]
@@ -306,6 +312,13 @@ color = "previous"
 [group.power.edges]
 left = "round"
 right = "round"
+
+
+[group.power.collapsed]
+style = "tile"
+icon = "arch"
+background = "83a598"
+foreground = "282828"
 
 # The weather sits beside the clock because both are about the world outside the
 # machine rather than the machine.
@@ -349,11 +362,12 @@ right = "round"
 [module.workspaces]
 source = "sway:workspaces"
 style = "dim"
-min_width = 34
+min_width = 30
 
 [module.workspaces.states.focused]
 focused = true
 style = "focused"
+radius = 13
 
 [module.workspaces.states.visible]
 visible = true
@@ -498,13 +512,14 @@ icon = "keyboard"
 [module.network]
 source = "network"
 interval = "2s"
+alt_animation = "180ms"
 # The network's name when there is one, falling back to the interface: a cable
 # has no name to give, and neither has a card that has joined nothing.
 #
 # `format_alt` is a list, so a left click goes round three views rather than
 # toggling between two: what it is on, what it is doing, and how well it can
 # hear it. The icon grades on the signal, so it says that much without a click.
-format = "$ssid|$device"
+format = "$ssid "
 format_alt = ["$down{  $up}", "$signal.n(d:0){  $dbm.n(d:0) dBm}"]
 style = "tile_alt"
 icon = "wifi"
@@ -639,6 +654,7 @@ interval = "once"
 pages = true
 refresh_button = "middle"
 alt_button = "right"
+alt_animation = "180ms"
 # What the script publishes, and what kind each is. Declaring them is what lets a
 # typo in the format below be a startup error rather than a blank space, and what
 # makes $temp a number that a threshold could read rather than a piece of text.
@@ -646,15 +662,15 @@ fields = { icon = "text", weather = "text", location = "text", temp = "number", 
 # The chain on $weather is what keeps the module on the bar when the fetch failed:
 # a format whose fields are all missing draws nothing, and a module that draws
 # nothing has nothing left to click to try again.
-format = "{$icon }$weather|'unavailable'{ ($location)}{ $temp.n(d:0) °C}{, $wind.n(d:1) m/s $direction}"
+format = "{$icon }$weather|'unavailable'{ ($location)}{ $temp.n(d:0) °C}{, $wind.n(d:1) m/s $direction} "
 format_alt = [
-  "{$forecast_icon }{$location, }next 9 h: $forecast_avg.n(d:0)|'unavailable'{ °C ($forecast_min.n(d:0) to $forecast_max.n(d:0))}",
+  "{$forecast_icon }{$location, }next 9 h: $forecast_avg.n(d:0)|'unavailable'{ °C ($forecast_min.n(d:0) to $forecast_max.n(d:0))} ",
   # The short one, for when the full reading is more bar than it is worth: the
   # script's own glyph and the temperature, and nothing that grows with the place
   # name or the wind. `collapsible` cannot do this job - folding shows the style's
   # icon, which is a vector from dbar's own set, and the glyph here is text the
   # script published, so the two would sit side by side.
-  "{$icon }$temp.n(d:0)|'unavailable'",
+  "{$icon }$temp.n(d:0)|'unavailable' ",
 ]
 style = "panel"
 
@@ -670,7 +686,7 @@ foreground = "$subtext"
 source = "time"
 # On the minute, rather than drifting from whenever dbar started.
 interval = "1m"
-format = "$now.time(f:'%a %d %b  %H:%M')"
+format = "$now.time(f:'%a %d %b  %H:%M') "
 # A bar shows the time; a calendar is a different thing, and it belongs to a program of
 # your own rather than to dbar. The argv is run directly, so there is no shell here and
 # nothing to quote.
