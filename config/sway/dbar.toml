@@ -416,6 +416,9 @@ background = "$critical"
 source = "media"
 controls = true
 collapsible = true
+# The same travel the islands take, so a fold looks the same whichever level of
+# the bar it happens on.
+collapse_animation = "180ms"
 format = "{$artist  }$title"
 style = "panel"
 max_width = 320
@@ -427,6 +430,9 @@ icon = "$pause"
 field = "status"
 equals = "paused"
 foreground = "$subtext"
+icon = "$play"
+
+[module.media.collapsed]
 icon = "$play"
 
 # `default` is what a keyboard does anyway, so the module says nothing then and the
@@ -671,9 +677,9 @@ format_alt = [
   "{$forecast_icon }{$location, }next 9 h: $forecast_avg.n(d:0)|'unavailable'{ °C ($forecast_min.n(d:0) to $forecast_max.n(d:0))} ",
   # The short one, for when the full reading is more bar than it is worth: the
   # script's own glyph and the temperature, and nothing that grows with the place
-  # name or the wind. `collapsible` cannot do this job - folding shows the style's
-  # icon, which is a vector from dbar's own set, and the glyph here is text the
-  # script published, so the two would sit side by side.
+  # name or the wind. `collapsible` still cannot do this job, though an icon may
+  # now be a glyph: folding shows the style's icon, which is fixed, and $icon is
+  # published with each reading and changes with the weather.
   "{$icon }$temp.n(d:0)|'unavailable' ",
 ]
 style = "panel"
