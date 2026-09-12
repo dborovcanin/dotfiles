@@ -432,8 +432,11 @@ equals = "paused"
 foreground = "$subtext"
 icon = "$play"
 
+# Folded, the module is one icon and a click on it unfolds rather than pauses, so
+# the play/pause button would be telling a lie. Says "a player lives here" instead,
+# and leaves the state colours behind with the wording.
 [module.media.collapsed]
-icon = "$play"
+icon = "$media"
 
 # `default` is what a keyboard does anyway, so the module says nothing then and the
 # island goes with it - the bar grows a segment exactly when the mode does.
