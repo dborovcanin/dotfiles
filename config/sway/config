@@ -340,9 +340,7 @@ bindsym Ctrl+Shift+period exec dunstctl context
 
 # Enable blur
 blur enable
-
-# Very light blur
-blur_radius 3
+blur_radius 8
 blur_passes 1
 
 # Optional: slight grain so blur looks nicer
