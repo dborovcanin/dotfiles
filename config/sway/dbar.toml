@@ -364,7 +364,7 @@ source = "sway:workspaces"
 style = "dim"
 min_width = 30
 format = "$name"
-icons = { "10" = "$arch", "1" = "$slack", "2" = "$code", "3" = "$chrome" }
+icons = { "0" = "$arch", "1" = "$slack", "2" = "$code", "3" = "$chrome" }
 
 
 [module.workspaces.states.focused]
@@ -664,7 +664,7 @@ interval = "once"
 # whichever place is showing, so paging costs no format of its own.
 pages = true
 refresh_button = "middle"
-alt_button = "right"
+alt_button = "left"
 alt_animation = "180ms"
 # What the script publishes, and what kind each is. Declaring them is what lets a
 # typo in the format below be a startup error rather than a blank space, and what
