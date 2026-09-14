@@ -16,7 +16,7 @@
 # to look, not where they make a screenshot colourful.
 
 [bar]
-height = 30
+height = 28
 position = "top"
 # The bar sits under floating windows, so one dragged across the top of the
 # screen passes over it rather than behind it. Tiled windows never reach it -
@@ -24,7 +24,7 @@ position = "top"
 layer = "bottom"
 margin = 3
 gap = 5
-font = "Noto Sans 18"
+font = "DejaVu Sans 18"
 
 # What to draw a character the bar's own font has no glyph for.
 #
@@ -45,14 +45,11 @@ font = "Noto Sans 18"
 # has to be installed - dbar says so at startup rather than drawing empty boxes later.
 # Delete the line and dbar picks a set like this one from whatever it finds.
 fallback = [
-  "Symbols Nerd Font",
-  "Noto Sans Symbols 2",
-  "Noto Color Emoji",
   "Noto Sans CJK JP",
-  "Noto Sans Arabic",
-  "Noto Sans Hebrew",
   "Noto Sans Thai",
-  "Noto Sans Devanagari",
+  "Noto Color Emoji",
+  "Noto Sans Symbols 2",
+  "Symbols Nerd Font",
 ]
 
 icon_size = 20
@@ -360,7 +357,7 @@ right = "round"
 # Three states, so a glance says which workspace is here, which is on the other
 # screen and which is asking for attention. Everything else is a quiet number.
 [module.workspaces]
-source = "sway:workspaces"
+source = "workspaces"
 style = "dim"
 min_width = 30
 format = "$name"
@@ -439,14 +436,14 @@ icon = "$play"
 # `default` is what a keyboard does anyway, so the module says nothing then and the
 # island goes with it - the bar grows a segment exactly when the mode does.
 [module.mode]
-source = "sway:mode"
+source = "mode"
 format = "$mode"
 style = "panel"
 foreground = "$background"
 icon = "$keyboard"
 
 [module.title]
-source = "sway:window"
+source = "window"
 style = "panel"
 max_width = 420
 format = " $title "
@@ -504,7 +501,7 @@ style = "critical"
 # The compositor says which layout is active, and says so again the moment it is
 # switched, so this is never read on a timer. A click shows the full name.
 [module.language]
-source = "sway:language"
+source = "language"
 format = "$short"
 format_alt = "$layout"
 style = "tile"

@@ -174,6 +174,9 @@ bindsym $mod+Shift+e exec "swaynag -t warning -m 'You pressed the exit shortcut.
 bindsym XF86MonBrightnessUp exec --no-startup-id $dotfiles/scripts/brightness.sh up
 bindsym XF86MonBrightnessDown exec --no-startup-id $dotfiles/scripts/brightness.sh down
 
+bindsym Shift+XF86MonBrightnessUp exec ddcutil setvcp 10 + 5
+bindsym Shift+XF86MonBrightnessDown exec ddcutil setvcp 10 - 5
+
 bindsym XF86AudioRaiseVolume exec pactl set-sink-volume @DEFAULT_SINK@ +5%
 bindsym XF86AudioLowerVolume exec pactl set-sink-volume @DEFAULT_SINK@ -5%
 bindsym XF86AudioMute exec pactl set-sink-mute @DEFAULT_SINK@ toggle
