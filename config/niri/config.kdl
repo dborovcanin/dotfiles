@@ -117,7 +117,9 @@ window-rule {
 
 // Startup
 spawn-sh-at-startup "swaybg -i /home/dusan/Downloads/bg.jpg -m fill"
-spawn-sh-at-startup "dbar -c $HOME/dotfiles/config/sway/dbar.toml"
+// niri draws bottom-layer surfaces inside each workspace, so they slide on a
+// switch. Run dbar on the top layer here to keep it fixed; sway keeps "bottom".
+spawn-sh-at-startup r#"sed 's/^layer = "bottom"$/layer = "top"/' $HOME/dotfiles/config/sway/dbar.toml > $XDG_RUNTIME_DIR/dbar-niri.toml && dbar -c $XDG_RUNTIME_DIR/dbar-niri.toml"#
 spawn-sh-at-startup "xrdb -merge ~/.Xresources"
 spawn-sh-at-startup "dunst -config $HOME/dotfiles/config/dunst/dunstrc > /dev/null"
 spawn-sh-at-startup "$HOME/dotfiles/scripts/startup.sh > /dev/null"
