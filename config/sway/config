@@ -242,7 +242,7 @@ mode "$mode_system" {
     bindsym Return mode "default"
     bindsym Escape mode "default"
 }
-bindsym $mod+Escape mode "$mode_system"
+bindsym $mod+Escape exec $dotfiles/scripts/power.sh
 
 exec swayidle -w \
     timeout 300 'pgrep -x swaylock >/dev/null || swaylock -f -i $lockbg' \
