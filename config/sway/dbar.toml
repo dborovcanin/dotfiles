@@ -23,8 +23,7 @@ position = "top"
 # the exclusive zone keeps the strip to itself.
 layer = "bottom"
 margin = 3
-gap = 5
-font = "DejaVu Sans 18"
+font = "Adwaita Sans 18"
 
 # What to draw a character the bar's own font has no glyph for.
 #
@@ -45,6 +44,8 @@ font = "DejaVu Sans 18"
 # has to be installed - dbar says so at startup rather than drawing empty boxes later.
 # Delete the line and dbar picks a set like this one from whatever it finds.
 fallback = [
+  "Inter",
+  "DejaVu Sans",
   "Noto Sans CJK JP",
   "Noto Sans Thai",
   "Noto Color Emoji",
