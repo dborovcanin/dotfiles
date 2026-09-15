@@ -49,7 +49,7 @@ KEY_SIZE=${POWER_KEY_SIZE:-10pt}
 # scripts/dbar/sway_calendar.sh is painted with. Every colour can be swapped
 # from the environment without touching the file.
 BG=${POWER_BG:-"#282828"}           # window
-BG_ALPHA=${POWER_BG_ALPHA:-e6}      # foot's alpha=.9, as the last byte of the window
+BG_ALPHA=${POWER_BG_ALPHA:-ff}      # opaque; the last byte of the window colour
 FG=${POWER_FG:-"#ebdbb2"}           # tile labels
 BORDER=${POWER_BORDER:-"#d79921"}   # the frame around the window
 TILE=${POWER_TILE:-"#3c3836"}       # behind the tile under the cursor

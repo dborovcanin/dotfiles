@@ -24,7 +24,7 @@ HINT_SIZE=${CAL_HINT_SIZE:-11pt}
 # calendar belongs to the rest of the desktop rather than to rofi's own theme.
 # Every colour can be swapped from the environment without touching the file.
 BG=${CAL_BG:-"#282828"}             # window, and the text on the selected day
-BG_ALPHA=${CAL_BG_ALPHA:-e6}        # foot's alpha=.9, as the last byte of the window
+BG_ALPHA=${CAL_BG_ALPHA:-ff}        # opaque; the last byte of the window colour
 FG=${CAL_FG:-"#ebdbb2"}             # the days themselves
 BORDER=${CAL_BORDER:-"#d79921"}     # the frame around the window
 ACCENT=${CAL_ACCENT:-"#fabd2f"}     # the date line at the top
