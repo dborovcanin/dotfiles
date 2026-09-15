@@ -5,7 +5,7 @@ set -euo pipefail
 #
 # It is the system mode from config/sway/config drawn as a row of tiles: the
 # same keys still do the same things the moment they are pressed (l lock,
-# t travel lock, e logout, s suspend, h hibernate, r reboot, Shift+s shutdown),
+# t travel lock, s suspend, Shift+s shutdown, r reboot, h hibernate, e logout),
 # and the arrows with Return pick a tile for when the keys are forgotten.
 # Logging out, rebooting and shutting down ask once more before they happen,
 # because a stray Return here costs everything that was open.
@@ -157,11 +157,13 @@ add lock "$I_LOCK" "$C_LOCK" Lock l l
 if [[ $WM == sway || -n ${POWER_TRAVEL_CMD:-} ]]; then
     add travel "$I_TRAVEL" "$C_TRAVEL" Travel t t
 fi
-add logout "$I_LOGOUT" "$C_LOGOUT" Logout e e
 can Suspend && add suspend "$I_SUSPEND" "$C_SUSPEND" Suspend s s
-can Hibernate && add hibernate "$I_HIBERNATE" "$C_HIBERNATE" Hibernate h h
+# rofi never matches Shift+s by name, because Shift is spent on turning s into S,
+# so the key is bound by its keycode instead.
+add shutdown "$I_POWER" "$C_SHUTDOWN" Shutdown 'Shift+[39]' Shift+s
 add reboot "$I_REBOOT" "$C_REBOOT" Reboot r r
-add shutdown "$I_POWER" "$C_SHUTDOWN" Shutdown Shift+s S
+can Hibernate && add hibernate "$I_HIBERNATE" "$C_HIBERNATE" Hibernate h h
+add logout "$I_LOGOUT" "$C_LOGOUT" Logout e e
 
 # A tile is three lines - icon, label, key - handed to rofi as one entry, which
 # is why entries are split on | rather than on the newlines inside them.
@@ -252,12 +254,17 @@ pick() {
     local mesg=$1 frame=$2 selected=$3
     shift 3
     local -a binds=() tiles=()
-    local i=0 status out
+    local i=0 j status out
     while (($#)); do
         tiles+=("$1" "$2" "$3" "$4")
         binds+=(-kb-custom-$((i + 1)) "$5")
         shift 5
         i=$((i + 1))
+    done
+    # rofi keeps the first of a repeated option, so the slots with a key must not
+    # be cleared as well; only the rest lose their default Alt+number.
+    for ((j = i + 1; j <= 7; j++)); do
+        binds+=(-kb-custom-$j "")
     done
 
     set +e
@@ -267,8 +274,6 @@ pick() {
         -theme-str "$(theme "$i" "$frame")" \
         -kb-move-char-back "" -kb-move-char-forward "" \
         -kb-element-prev "Left,ISO_Left_Tab" -kb-element-next "Right,Tab" \
-        -kb-custom-1 "" -kb-custom-2 "" -kb-custom-3 "" -kb-custom-4 "" \
-        -kb-custom-5 "" -kb-custom-6 "" -kb-custom-7 "" \
         -kb-screenshot "" \
         -kb-cancel "Escape,q" \
         "${binds[@]}")
