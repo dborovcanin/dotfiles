@@ -360,9 +360,9 @@ right = "round"
 [module.workspaces]
 source = "workspaces"
 style = "dim"
-min_width = 30
+min_width = 28
 format = "$name"
-icons = { "0" = "$arch", "1" = "$slack", "2" = "$code", "3" = "$chrome" }
+icons = { "1" = "$slack", "2" = "$code", "3" = "$chrome" }
 
 
 [module.workspaces.states.focused]
