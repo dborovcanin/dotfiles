@@ -290,8 +290,8 @@ binds {
     // Exit (niri shows its own confirmation dialog)
     Mod+Shift+E { quit; }
 
-    // System menu (replaces sway's system mode)
-    Mod+Escape { spawn-sh "$HOME/dotfiles/config/niri/scripts/system_menu.sh"; }
+    // Power menu (shared with sway and i3)
+    Mod+Escape { spawn-sh r#"POWER_TRAVEL_CMD='setsid -f "$HOME/dotfiles/config/niri/scripts/travel_lock.sh" >/dev/null 2>&1' $HOME/dotfiles/scripts/power.sh"#; }
 
     // Scratchpad (scripted, windows park on the "scratch" workspace)
     Mod+Shift+M { spawn-sh "$HOME/dotfiles/config/niri/scripts/scratchpad.sh move"; }

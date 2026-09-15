@@ -19,10 +19,8 @@ set $desktop_env i3
 exec --no-startup-id export GTK_THEME=$GTK_THEME
 exec --no-startup-id export GTK2_RC_FILES=$HOME/.gtkrc-2.0
 exec --no-startup-id export GTK3_MODULES=$HOME/.config/gtk-3.0/settings.ini
-exec --no-startup-id env XDG_CURRENT_DESKTOP=$desktop_env /usr/lib/xdg-desktop-portal &
-exec --no-startup-id env XDG_CURRENT_DESKTOP=$desktop_env /usr/lib/xdg-desktop-portal-gtk &
-
-
+# exec --no-startup-id env XDG_CURRENT_DESKTOP=$desktop_env /usr/lib/xdg-desktop-portal &
+# exec --no-startup-id env XDG_CURRENT_DESKTOP=$desktop_env /usr/lib/xdg-desktop-portal-gtk &
 
 # Path to dotfiles that holds the config
 set $dotfiles $HOME/dotfiles/config
@@ -53,6 +51,7 @@ smart_gaps on
 # start a terminal
 # bindsym $mod+Return exec WINIT_X11_SCALE_FACTOR=1.0 alacritty -o font.size=12
 bindsym $mod+Return exec st -A 0.8
+# bindsym $mod+Return exec alacritty
 bindsym $mod+Shift+Return exec $dotfiles/i3/scripts/sticky_term.sh
 bindsym $mod+Shift+space exec printf "toggle" | nc -U /run/user/1000/findy.sock
 
@@ -219,8 +218,7 @@ mode "$mode_system" {
      bindsym Return mode "default"
      bindsym Escape mode "default"
 }
-bindsym $mod+Escape mode "$mode_system"
-# bindsym $mod+Escape exec --no-startup-id $dtofiles/i3/scripts/system.sh
+bindsym $mod+Escape exec --no-startup-id $HOME/dotfiles/scripts/power.sh
 
 mode "move_workspace" {
     bindsym Up move workspace to output up
