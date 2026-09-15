@@ -12,11 +12,12 @@ start_once() {
     fi
 }
 
+start_once codium
+start_once brave
+
 # Start Slack only on workdays (Mon=1 ... Sun=7).
 weekday="$(date '+%u')"
 if [ "$weekday" -lt 6 ]; then
+    sleep 5
     start_once slack
 fi
-
-start_once codium
-start_once brave
