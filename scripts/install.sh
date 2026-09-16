@@ -33,9 +33,15 @@ set -euo pipefail
 # Replaced files are kept under ~/.config/dotfiles-backup-<timestamp>, laid out
 # the way they sat in home, unless --no-backup says otherwise.
 #
-# Two things are left to do by hand afterwards, both printed on the way out:
-# tlp.conf belongs to /etc and needs root, and X11 clients do not see the cursor
-# or the colours in .Xresources until `xrdb -merge ~/.Xresources` has run.
+# The desktop colour scheme is set from the theme that theme.sh applied last.
+# libadwaita and the Qt platform theme take light or dark from there rather than
+# from any file, so a light theme on a desktop still set to dark gets its own
+# background with libadwaita's light-on-dark text over it - unreadable, and the
+# reason this is done here rather than left as advice.
+#
+# One thing is left to do by hand, printed on the way out: tlp.conf belongs to
+# /etc and needs root. X11 clients also want `xrdb -merge ~/.Xresources` before
+# the cursor and colours in it take effect, which this runs when xrdb is there.
 
 usage() {
     sed -n '4,40s/^# \{0,1\}//p' "$0"
@@ -165,6 +171,43 @@ while IFS='|' read -r src dst; do
 done < <(targets)
 put_fish
 
+# The theme applied last decides whether the desktop asks for light or dark.
+sync_scheme() {
+    local name file want have
+    name=$(cat "$root/themes/current" 2>/dev/null) || return 0
+    [[ -n ${name:-} ]] || return 0
+    if [[ $name == */* ]]; then file=$name; else file=$root/themes/$name.sh; fi
+    [[ -r $file ]] || return 0
+    command -v gsettings >/dev/null || return 0
+
+    # Sourced in a subshell: these files set THEME_* wholesale and this script
+    # has no business carrying them afterwards.
+    want=$(
+        # shellcheck disable=SC1090
+        THEME_SCHEME=dark
+        source "$root/themes/gruvbox.sh" 2>/dev/null
+        source "$file" 2>/dev/null
+        [[ $THEME_SCHEME == light ]] && echo prefer-light || echo prefer-dark
+    )
+    have=$(gsettings get org.gnome.desktop.interface color-scheme 2>/dev/null | tr -d \')
+    [[ $have == "$want" ]] && return 0
+    say "scheme" "$want (was $have), for $name"
+    ((dry_run)) && return 0
+    gsettings set org.gnome.desktop.interface color-scheme "$want"
+}
+
+# X11 clients read the resource database once, at load.
+sync_xrdb() {
+    command -v xrdb >/dev/null || return 0
+    [[ -n ${DISPLAY:-} || -n ${WAYLAND_DISPLAY:-} ]] || return 0
+    [[ -f $HOME/.Xresources ]] || return 0
+    ((dry_run)) && return 0
+    xrdb -merge "$HOME/.Xresources" 2>/dev/null || true
+}
+
+sync_scheme
+sync_xrdb
+
 printf '\n%d %s, %d already current' "$installed" \
     "$( ((dry_run)) && echo "to install" || echo installed )" "$skipped"
 ((backed_up)) && printf ', %d saved under %s' "$backed_up" "${backup/#"$HOME"/\~}"
@@ -179,7 +222,6 @@ Not copied, on purpose:
                         read from the clone by the window manager configs
 
 Reload what is running: sway and niri re-read their config on reload, dunst and
-tmux need restarting, GTK and Qt apps pick up colours when they next start, and
-X11 clients want `xrdb -merge ~/.Xresources` before the cursor and colours in it
-take effect.
+tmux need restarting, and GTK and Qt apps pick up colours when they next start.
+The desktop colour scheme and the X resource database were handled above.
 EOF

@@ -647,16 +647,9 @@ apply() {
     done < <(marked_files)
 
     if [[ $theme == */* ]]; then realpath "$theme"; else echo "$theme"; fi >"$themes/current"
-    echo "Applied $theme. Run scripts/install.sh, then reload sway, niri, dunst and tmux."
-    # libadwaita and the Qt platform theme take light or dark from the desktop
-    # colour scheme, which lives in dconf rather than in any file here.
-    local want=prefer-dark
-    [[ $THEME_SCHEME == light ]] && want=prefer-light
-    if command -v gsettings >/dev/null &&
-        [[ $(gsettings get org.gnome.desktop.interface color-scheme 2>/dev/null) != "'$want'" ]]; then
-        echo "This theme is $THEME_SCHEME; the desktop colour scheme is not. To match it:"
-        echo "    gsettings set org.gnome.desktop.interface color-scheme $want"
-    fi
+    # install.sh copies this out and sets the desktop colour scheme from
+    # THEME_SCHEME, which is what makes a light theme land on light widgets.
+    echo "Applied $theme ($THEME_SCHEME). Run scripts/install.sh, then reload sway, niri, dunst and tmux."
 }
 
 case ${1:-} in
