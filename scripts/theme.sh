@@ -149,6 +149,53 @@ critical = "$THEME_RED"
 EOF
 }
 
+# btop names every colour it draws, including the three-stop gradients under the
+# cpu and temperature meters. The meters that measure quantity rather than trouble
+# - memory and network - are given a start and nothing else, which btop reads as
+# one flat colour.
+render_btop() {
+  cat <<EOF
+theme[main_bg]="$THEME_BG"
+theme[main_fg]="$THEME_FG"
+theme[title]="$THEME_FG"
+theme[hi_fg]="$THEME_BORDER"
+theme[selected_bg]="$THEME_BG_RAISED"
+theme[selected_fg]="$THEME_FG"
+theme[inactive_fg]="$THEME_DIM"
+theme[graph_text]="$THEME_SUBTLE"
+theme[proc_misc]="$THEME_ACCENT"
+theme[cpu_box]="$THEME_BG_RAISED"
+theme[mem_box]="$THEME_BG_RAISED"
+theme[net_box]="$THEME_BG_RAISED"
+theme[proc_box]="$THEME_BG_RAISED"
+theme[div_line]="$THEME_BG_RAISED"
+theme[temp_start]="$THEME_CYAN"
+theme[temp_mid]="$THEME_ORANGE"
+theme[temp_end]="$THEME_RED"
+theme[cpu_start]="$THEME_GREEN"
+theme[cpu_mid]="$THEME_YELLOW"
+theme[cpu_end]="$THEME_RED"
+theme[free_start]="$THEME_GREEN"
+theme[free_mid]=""
+theme[free_end]=""
+theme[cached_start]="$THEME_CYAN"
+theme[cached_mid]=""
+theme[cached_end]=""
+theme[available_start]="$THEME_YELLOW"
+theme[available_mid]=""
+theme[available_end]=""
+theme[used_start]="$THEME_RED"
+theme[used_mid]=""
+theme[used_end]=""
+theme[download_start]="$THEME_BLUE"
+theme[download_mid]=""
+theme[download_end]=""
+theme[upload_start]="$THEME_MAGENTA"
+theme[upload_mid]=""
+theme[upload_end]=""
+EOF
+}
+
 # i3status-rust ships no theme for most palettes, so every state is overridden.
 render_i3status() {
   cat <<EOF

@@ -88,6 +88,7 @@ config/foot/foot.ini|$HOME/.config/foot/foot.ini
 config/alacritty/alacritty.toml|$HOME/.config/alacritty/alacritty.toml
 config/helix/config.toml|$HOME/.config/helix/config.toml
 config/btop/btop.conf|$HOME/.config/btop/btop.conf
+config/btop/themes/dotfiles.theme|$HOME/.config/btop/themes/dotfiles.theme
 config/starship/starship.toml|$HOME/.config/starship.toml
 config/gtk-3.0/gtk.css|$HOME/.config/gtk-3.0/gtk.css
 config/gtk-3.0/settings.ini|$HOME/.config/gtk-3.0/settings.ini
