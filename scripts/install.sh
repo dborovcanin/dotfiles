@@ -46,8 +46,10 @@ set -euo pipefail
 # reload over their IPC, dunst over dunstctl, picom on SIGUSR1, polybar by
 # restarting its bars, tmux by sourcing its file again, and foot by switching
 # between the theme blocks its config already carries. niri watches its own
-# config file and needs nobody's help. dbar has no reload path and is therefore
-# restarted, with the argv it was started with.
+# config file and needs nobody's help. dbar is sent the realtime signal its config
+# names, when the running bar is actually watching for it - /proc says which
+# signals a process catches, and one it does not catch would kill it - and is
+# restarted with its own argv otherwise.
 #
 # This runs whether or not a file changed here, because the configs that are
 # read from the clone - dbar, dunst, picom, polybar, the i3 status bar - are
@@ -305,37 +307,72 @@ reload_foot() {
     fi
 }
 
-# dbar reads its config once and has no reload path, so it is restarted with the
-# argv it was started with, taken from the process itself: sway starts it
-# straight from the clone, while niri points it at a copy under $XDG_RUNTIME_DIR
-# with the layer rewritten. That copy is regenerated first, or the restart would
-# put the pre-theme file back on screen. The rewrite is the line in
-# config/niri/config.kdl, and the two have to move together.
+# The realtime signal offset the bar's config asks to be re-read on, if it asks.
+dbar_reload_offset() {
+    sed -n 's/^[[:space:]]*reload_signal[[:space:]]*=[[:space:]]*\([0-9]\{1,\}\).*/\1/p' \
+        "$root/config/dbar/config.toml" 2>/dev/null | head -n 1
+}
+
+# Whether process $1 has a handler installed for signal number $2.
+#
+# SigCgt in /proc/PID/status is the mask of signals the process catches, one bit per
+# signal, so this is the process itself answering rather than a guess from its config.
+# It has to be asked: a realtime signal that nothing catches kills what it is sent to.
+catches() {
+    local mask
+    mask=$(sed -n 's/^SigCgt:[[:space:]]*//p' "/proc/$1/status" 2>/dev/null) || return 1
+    [[ -n $mask ]] || return 1
+    (((0x$mask >> ($2 - 1)) & 1))
+}
+
+# dbar reads its config once. A bar whose config names a reload signal, and that was
+# started late enough to be watching for it, is told to read the file again; anything
+# else is restarted. Signalling is worth the check because a restart takes the tray with
+# it - every application has to register with the new bar, and some never do until they
+# are restarted themselves.
 reload_dbar() {
-    local pid conf i argv
+    local offset number pid
     command -v dbar >/dev/null || return 0
     running dbar || return 0
-    say "reload" "dbar (restart)"
-    ((dry_run)) && return 0
+    offset=$(dbar_reload_offset)
+    number=""
+    [[ -n $offset ]] && number=$(kill -l "RTMIN+$offset" 2>/dev/null || true)
     for pid in $(pgrep -x dbar); do
-        mapfile -d '' -t argv <"/proc/$pid/cmdline" 2>/dev/null || continue
-        ((${#argv[@]})) || continue
-        conf=""
-        for ((i = 0; i < ${#argv[@]}; i++)); do
-            [[ ${argv[i]} == -c ]] && conf=${argv[i + 1]:-}
-        done
-        if [[ -n $conf && $conf != "$root"/* && -f $root/config/dbar/config.toml ]]; then
-            sed 's/^layer = "bottom"$/layer = "top"/' \
-                "$root/config/dbar/config.toml" >"$conf"
+        if [[ -n $number ]] && catches "$pid" "$number"; then
+            say "reload" "dbar (SIGRTMIN+$offset)"
+            ((dry_run)) || kill -s "RTMIN+$offset" "$pid" 2>/dev/null || true
+            continue
         fi
-        kill "$pid" 2>/dev/null || continue
-        # Wait for the surface to go before asking for another one.
-        for _ in $(seq 20); do
-            kill -0 "$pid" 2>/dev/null || break
-            sleep 0.1
-        done
-        setsid "${argv[@]}" >/dev/null 2>&1 &
+        say "reload" "dbar (restart)"
+        ((dry_run)) && continue
+        restart_dbar "$pid"
     done
+}
+
+# Start a bar again with the argv it was started with, because sway and niri start it
+# differently: niri points it at a copy under $XDG_RUNTIME_DIR with the layer rewritten,
+# and that copy is regenerated here or the restart would put the pre-theme file back on
+# screen. The rewrite is the line in config/niri/config.kdl, and the two have to move
+# together.
+restart_dbar() {
+    local pid=$1 conf i argv
+    mapfile -d '' -t argv <"/proc/$pid/cmdline" 2>/dev/null || return 0
+    ((${#argv[@]})) || return 0
+    conf=""
+    for ((i = 0; i < ${#argv[@]}; i++)); do
+        [[ ${argv[i]} == -c ]] && conf=${argv[i + 1]:-}
+    done
+    if [[ -n $conf && $conf != "$root"/* && -f $root/config/dbar/config.toml ]]; then
+        sed 's/^layer = "bottom"$/layer = "top"/' \
+            "$root/config/dbar/config.toml" >"$conf"
+    fi
+    kill "$pid" 2>/dev/null || return 0
+    # Wait for the surface to go before asking for another one.
+    for _ in $(seq 20); do
+        kill -0 "$pid" 2>/dev/null || break
+        sleep 0.1
+    done
+    setsid "${argv[@]}" >/dev/null 2>&1 &
 }
 
 reload_running() {
@@ -370,7 +407,8 @@ Not copied, on purpose:
                         read from the clone by the window manager configs
 
 Reloaded above, where the program was running: sway, i3, dunst, picom, polybar,
-tmux, foot's colour block, and dbar by restarting it. niri, alacritty and kitty
+tmux, foot's colour block, and dbar on its reload signal, or by restarting it
+when the running bar predates the signal. niri, alacritty and kitty
 watch their own config files. Left by hand: a running helix wants
 `:config-reload` typed into it, since an editor that does not handle the signal
 dies of it, and GTK and Qt apps pick up colours when they next start. The
