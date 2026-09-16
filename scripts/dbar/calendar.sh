@@ -14,7 +14,7 @@ set -euo pipefail
 # the first run reaches every later one, which is what makes the CAL_* overrides
 # below stick for the whole life of the window.
 
-# Same family as config/sway/foot.ini, one size up, because this is read at a
+# Same family as config/foot/foot.ini, one size up, because this is read at a
 # glance from across the desk. The hint line is not read so much as remembered,
 # so it gets out of the way at a size of its own.
 FONT=${CAL_FONT:-"JetBrainsMonoNL NF 18"}

@@ -39,7 +39,7 @@ if [[ -z $WM ]]; then
     fi
 fi
 
-# Same family as config/sway/foot.ini; the icons are what is read first, so
+# Same family as config/foot/foot.ini; the icons are what is read first, so
 # they get a size of their own well above the labels.
 FONT=${POWER_FONT:-"JetBrainsMonoNL NF 14"}
 ICON_SIZE=${POWER_ICON_SIZE:-30pt}
