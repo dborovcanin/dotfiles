@@ -185,6 +185,61 @@ render_dunst_urgency() {
 EOF
 }
 
+# fish takes colours without '#'. The __prompt_color_* ones are read by the
+# prompt functions in fish/functions.
+render_fish() {
+    local bg=${THEME_BG#\#} bg_alt=${THEME_BG_ALT#\#} raised=${THEME_BG_RAISED#\#}
+    local fg=${THEME_FG#\#} fg_alt=${THEME_FG_ALT#\#} dim=${THEME_DIM#\#}
+    local accent=${THEME_ACCENT#\#} red=${THEME_RED#\#} green=${THEME_GREEN#\#}
+    local yellow=${THEME_YELLOW#\#} blue=${THEME_BLUE#\#} magenta=${THEME_MAGENTA#\#}
+    local cyan=${THEME_CYAN#\#} orange=${THEME_ORANGE#\#}
+    cat <<EOF
+set -g fish_color_normal $fg
+set -g fish_color_command $green
+set -g fish_color_keyword $red
+set -g fish_color_quote $yellow
+set -g fish_color_redirection $cyan
+set -g fish_color_end $orange
+set -g fish_color_error $red
+set -g fish_color_param $fg_alt
+set -g fish_color_option $fg_alt
+set -g fish_color_comment $dim
+set -g fish_color_operator $orange
+set -g fish_color_escape $magenta
+set -g fish_color_autosuggestion $dim
+set -g fish_color_valid_path --underline
+set -g fish_color_cancel $red --reverse
+set -g fish_color_selection --background=$bg_alt
+set -g fish_color_search_match --background=$raised
+set -g fish_color_history_current --bold
+set -g fish_color_cwd $green
+set -g fish_color_cwd_root $red
+set -g fish_color_user $green
+set -g fish_color_host $blue
+set -g fish_color_host_remote $yellow
+set -g fish_color_status $red
+set -g fish_pager_color_prefix $accent --bold --underline
+set -g fish_pager_color_completion $fg
+set -g fish_pager_color_description $dim
+set -g fish_pager_color_progress $bg --background=$accent
+set -g fish_pager_color_selected_background --background=$bg_alt
+
+set -g __prompt_color_parent ${THEME_ANSI[4]#\#}
+set -g __prompt_color_dir ${THEME_ANSI[12]#\#}
+set -g __prompt_color_ok $green
+set -g __prompt_color_error $red
+set -g __prompt_color_clean $green
+set -g __prompt_color_modified $yellow
+set -g __prompt_color_conflicted $red
+set -g __prompt_color_meta $dim
+set -g __prompt_color_duration ${THEME_ANSI[1]#\#}
+set -g __prompt_color_jobs ${THEME_ANSI[2]#\#}
+set -g __prompt_color_root $yellow
+set -g __prompt_color_remote $orange
+set -g __prompt_color_time ${THEME_ANSI[6]#\#}
+EOF
+}
+
 render_tmux() {
     printf 'set -g status-bg "%s"\nset -g status-fg "%s"\n' "$THEME_BG_ALT" "$THEME_FG"
 }

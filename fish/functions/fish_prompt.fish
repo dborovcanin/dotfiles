@@ -14,7 +14,10 @@ function __prompt_git_async --on-event fish_prompt
     set -g __prompt_seen 1
 
     command kill $__prompt_git_job 2>/dev/null
-    fish --no-config -c 'source $argv[1]
+    # The child runs without config, so the colours travel in its environment.
+    __prompt_color_clean=$__prompt_color_clean __prompt_color_modified=$__prompt_color_modified \
+        __prompt_color_conflicted=$__prompt_color_conflicted __prompt_color_meta=$__prompt_color_meta \
+        fish --no-config -c 'source $argv[1]
         begin; echo $PWD; __prompt_git; end >$argv[2]
         command kill -USR1 $argv[3]' \
         (functions --details __prompt_git) $__prompt_git_file $fish_pid &
@@ -36,8 +39,8 @@ __prompt_git_async
 
 function fish_prompt
     set -l last_status $status
-    set -l char_color 5fd700
-    test $last_status -ne 0; and set char_color ff0000
+    set -l char_color $__prompt_color_ok
+    test $last_status -ne 0; and set char_color $__prompt_color_error
 
     if contains -- --final-rendering $argv
         printf '%s❯%s ' (set_color $char_color) (set_color normal)
@@ -55,7 +58,7 @@ function fish_prompt
     set -l git
     test "$__prompt_git_pwd" = $PWD; and set git $__prompt_git_status
 
-    printf '%s%s%s%s%s%s\n' (set_color 0087af) $parent (set_color -o 00afff) $base \
+    printf '%s%s%s%s%s%s\n' (set_color $__prompt_color_parent) $parent (set_color -o $__prompt_color_dir) $base \
         (set_color normal) "$git"
     printf '%s❯%s ' (set_color $char_color) (set_color normal)
 end

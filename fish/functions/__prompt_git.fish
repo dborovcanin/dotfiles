@@ -4,10 +4,10 @@ function __prompt_git
     set -l lines (command git --no-optional-locks status --porcelain=v2 --branch 2>/dev/null)
     or return
 
-    set -l clean (set_color 5fd700)
-    set -l modified (set_color d7af00)
-    set -l conflicted (set_color ff0000)
-    set -l meta (set_color 808080)
+    set -l clean (set_color $__prompt_color_clean)
+    set -l modified (set_color $__prompt_color_modified)
+    set -l conflicted (set_color $__prompt_color_conflicted)
+    set -l meta (set_color $__prompt_color_meta)
 
     set -l branch (string replace -f '# branch.head ' '' -- $lines)
     if test "$branch" = '(detached)'

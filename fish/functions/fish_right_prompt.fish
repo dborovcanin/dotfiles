@@ -11,7 +11,7 @@ function fish_right_prompt
         for code in $last_pipestatus
             set -a codes (fish_status_to_signal $code)
         end
-        set -a parts (set_color d70000)"✘ "(string join '|' -- $codes)
+        set -a parts (set_color $__prompt_color_error)"✘ "(string join '|' -- $codes)
     end
 
     if test "$CMD_DURATION" -ge 3000 2>/dev/null
@@ -23,18 +23,18 @@ function fish_right_prompt
                 set -a time $d[$i](string sub -s $i -l 1 dhms)
             end
         end
-        set -a parts (set_color 875f5f)"$time"
+        set -a parts (set_color $__prompt_color_duration)"$time"
     end
 
-    jobs -q; and set -a parts (set_color 5faf00)\uf013
+    jobs -q; and set -a parts (set_color $__prompt_color_jobs)\uf013
 
     if fish_is_root_user
-        set -a parts (set_color -o d7af00)$USER@$hostname
+        set -a parts (set_color -o $__prompt_color_root)$USER@$hostname
     else if set -q SSH_CONNECTION
-        set -a parts (set_color d7af87)$USER@$hostname
+        set -a parts (set_color $__prompt_color_remote)$USER@$hostname
     end
 
-    set -a parts (set_color 5f8787)(date +%T)
+    set -a parts (set_color $__prompt_color_time)(date +%T)
 
     echo -n (string join ' ' -- $parts)(set_color normal)
 end
