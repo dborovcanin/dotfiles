@@ -82,7 +82,7 @@ layout {
     }
 
     border {
-        width 3
+        width 4
         // theme:begin niri-border
         active-color "#d79921"
         inactive-color "#3c3836"
@@ -124,7 +124,7 @@ spawn-sh-at-startup "dunst -config $HOME/dotfiles/config/dunst/dunstrc > /dev/nu
 spawn-sh-at-startup "$HOME/dotfiles/scripts/startup.sh > /dev/null"
 spawn-sh-at-startup "foot --server"
 spawn-sh-at-startup "kdeconnectd > /dev/null"
-spawn-sh-at-startup "wl-paste --watch cliphist store --max-items=5000"
+spawn-sh-at-startup "wl-paste --watch cliphist store --max-items=10000"
 spawn-sh-at-startup "swayidle -w timeout 300 'pgrep -x swaylock >/dev/null || swaylock -f -i /home/dusan/Pictures/backgrounds/gruvbox-wallpapers/wallpapers/mix/Powerline-blur.png' timeout 600 'niri msg action power-off-monitors' before-sleep 'pgrep -x swaylock >/dev/null || swaylock -f -i /home/dusan/Pictures/backgrounds/gruvbox-wallpapers/wallpapers/mix/Powerline-blur.png'"
 
 // Named workspaces, so windows can be assigned to them like in sway

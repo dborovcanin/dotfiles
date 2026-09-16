@@ -4,6 +4,8 @@ set $mod Mod4
 # Hide titlebar
 # default_border pixel
 
+animation_duration_ms 150
+
 # theme:begin wm
 set $background #282828
 set $background_alt #3c3836
@@ -45,8 +47,8 @@ floating_modifier $mod
 
 # Default borders: 5px for all the windows; no borders for fullscreen
 smart_borders on
-default_border pixel 3
-default_floating_border pixel 3
+default_border pixel 4
+default_floating_border pixel 4
 
 # Default gaps
 gaps inner 8
@@ -289,7 +291,7 @@ input type:keyboard {
 exec kdeconnectd > /dev/null
 
 # Used by the clipboard manager
-exec wl-paste --watch cliphist store --max-items=5000
+exec wl-paste --watch cliphist store --max-items=10000
 bindsym $mod+c exec $dotfiles/scripts/clipboard.sh
 
 bindsym $mod+Shift+g mode "gaps_inner"
