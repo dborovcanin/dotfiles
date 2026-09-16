@@ -25,6 +25,11 @@ set -euo pipefail
 # will bury it. --dry-run lists everything that would be replaced, which is the
 # cheap way to find out.
 #
+# btop is the one copied here that rewrites its own config every time it quits,
+# settings changed from inside it included. The repo copy goes stale by the program
+# being used, so copy ~/.config/btop/btop.conf back into the repo before running
+# this, or the last thing changed in btop is what gets overwritten.
+#
 # A destination that is a symlink is removed and replaced by a real file rather
 # than written through. cp follows a link and would overwrite whatever sits at
 # the far end, which need not be yours: ~/.config/starship.toml arrived as a
@@ -82,6 +87,7 @@ config/i3/config|$HOME/.config/i3/config
 config/foot/foot.ini|$HOME/.config/foot/foot.ini
 config/alacritty/alacritty.toml|$HOME/.config/alacritty/alacritty.toml
 config/helix/config.toml|$HOME/.config/helix/config.toml
+config/btop/btop.conf|$HOME/.config/btop/btop.conf
 config/starship/starship.toml|$HOME/.config/starship.toml
 config/gtk-3.0/gtk.css|$HOME/.config/gtk-3.0/gtk.css
 config/gtk-3.0/settings.ini|$HOME/.config/gtk-3.0/settings.ini
