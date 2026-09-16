@@ -109,3 +109,19 @@ abbr -a drma 'docker rm (docker ps -a -q) -f'
 # other
 abbr -a terminal alacritty
 abbr -a code codium
+
+# -------------------------------------------------------------------
+# Wayland session (login shell on tty1)
+# -------------------------------------------------------------------
+if status is-login
+    set -gx XDG_CURRENT_DESKTOP sway
+    set -gx XDG_SESSION_TYPE wayland
+    set -gx MOZ_ENABLE_WAYLAND 1
+    set -gx QT_QPA_PLATFORM wayland
+    set -gx SDL_VIDEODRIVER wayland
+    set -gx _JAVA_AWT_WM_NONREPARENTING 1
+
+    if test -z "$WAYLAND_DISPLAY" -a -z "$DISPLAY" -a "$XDG_VTNR" = 1
+        exec dbus-run-session sway
+    end
+end
