@@ -4,11 +4,11 @@ set -euo pipefail
 # Writes a colour theme into every config and script of these dotfiles.
 #
 # Usage: theme.sh apply <name|path>   rewrite every theme block with that theme
-#        theme.sh list                the themes in config/themes
+#        theme.sh list                the themes in themes/
 #        theme.sh current             the theme applied last
 #        theme.sh check               every theme block, and whether it can be drawn
 #
-# A theme is a file of THEME_* colours in config/themes (see gruvbox.sh). A
+# A theme is a file of THEME_* colours in themes/ (see gruvbox.sh). A
 # themed file carries one or more blocks between two marker comments:
 #
 #     # theme:begin <block>
@@ -25,7 +25,7 @@ usage() {
 }
 
 root=$(realpath "$(dirname "$(realpath "${BASH_SOURCE[0]}")")/..")
-themes=$root/config/themes
+themes=$root/themes
 self=$(realpath "${BASH_SOURCE[0]}")
 
 # ---------------------------------------------------------------------------
@@ -568,7 +568,7 @@ load_theme() {
     local theme=$1 file
     if [[ $theme == */* ]]; then file=$theme; else file=$themes/$theme.sh; fi
     [[ -r $file ]] || { echo "theme.sh: no theme at $file" >&2; exit 1; }
-    # shellcheck source=../config/themes/gruvbox.sh
+    # shellcheck source=../themes/gruvbox.sh
     source "$themes/gruvbox.sh"
     # shellcheck disable=SC1090
     source "$file"

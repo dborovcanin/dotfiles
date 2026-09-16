@@ -173,10 +173,8 @@ printf '.\n'
 cat <<'EOF'
 
 Not copied, on purpose:
-  config/tlp/tlp.conf   belongs to /etc and needs root:
-                        sudo cp config/tlp/tlp.conf /etc/tlp.conf
-  vim/init.vim          a vim-plug config; ~/.config/nvim is LazyVim and nvim
-                        refuses to start with both an init.vim and an init.lua
+  etc/tlp.conf          belongs to /etc and needs root:
+                        sudo cp etc/tlp.conf /etc/tlp.conf
   dbar, dunst, picom, polybar, rofi, i3/status.toml, bin, scripts
                         read from the clone by the window manager configs
 

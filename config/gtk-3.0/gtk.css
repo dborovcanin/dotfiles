@@ -1,4 +1,4 @@
-/* GTK 3 — the colours are written by scripts/theme.sh from config/themes.
+/* GTK 3 — the colours are written by scripts/theme.sh from themes/.
  *
  * Goes to ~/.config/gtk-3.0/gtk.css. GTK 3 loads it above the theme, so the
  * names below win over whatever Adwaita defined. The rules after the block are
