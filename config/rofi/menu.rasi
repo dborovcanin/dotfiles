@@ -26,7 +26,7 @@
 window {
     location: center;
     anchor: center;
-    width: 44em;
+    width: 20em;
     background-color: @bg;
     border: 2px solid;
     border-color: @frame;
