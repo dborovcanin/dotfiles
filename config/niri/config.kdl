@@ -82,7 +82,7 @@ layout {
     }
 
     border {
-        width 5
+        width 3
         // theme:begin niri-border
         active-color "#d79921"
         inactive-color "#3c3836"
@@ -327,4 +327,10 @@ binds {
 
     // Overview, niri's way to see all workspaces
     Mod+Tab repeat=false { toggle-overview; }
+}
+
+animations {
+    workspace-switch { 
+        off
+    }
 }
