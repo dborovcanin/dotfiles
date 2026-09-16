@@ -259,7 +259,7 @@ set -g fish_color_error $red
 set -g fish_color_param $fg_alt
 set -g fish_color_option $fg_alt
 set -g fish_color_comment $dim
-set -g fish_color_operator $orange
+set -g fish_color_operator $fg_alt
 set -g fish_color_escape $magenta
 set -g fish_color_autosuggestion $dim
 set -g fish_color_valid_path --underline
