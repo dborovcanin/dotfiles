@@ -295,6 +295,24 @@ render_kde() {
         "$(kde_rgb "$THEME_BG")" "$(kde_rgb "$THEME_DIM")"
 }
 
+# GTK 3 has no light/dark variant to name, it has a flag. GTK 4 and libadwaita
+# ignore the flag and read the desktop colour scheme instead, which apply prints
+# a reminder about rather than setting, since it is dconf and not a file here.
+render_gtk_prefs() {
+    local dark=0
+    [[ $THEME_SCHEME == dark ]] && dark=1
+    printf 'gtk-application-prefer-dark-theme=%d\n' "$dark"
+}
+
+# GTK 2 picks the variant by name. Breeze ships both and is already installed.
+render_gtk2_theme() {
+    if [[ $THEME_SCHEME == dark ]]; then
+        printf 'gtk-theme-name = "Breeze-Dark"\n'
+    else
+        printf 'gtk-theme-name = "Breeze"\n'
+    fi
+}
+
 render_helix() {
     printf 'theme = "%s"\n' "$THEME_HELIX"
 }
@@ -629,7 +647,16 @@ apply() {
     done < <(marked_files)
 
     if [[ $theme == */* ]]; then realpath "$theme"; else echo "$theme"; fi >"$themes/current"
-    echo "Applied $theme. Copy the configs into place and reload sway, niri, dunst and tmux."
+    echo "Applied $theme. Run scripts/install.sh, then reload sway, niri, dunst and tmux."
+    # libadwaita and the Qt platform theme take light or dark from the desktop
+    # colour scheme, which lives in dconf rather than in any file here.
+    local want=prefer-dark
+    [[ $THEME_SCHEME == light ]] && want=prefer-light
+    if command -v gsettings >/dev/null &&
+        [[ $(gsettings get org.gnome.desktop.interface color-scheme 2>/dev/null) != "'$want'" ]]; then
+        echo "This theme is $THEME_SCHEME; the desktop colour scheme is not. To match it:"
+        echo "    gsettings set org.gnome.desktop.interface color-scheme $want"
+    fi
 }
 
 case ${1:-} in

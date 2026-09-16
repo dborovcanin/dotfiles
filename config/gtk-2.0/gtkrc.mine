@@ -4,10 +4,12 @@
 # but it includes this file, so gruvbox lives here and survives.
 #
 # GTK 2 engines bake a lot of their colours in, so this is as close as GTK 2
-# gets. Breeze-Dark is the base because it is the darkest engine theme already
-# installed that reads gtk_color_scheme.
+# gets. Breeze is the base because it ships both a light and a dark variant and
+# is already installed; theme.sh picks the one matching THEME_SCHEME.
 
+# theme:begin gtk2-theme
 gtk-theme-name = "Breeze-Dark"
+# theme:end
 gtk-icon-theme-name = "Adwaita"
 
 # theme:begin gtk2

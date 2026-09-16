@@ -4,6 +4,11 @@
 # config and script that carries a theme block. gruvbox is always read first,
 # so another theme only has to set what it changes.
 
+# dark or light. Everything that has to know which way round the palette runs
+# reads this: the GTK 2 base theme, GTK 3's prefer-dark, and the reminder about
+# the desktop colour scheme that apply prints at the end.
+THEME_SCHEME="dark"
+
 THEME_BG="#282828"        # bg0: windows, terminal background
 THEME_BG_ALT="#3c3836"    # bg1: search boxes, the row under the cursor, selection
 THEME_BG_RAISED="#504945" # bg2: rules and separators
