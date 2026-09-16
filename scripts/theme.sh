@@ -65,8 +65,13 @@ render_niri_tabs() {
 EOF
 }
 
-# foot and the Xresources terminals want the sixteen colours; foot without '#'.
-render_foot() {
+# foot wants the sixteen colours without '#'. Since foot 1.27 there is no plain
+# [colors] section: there is [colors-dark] and [colors-light], and foot picks
+# between them by what the desktop asks for. Both get the same colours, so the
+# terminal shows the theme that was applied even when the desktop's preference
+# says otherwise. alpha stays outside the markers, in the file, because it is a
+# preference rather than a colour.
+foot_colors() {
     local i
     printf 'foreground=%s\nbackground=%s\n\n' "${THEME_FG#\#}" "${THEME_BG#\#}"
     for i in {0..7}; do printf 'regular%d=%s\n' "$i" "${THEME_ANSI[i]#\#}"; done
@@ -76,6 +81,9 @@ render_foot() {
         "${THEME_FG#\#}" "${THEME_BG_ALT#\#}"
     printf 'urls=%s\n' "${THEME_BLUE#\#}"
 }
+
+render_foot_dark() { foot_colors; }
+render_foot_light() { foot_colors; }
 
 render_alacritty() {
     local names=(black red green yellow blue magenta cyan white) i
