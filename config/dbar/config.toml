@@ -265,8 +265,8 @@ radius = 16
 [group.system.collapsed]
 style = "tile"
 icon = "$tux"
-background = "83a598"
-foreground = "282828"
+background = "$accent"
+foreground = "$background"
 
 [group.system.separator]
 shape = "curve"
@@ -317,8 +317,8 @@ right = "round"
 [group.power.collapsed]
 style = "tile"
 icon = "$arch"
-background = "83a598"
-foreground = "282828"
+background = "$accent"
+foreground = "$background"
 
 # The weather sits beside the clock because both are about the world outside the
 # machine rather than the machine.
