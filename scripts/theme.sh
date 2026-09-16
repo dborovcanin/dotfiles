@@ -223,6 +223,7 @@ set -g fish_pager_color_completion $fg
 set -g fish_pager_color_description $dim
 set -g fish_pager_color_progress $bg --background=$accent
 set -g fish_pager_color_selected_background --background=$bg_alt
+set -g fish_pager_color_selected_completion $accent
 
 set -g __prompt_color_parent ${THEME_ANSI[4]#\#}
 set -g __prompt_color_dir ${THEME_ANSI[12]#\#}

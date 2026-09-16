@@ -74,6 +74,7 @@ set -g fish_pager_color_completion ebdbb2
 set -g fish_pager_color_description 928374
 set -g fish_pager_color_progress 282828 --background=fabd2f
 set -g fish_pager_color_selected_background --background=3c3836
+set -g fish_pager_color_selected_completion fabd2f
 
 set -g __prompt_color_parent 458588
 set -g __prompt_color_dir 83a598
