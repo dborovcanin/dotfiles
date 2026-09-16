@@ -3,15 +3,21 @@
 # awake, so long-running jobs keep going with the lid closed. Suspend, lid
 # switch and idle handling stay inhibited until the session is unlocked.
 #
+# Works under sway and niri; anything else gets the lock without the blanking.
+#
 # Usage: travel_lock.sh          start travel lock
 #        travel_lock.sh --stop   drop the inhibitors (screen stays locked)
 set -euo pipefail
 
+source "$(dirname "$(realpath "${BASH_SOURCE[0]}")")/lib/wm.sh"
+MONITORS_ON=$(wm_monitors_cmd on)
+MONITORS_OFF=$(wm_monitors_cmd off)
+
 INHIBIT_WHAT="handle-lid-switch:sleep:idle"
 IDLE_TIMEOUT=5
 RUNDIR="${XDG_RUNTIME_DIR:-/tmp}"
-LOCKFILE="$RUNDIR/niri-travel-lock.lock"
-PIDFILE="$RUNDIR/niri-travel-lock.pid"
+LOCKFILE="$RUNDIR/travel-lock.lock"
+PIDFILE="$RUNDIR/travel-lock.pid"
 
 if [ "${1:-}" = "--stop" ]; then
     if [ -s "$PIDFILE" ] && kill "$(cat "$PIDFILE")" 2>/dev/null; then
@@ -33,7 +39,7 @@ if [ "${1:-}" != "--inhibited" ]; then
     fi
     exec systemd-inhibit \
         --what="$INHIBIT_WHAT" \
-        --who="niri travel lock" \
+        --who="$WM travel lock" \
         --why="Keeping background tasks running while commuting" \
         --mode=block \
         "$0" --inhibited
@@ -46,14 +52,14 @@ IDLE_PID=""
 
 cleanup() {
     [ -n "$IDLE_PID" ] && kill "$IDLE_PID" 2>/dev/null || true
-    niri msg action power-on-monitors >/dev/null 2>&1 || true
+    eval "$MONITORS_ON" >/dev/null 2>&1 || true
     rm -f "$IMG" "$BLUR" "$PIDFILE"
 }
 trap cleanup EXIT INT TERM
 
 echo $$ >"$PIDFILE"
 
-niri msg action power-on-monitors >/dev/null 2>&1 || true
+eval "$MONITORS_ON" >/dev/null 2>&1 || true
 sleep 0.2
 
 LOCK_ARGS=(-f -c 000000)
@@ -67,12 +73,15 @@ fi
 
 swaylock "${LOCK_ARGS[@]}"
 
-# Let swayidle own the power state: blank after IDLE_TIMEOUT of inactivity,
-# repeat for as long as the session stays locked. Niri wakes the monitors on
-# any input by itself; the resume hook only makes that explicit.
+# Let swayidle own the monitor power state: blank after IDLE_TIMEOUT of inactivity,
+# wake on any input, repeat for as long as the session stays locked.
+# Do not blank the screen by hand here -- swayidle only fires "resume" once its
+# own "timeout" has fired, so a manual blank leaves the wake-up unarmed, and
+# input aimed at waking the screen keeps resetting the idle counter that would
+# have armed it.
 swayidle -w \
-    timeout "$IDLE_TIMEOUT" 'niri msg action power-off-monitors' \
-    resume 'niri msg action power-on-monitors' >/dev/null 2>&1 &
+    timeout "$IDLE_TIMEOUT" "$MONITORS_OFF" \
+    resume "$MONITORS_ON" >/dev/null 2>&1 &
 IDLE_PID=$!
 
 # Hold the inhibitor until the screen is unlocked.

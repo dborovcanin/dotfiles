@@ -4,13 +4,15 @@ set $mod Mod4
 # Hide titlebar
 new_window pixel
 
-set $background #282A2E
-set $background_alt #373B41
-set $foreground #C5C8C6
-set $primary #dbc291
-set $secondary #8ABEB7
-set $alert #A54242
-set $disabled #707880
+# theme:begin wm
+set $background #282828
+set $background_alt #3c3836
+set $foreground #ebdbb2
+set $primary #d79921
+set $secondary #8ec07c
+set $alert #cc241d
+set $disabled #928374
+# theme:end
 
 # Set GTK theme
 set $GTK_THEME Adwaita
@@ -52,7 +54,7 @@ smart_gaps on
 # bindsym $mod+Return exec WINIT_X11_SCALE_FACTOR=1.0 alacritty -o font.size=12
 bindsym $mod+Return exec st -A 0.8
 # bindsym $mod+Return exec alacritty
-bindsym $mod+Shift+Return exec $dotfiles/i3/scripts/sticky_term.sh
+bindsym $mod+Shift+Return exec $HOME/dotfiles/scripts/sticky_term.sh
 bindsym $mod+Shift+space exec printf "toggle" | nc -U /run/user/1000/findy.sock
 
 set $monitor1 eDP
@@ -71,8 +73,7 @@ bindsym $mod+Shift+q kill
 
 # start dmenu (a program launcher)
 # bindsym $mod+d exec dmenu_run -fn 'DejaVu Sans Mono Nerd Font:size=16' -nb '$background' -sb '$primary' -i
-bindsym $mod+d exec "rofi -show drun -show-icons -display-drun \\"Run\\" -theme-str '#window {width: 700; border: 3px solid; font: \\"JetBrainsMonoNL 12\\";}' -terminal 'st'"
-bindsym $mod+Shift+d exec $dotfiles/i3/scripts/search.sh
+bindsym $mod+d exec --no-startup-id LAUNCHER_TERMINAL=st $HOME/dotfiles/scripts/launcher.sh
 
 # change focus
 bindsym $mod+j focus left
@@ -169,7 +170,7 @@ bindsym XF86MonBrightnessUp exec --no-startup-id ~/.local/bin/brightness up
 bindsym XF86MonBrightnessDown exec --no-startup-id ~/.local/bin/brightness down
 
 # emojis
-bindsym $mod+e exec --no-startup-id $dotfiles/i3/scripts/emoji.sh
+bindsym $mod+e exec --no-startup-id $HOME/dotfiles/scripts/emoji.sh
 
 #bindsym XF86AudioRaiseVolume exec --no-startup-id pactl -- set-sink-volume 0 +5% #increase sound volume
 #bindsym XF86AudioLowerVolume exec --no-startup-id pactl -- set-sink-volume 0 -5% #decrease sound volume
@@ -283,7 +284,7 @@ bindsym $mod+g exec --no-startup-id brave > /dev/null
 ## Move to and from scratchpad
 bindsym $mod+Shift+m move scratchpad
 bindsym $mod+m scratchpad show
-bindsym $mod+Shift+s exec $dotfiles/i3/scripts/screenshot.sh
+bindsym $mod+Shift+s exec $HOME/dotfiles/scripts/screenshot.sh
 for_window [class="fzf-menu"] floating enable
 
 # Startup
@@ -291,7 +292,7 @@ exec --no-startup-id kbdd
 # exec --no-startup-id $dotfiles/polybar/launch.sh > /dev/null # Start Polybar
 exec --no-startup-id xrdb -merge ~/.Xresources
 exec --no-startup-id dunst -config $dotfiles/dunst/dunstrc > /dev/null # Start notification daemon
-exec --no-startup-id $dotfiles/i3/scripts/startup.sh > /dev/null # Startup programs
+exec --no-startup-id $HOME/dotfiles/scripts/startup.sh > /dev/null # Startup programs
 
 # Switch to urgent
 bindsym $mod+x [urgent=latest] focus

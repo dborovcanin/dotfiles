@@ -45,9 +45,9 @@ FONT=${POWER_FONT:-"JetBrainsMonoNL NF 14"}
 ICON_SIZE=${POWER_ICON_SIZE:-30pt}
 KEY_SIZE=${POWER_KEY_SIZE:-10pt}
 
-# The gruvbox dark of config/sway/foot.ini, the same one the calendar in
-# scripts/dbar/sway_calendar.sh is painted with. Every colour can be swapped
-# from the environment without touching the file.
+# Colours are written by scripts/theme.sh between the theme markers, and every
+# one can still be swapped from the environment without touching the file.
+# theme:begin power
 BG=${POWER_BG:-"#282828"}           # window
 BG_ALPHA=${POWER_BG_ALPHA:-ff}      # opaque; the last byte of the window colour
 FG=${POWER_FG:-"#ebdbb2"}           # tile labels
@@ -66,6 +66,7 @@ C_SUSPEND=${POWER_SUSPEND_COLOR:-"#fabd2f"}
 C_HIBERNATE=${POWER_HIBERNATE_COLOR:-"#8ec07c"}
 C_REBOOT=${POWER_REBOOT_COLOR:-"#fe8019"}
 C_SHUTDOWN=${POWER_SHUTDOWN_COLOR:-"#fb4934"}
+# theme:end
 
 LOCK_IMAGE=${POWER_LOCK_IMAGE:-"$HOME/Downloads/bg-blur.jpg"}
 CONFIRM=${POWER_CONFIRM:-"logout reboot shutdown"}
@@ -109,15 +110,15 @@ logout_cmd() {
     esac
 }
 
-# The travel lock blanks outputs with swaymsg and shoots them with grim, so it is
-# offered only where it can work: under sway, or wherever POWER_TRAVEL_CMD
+# The travel lock blanks outputs through sway or niri and shoots them with grim,
+# so it is offered only where it can work: under those two, or wherever POWER_TRAVEL_CMD
 # names something that does the same job.
 travel_cmd() {
     if [[ -n ${POWER_TRAVEL_CMD:-} ]]; then
         eval "$POWER_TRAVEL_CMD"
     else
         # It holds on until the screen is unlocked, and this menu should not.
-        setsid -f "$here/sway/travel_lock.sh" >/dev/null 2>&1
+        WM=$WM setsid -f "$here/travel_lock.sh" >/dev/null 2>&1
     fi
 }
 
@@ -154,7 +155,7 @@ add() {
 }
 
 add lock "$I_LOCK" "$C_LOCK" Lock l l
-if [[ $WM == sway || -n ${POWER_TRAVEL_CMD:-} ]]; then
+if [[ $WM == sway || $WM == niri || -n ${POWER_TRAVEL_CMD:-} ]]; then
     add travel "$I_TRAVEL" "$C_TRAVEL" Travel t t
 fi
 can Suspend && add suspend "$I_SUSPEND" "$C_SUSPEND" Suspend s s
@@ -174,7 +175,7 @@ tile() {
 
 # Every tile is as wide as the longest label, "Hibernate", with room either side,
 # and the window is exactly as wide as the tiles it holds, so dropping one
-# (hibernate without swap, travel off sway) shrinks the window rather than
+# (hibernate without swap, travel off Wayland) shrinks the window rather than
 # leaving a hole in it.
 theme() {
     local count=$1 frame=$2

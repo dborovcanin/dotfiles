@@ -13,8 +13,10 @@
     horizontal_padding = 12
     frame_width = 3
     corner_radius = 10
-    frame_color = "#dbc291"
+    # theme:begin dunst-global
+    frame_color = "#d79921"
     separator_color = "#504945"
+    # theme:end
     close = ctrl+space
     close_all = ctrl+shift+space
     history = mod1+grave
@@ -38,6 +40,7 @@
     idle_threshold = 120
     font = DejaVu Sans Mono 14
 
+# theme:begin dunst-urgency
 [urgency_low]
     background = "#282828"
     foreground = "#a89984"
@@ -49,10 +52,11 @@
     timeout = 20
 
 [urgency_critical]
-    background = "#1d2021"
+    background = "#282828"
     foreground = "#ebdbb2"
     frame_color = "#fb4934"
     timeout = 0
+# theme:end
 
 [slack]
     appname = Slack

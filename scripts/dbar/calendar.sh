@@ -20,9 +20,10 @@ set -euo pipefail
 FONT=${CAL_FONT:-"JetBrainsMonoNL NF 18"}
 HINT_SIZE=${CAL_HINT_SIZE:-11pt}
 
-# The gruvbox dark that config/sway/foot.ini paints the terminal with, so the
+# Colours are written by scripts/theme.sh between the theme markers, so the
 # calendar belongs to the rest of the desktop rather than to rofi's own theme.
-# Every colour can be swapped from the environment without touching the file.
+# Every colour can still be swapped from the environment without touching the file.
+# theme:begin calendar
 BG=${CAL_BG:-"#282828"}             # window, and the text on the selected day
 BG_ALPHA=${CAL_BG_ALPHA:-ff}        # opaque; the last byte of the window colour
 FG=${CAL_FG:-"#ebdbb2"}             # the days themselves
@@ -35,6 +36,7 @@ HEADING=${CAL_HEADING:-"#a89984"}   # the names of the weekdays
 RULE=${CAL_RULE:-"#504945"}         # the lines between the parts
 KEY=${CAL_KEY:-"#d5c4a1"}           # the keys in the hint line
 DIM=${CAL_DIM:-"#928374"}           # what the keys do
+# theme:end
 
 # The longest date line there can be is "Wednesday, 30 September 2026" behind
 # an icon and a space: thirty columns. The grid is only twenty, and the hint at

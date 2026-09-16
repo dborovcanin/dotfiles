@@ -1,6 +1,9 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
+# Opens what is picked through whichever window manager is running.
+source "$(dirname "$(realpath "${BASH_SOURCE[0]}")")/lib/wm.sh"
+
 STATE_DIR="${XDG_STATE_HOME:-$HOME/.local/state}/content_search"
 HISTORY_FILE="$STATE_DIR/history"
 mkdir -p "$STATE_DIR"
@@ -24,7 +27,6 @@ require_cmd() {
 
 require_cmd fzf
 require_cmd rg
-require_cmd niri
 
 get_history() {
   tac "$HISTORY_FILE" | awk '!seen[$0]++' | grep -Fvx "$HOME" | head -n 10
@@ -196,30 +198,30 @@ open_file() {
 
   if command -v codium >/dev/null 2>&1; then
     printf -v cmd 'codium --goto %q' "$file:$line"
-    niri msg action spawn-sh -- "$cmd" >/dev/null
+    wm_exec "$cmd"
   elif command -v code >/dev/null 2>&1; then
     printf -v cmd 'code --goto %q' "$file:$line"
-    niri msg action spawn-sh -- "$cmd" >/dev/null
+    wm_exec "$cmd"
   elif [ -n "${EDITOR:-}" ]; then
     case "$EDITOR" in
       *nvim*|*vim*)
         printf -v inner '%s +%s %q' "$EDITOR" "$line" "$file"
         printf -v cmd 'foot sh -lc %q' "$inner"
-        niri msg action spawn-sh -- "$cmd" >/dev/null
+        wm_exec "$cmd"
         ;;
       *code*|*codium*)
         printf -v cmd '%s --goto %q' "$EDITOR" "$file:$line"
-        niri msg action spawn-sh -- "$cmd" >/dev/null
+        wm_exec "$cmd"
         ;;
       *)
         printf -v inner '%s %q' "$EDITOR" "$file"
         printf -v cmd 'foot sh -lc %q' "$inner"
-        niri msg action spawn-sh -- "$cmd" >/dev/null
+        wm_exec "$cmd"
         ;;
     esac
   else
     printf -v cmd 'xdg-open %q' "$file"
-    niri msg action spawn-sh -- "$cmd" >/dev/null
+    wm_exec "$cmd"
   fi
 }
 

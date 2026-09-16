@@ -4,16 +4,9 @@
 // Sway features with no niri equivalent are noted inline: sticky windows,
 // binding modes, runtime gaps, parent focus and per-window idle inhibit.
 // Scratchpad, urgent focus, system menu and the sway-specific scripts are
-// replaced by scripts in config/niri/scripts.
+// replaced by scripts in scripts/niri.
 
-// Colors (same palette as sway)
-// background     #282A2E
-// background_alt #373B41
-// foreground     #C5C8C6
-// primary        #dbc291
-// secondary      #8ABEB7
-// alert          #A54242
-// disabled       #707880
+// Colours are written by scripts/theme.sh between the theme markers.
 
 environment {
     GTK_THEME "Adwaita"
@@ -72,7 +65,9 @@ output "HDMI-A-1" {
 layout {
     gaps 15
     center-focused-column "never"
-    background-color "#282A2E"
+    // theme:begin niri-background
+    background-color "#282828"
+    // theme:end
 
     preset-column-widths {
         proportion 0.33333
@@ -88,15 +83,19 @@ layout {
 
     border {
         width 5
-        active-color "#dbc291"
-        inactive-color "#373B41"
-        urgent-color "#A54242"
+        // theme:begin niri-border
+        active-color "#d79921"
+        inactive-color "#3c3836"
+        urgent-color "#cc241d"
+        // theme:end
     }
 
     tab-indicator {
-        active-color "#dbc291"
-        inactive-color "#707880"
-        urgent-color "#A54242"
+        // theme:begin niri-tabs
+        active-color "#d79921"
+        inactive-color "#928374"
+        urgent-color "#cc241d"
+        // theme:end
     }
 }
 
@@ -119,7 +118,7 @@ window-rule {
 spawn-sh-at-startup "swaybg -i /home/dusan/Downloads/bg.jpg -m fill"
 // niri draws bottom-layer surfaces inside each workspace, so they slide on a
 // switch. Run dbar on the top layer here to keep it fixed; sway keeps "bottom".
-spawn-sh-at-startup r#"sed 's/^layer = "bottom"$/layer = "top"/' $HOME/dotfiles/config/sway/dbar.toml > $XDG_RUNTIME_DIR/dbar-niri.toml && dbar -c $XDG_RUNTIME_DIR/dbar-niri.toml"#
+spawn-sh-at-startup r#"sed 's/^layer = "bottom"$/layer = "top"/' $HOME/dotfiles/config/dbar/config.toml > $XDG_RUNTIME_DIR/dbar-niri.toml && dbar -c $XDG_RUNTIME_DIR/dbar-niri.toml"#
 spawn-sh-at-startup "xrdb -merge ~/.Xresources"
 spawn-sh-at-startup "dunst -config $HOME/dotfiles/config/dunst/dunstrc > /dev/null"
 spawn-sh-at-startup "$HOME/dotfiles/scripts/startup.sh > /dev/null"
@@ -219,7 +218,7 @@ binds {
     Mod+Shift+Q repeat=false { close-window; }
 
     // Launcher
-    Mod+D { spawn-sh "rofi -show drun -show-icons -display-drun Run -terminal foot -font 'JetBrainsMono Nerd Font 16' -theme-str 'window {width: 30%;} listview {lines: 10;}'"; }
+    Mod+D { spawn-sh "$HOME/dotfiles/scripts/launcher.sh"; }
 
     // Focus
     Mod+J     { focus-column-left; }
@@ -291,14 +290,14 @@ binds {
     Mod+Shift+E { quit; }
 
     // Power menu (shared with sway and i3)
-    Mod+Escape { spawn-sh r#"POWER_TRAVEL_CMD='setsid -f "$HOME/dotfiles/config/niri/scripts/travel_lock.sh" >/dev/null 2>&1' $HOME/dotfiles/scripts/power.sh"#; }
+    Mod+Escape { spawn-sh "$HOME/dotfiles/scripts/power.sh"; }
 
     // Scratchpad (scripted, windows park on the "scratch" workspace)
-    Mod+Shift+M { spawn-sh "$HOME/dotfiles/config/niri/scripts/scratchpad.sh move"; }
-    Mod+M { spawn-sh "$HOME/dotfiles/config/niri/scripts/scratchpad.sh show"; }
+    Mod+Shift+M { spawn-sh "$HOME/dotfiles/scripts/niri/scratchpad.sh move"; }
+    Mod+M { spawn-sh "$HOME/dotfiles/scripts/niri/scratchpad.sh show"; }
 
     // Focus urgent window
-    Mod+X { spawn-sh "$HOME/dotfiles/config/niri/scripts/focus_urgent.sh"; }
+    Mod+X { spawn-sh "$HOME/dotfiles/scripts/niri/focus_urgent.sh"; }
 
     // Brightness and audio
     XF86MonBrightnessUp allow-when-locked=true { spawn-sh "$HOME/dotfiles/scripts/brightness.sh up"; }
@@ -311,14 +310,14 @@ binds {
 
     // Tools
     Mod+E { spawn-sh "$HOME/dotfiles/scripts/emoji.sh"; }
-    Mod+Shift+F { spawn-sh "footclient --app-id content-search sh -c $HOME/dotfiles/config/niri/scripts/content_search.sh"; }
+    Mod+Shift+F { spawn-sh "footclient --app-id content-search sh -c $HOME/dotfiles/scripts/content_search.sh"; }
     Mod+Ctrl+F { spawn-sh "footclient --app-id file-search sh -c $HOME/dotfiles/bin/search"; }
     Mod+N { spawn "footclient" "-w" "1400x950" "--app-id" "slight" "/home/dusan/.local/bin/slight"; }
     Mod+B { spawn "footclient" "--app-id" "system-monitor" "btop"; }
     Mod+Shift+C { spawn-sh "codium $HOME/dotfiles"; }
-    Mod+C { spawn-sh "$HOME/dotfiles/scripts/sway/clipboard.sh"; }
+    Mod+C { spawn-sh "$HOME/dotfiles/scripts/clipboard.sh"; }
     Mod+G { spawn-sh "brave > /dev/null"; }
-    Mod+Shift+S { spawn-sh "$HOME/dotfiles/scripts/sway/screenshot.sh"; }
+    Mod+Shift+S { spawn-sh "$HOME/dotfiles/scripts/screenshot.sh"; }
 
     // Notifications
     Ctrl+Space { spawn "dunstctl" "close"; }

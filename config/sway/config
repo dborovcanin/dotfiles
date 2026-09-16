@@ -2,15 +2,17 @@
 set $mod Mod4
 
 # Hide titlebar
-default_border pixel
+# default_border pixel
 
-set $background #282A2E
-set $background_alt #373B41
-set $foreground #C5C8C6
-set $primary #dbc291
-set $secondary #8ABEB7
-set $alert #A54242
-set $disabled #707880
+# theme:begin wm
+set $background #282828
+set $background_alt #3c3836
+set $foreground #ebdbb2
+set $primary #d79921
+set $secondary #8ec07c
+set $alert #cc241d
+set $disabled #928374
+# theme:end
 
 # Set GTK theme
 set $GTK_THEME Adwaita
@@ -43,15 +45,15 @@ floating_modifier $mod
 
 # Default borders: 5px for all the windows; no borders for fullscreen
 smart_borders on
-default_border pixel 5
-default_floating_border pixel 5
+default_border pixel 3
+default_floating_border pixel 3
 
 # Default gaps
-gaps inner 15
+gaps inner 8
 smart_gaps on
 
 
-exec dbar -c $dotfiles/config/sway/dbar.toml
+exec dbar -c $dotfiles/config/dbar/config.toml
 
 # start a terminal
 bindsym $mod+Return exec footclient -T "term"
@@ -77,9 +79,7 @@ bindsym $mod+ctrl+Shift+p exec wlr-randr --output $monitor2 --off
 bindsym $mod+Shift+q kill
 
 # start dmenu (a program launcher)
-bindsym $mod+d exec "rofi -show drun -show-icons -display-drun Run -terminal 'foot' \
--font 'JetBrainsMono Nerd Font 16' \
--theme-str 'window {width: 30%;} listview {lines: 10;}'"
+bindsym $mod+d exec $dotfiles/scripts/launcher.sh
 
 # change focus
 bindsym $mod+j focus left
@@ -185,7 +185,7 @@ bindsym XF86AudioMute exec pactl set-sink-mute @DEFAULT_SINK@ toggle
 bindsym $mod+e exec --no-startup-id $dotfiles/scripts/emoji.sh
 
 # search
-bindsym $mod+Shift+f exec footclient --app-id content-search sh -c "$dotfiles/scripts/sway/content_search.sh"
+bindsym $mod+Shift+f exec footclient --app-id content-search sh -c "$dotfiles/scripts/content_search.sh"
 for_window [app_id="content-search"] floating enable, resize set 1500 950, move position center
 
 bindsym $mod+Ctrl+f exec footclient --app-id file-search sh -c "$dotfiles/bin/search"
@@ -228,14 +228,14 @@ bindsym $mod+r mode "resize"
 # set $bg /home/dusan/Downloads/bg.jpg
 # set $lockbg /home/dusan/Downloads/bg-blur.jpg
 
-set $bg ~/Pictures/backgrounds/gruvbox-wallpapers/wallpapers/photography/jake-weirick-EsvpmQ4zp5Y.jpg
-set $lockbg ~/Pictures/backgrounds/gruvbox-wallpapers/wallpapers/photography/jake-weirick-EsvpmQ4zp5Y-blur.jpg
+set $bg ~/Pictures/backgrounds/gruvbox-wallpapers/wallpapers/mix/Powerline.png
+set $lockbg ~/Pictures/backgrounds/gruvbox-wallpapers/wallpapers/mix/Powerline-blur.png
 
 set $mode_system System (l) lock, (t) travel lock, (e) logout, (s) suspend, (h) hibernate, (r) reboot, (Shift+s) shutdown
 
 mode "$mode_system" {
     bindsym l exec swaylock --image $lockbg, mode "default"
-    bindsym t exec $dotfiles/scripts/sway/travel_lock.sh, mode "default"
+    bindsym t exec $dotfiles/scripts/travel_lock.sh, mode "default"
     bindsym e exec swaymsg exit, mode "default"
     bindsym s exec systemctl suspend, mode "default"
     bindsym r exec systemctl reboot, mode "default"
@@ -290,7 +290,7 @@ exec kdeconnectd > /dev/null
 
 # Used by the clipboard manager
 exec wl-paste --watch cliphist store --max-items=5000
-bindsym $mod+c exec $dotfiles/scripts/sway/clipboard.sh
+bindsym $mod+c exec $dotfiles/scripts/clipboard.sh
 
 bindsym $mod+Shift+g mode "gaps_inner"
 mode "gaps_inner" {
@@ -330,7 +330,7 @@ bindsym $mod+g exec brave > /dev/null
 ## Move to and from scratchpad
 bindsym $mod+Shift+m move scratchpad
 bindsym $mod+m scratchpad show
-bindsym $mod+Shift+s exec $dotfiles/scripts/sway/screenshot.sh
+bindsym $mod+Shift+s exec $dotfiles/scripts/screenshot.sh
 for_window [class="fzf-menu"] floating enable
 
 # Startup
@@ -362,7 +362,7 @@ bindsym $mod+x [urgent=latest] focus
 # bar {
 #     font pango:JetBrainsMono NL, FontAwesome 14
 #     position top
-#     status_command i3status-rs $dotfiles/config/sway/status.toml
+#     status_command i3status-rs $dotfiles/config/i3/status.toml
 #     colors {
 #         background $background
 #         focused_workspace $background $background $primary

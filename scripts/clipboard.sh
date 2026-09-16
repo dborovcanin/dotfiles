@@ -1,9 +1,26 @@
 #!/bin/bash
 
+# Clipboard history from cliphist, drawn by config/rofi/menu.rasi.
+#
+# Return copies the entry back, Alt+p previews an image entry in feh.
+
+here=$(dirname "$(realpath "${BASH_SOURCE[0]}")")
+
+# theme:begin clipboard
+key_color="#d5c4a1"
+# theme:end
+
+# nf-md-clipboard_text, spelled as a code point like the icons in power.sh.
+icon=$'\U000F014D'
+
+# cliphist lists "id<tab>entry"; only the entry is shown, but rofi still prints
+# the whole line, and the id is what cliphist decode needs.
 rofi_cmd=(rofi -dmenu -matching fuzzy -i \
-    -font 'JetBrainsMono Nerd Font 14' \
-    -theme-str 'window {width: 30%;} listview {lines: 20;}' \
-    -p clipboard \
+    -p "$icon" \
+    -display-columns 2 -display-column-separator '\t' \
+    -mesg "<span foreground=\"$key_color\">Return</span> copy  ·  <span foreground=\"$key_color\">Alt+p</span> preview" \
+    -theme "$here/../config/rofi/menu.rasi" \
+    -theme-str 'window {width: 56em;} listview {lines: 12;}' \
     -kb-custom-1 'Alt+p')
 
 selected_row=0

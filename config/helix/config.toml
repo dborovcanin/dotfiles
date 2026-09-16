@@ -1,4 +1,6 @@
+# theme:begin helix
 theme = "gruvbox"
+# theme:end
 
 [editor]
 line-number = "relative"
