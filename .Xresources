@@ -1,3 +1,29 @@
+! ------------------------------------------------------------------------------
+! Cursor and font rendering
+! ------------------------------------------------------------------------------
+
+! The cursor for X11 and XWayland clients, which read it from the resource
+! database rather than from the compositor. It is one of several places the
+! cursor is named — sway's seat, niri's cursor block and the GTK settings.ini
+! files are the others — and they are held at the same theme and size on
+! purpose, so the pointer does not resize as focus moves between windows.
+!
+! 28 is what the running session uses: sway and niri both set it, and they are
+! what export XCURSOR_SIZE to everything they start.
+Xcursor.theme: BreezeX-Light
+Xcursor.size: 28
+
+! Font rendering for the X11 terminals configured below. hintslight with
+! subpixel order rgb is what the GTK settings.ini files ask for too.
+Xft.antialias: 1
+Xft.hinting: 1
+Xft.hintstyle: hintslight
+Xft.rgba: rgb
+
+! ------------------------------------------------------------------------------
+! urxvt
+! ------------------------------------------------------------------------------
+
 ! URxvt*cursorColor2:                   color
 ! URxvt*pointerColor:                   color
 ! URxvt*pointerColor2:                  color

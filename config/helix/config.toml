@@ -5,12 +5,27 @@ theme = "gruvbox"
 [editor]
 line-number = "relative"
 
+[editor.file-picker]
+hidden = false
+
 [editor.cursor-shape]
 insert = "bar"
 normal = "block"
 select = "block"
 
 [keys.normal]
+C-w = ":buffer-close"
+C-s = ":write"
+C-left = ["move_prev_word_start"]
+C-right = ["move_next_word_start"]
 G = ["goto_file_end", "goto_line_end"]
 0 = ["goto_line_start"]
 "$" = ["goto_line_end"]
+
+# Lazygit integration
+C-g = [":new", ":insert-output lazygit", ":buffer-close!", ":redraw"]
+
+[keys.insert]
+C-left = ["move_prev_word_start"]
+C-right = ["move_next_word_start"]
+C-backspace = ["delete_word_backward"]
