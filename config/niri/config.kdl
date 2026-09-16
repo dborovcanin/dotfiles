@@ -115,7 +115,7 @@ window-rule {
 }
 
 // Startup
-spawn-sh-at-startup "swaybg -i /home/dusan/Downloads/bg.jpg -m fill"
+spawn-sh-at-startup "swaybg -i /home/dusan/Pictures/backgrounds/gruvbox-wallpapers/wallpapers/mix/Powerline.png -m fill"
 // niri draws bottom-layer surfaces inside each workspace, so they slide on a
 // switch. Run dbar on the top layer here to keep it fixed; sway keeps "bottom".
 spawn-sh-at-startup r#"sed 's/^layer = "bottom"$/layer = "top"/' $HOME/dotfiles/config/dbar/config.toml > $XDG_RUNTIME_DIR/dbar-niri.toml && dbar -c $XDG_RUNTIME_DIR/dbar-niri.toml"#
@@ -125,7 +125,7 @@ spawn-sh-at-startup "$HOME/dotfiles/scripts/startup.sh > /dev/null"
 spawn-sh-at-startup "foot --server"
 spawn-sh-at-startup "kdeconnectd > /dev/null"
 spawn-sh-at-startup "wl-paste --watch cliphist store --max-items=5000"
-spawn-sh-at-startup "swayidle -w timeout 300 'pgrep -x swaylock >/dev/null || swaylock -f -i /home/dusan/Downloads/bg-blur.jpg' timeout 600 'niri msg action power-off-monitors' before-sleep 'pgrep -x swaylock >/dev/null || swaylock -f -i /home/dusan/Downloads/bg-blur.jpg'"
+spawn-sh-at-startup "swayidle -w timeout 300 'pgrep -x swaylock >/dev/null || swaylock -f -i /home/dusan/Pictures/backgrounds/gruvbox-wallpapers/wallpapers/mix/Powerline-blur.png' timeout 600 'niri msg action power-off-monitors' before-sleep 'pgrep -x swaylock >/dev/null || swaylock -f -i /home/dusan/Pictures/backgrounds/gruvbox-wallpapers/wallpapers/mix/Powerline-blur.png'"
 
 // Named workspaces, so windows can be assigned to them like in sway
 workspace "1"
