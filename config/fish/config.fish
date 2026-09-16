@@ -6,7 +6,7 @@
 # zsh plugins have no counterpart here.
 
 set -gx DOTFILES $HOME/dotfiles
-set -p fish_function_path $DOTFILES/fish/functions
+set -p fish_function_path $DOTFILES/config/fish/functions
 
 # -------------------------------------------------------------------
 # Environment
@@ -166,8 +166,21 @@ abbr -a code codium
 if status is-login
     set -gx XDG_CURRENT_DESKTOP sway
     set -gx XDG_SESSION_TYPE wayland
+    # /etc/environment pins GTK_THEME=Orchis-Dark and pam_env sets it before this
+    # file runs, which pre-empts the gruvbox gtk.css in config/gtk-*. It is
+    # cleared rather than set to a theme: GTK 4 has no theme by that name on
+    # disk, so any value at all makes it fall back to a half-built theme. With
+    # nothing set, GTK 3 takes the name from settings.ini, GTK 4 takes dark from
+    # the desktop portal, and both then read the gruvbox colours from gtk.css.
+    set -e GTK_THEME
     set -gx MOZ_ENABLE_WAYLAND 1
     set -gx QT_QPA_PLATFORM wayland
+    # Qt reads one platform theme name and each major version only finds its own
+    # plugin, so qt5ct and qt6ct cannot both be named here. Nearly everything Qt
+    # on this machine is Qt 6 — krita, okular, flameshot, kdenlive, obs,
+    # kdeconnect — so Qt 6 gets it. The qt5ct config is installed alongside for
+    # the few Qt 5 holdouts, and swapping this to qt5ct is all it takes.
+    set -gx QT_QPA_PLATFORMTHEME qt6ct
     set -gx SDL_VIDEODRIVER wayland
     set -gx _JAVA_AWT_WM_NONREPARENTING 1
 
