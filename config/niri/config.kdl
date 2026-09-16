@@ -9,9 +9,9 @@
 // Colours are written by scripts/theme.sh between the theme markers.
 
 environment {
-    GTK_THEME "Adwaita"
     GTK2_RC_FILES "/home/dusan/.gtkrc-2.0"
     XDG_CURRENT_DESKTOP "niri"
+    QT_QPA_PLATFORMTHEME "gtk3"
 }
 
 cursor {

@@ -1,6 +1,6 @@
 # Sourced from ~/.config/fish/config.fish:
 #
-#   source ~/dotfiles/fish/config.fish
+#   source ~/dotfiles/config/fish/config.fish
 #
 # Fish ships autosuggestions, syntax highlighting and completions, so the
 # zsh plugins have no counterpart here.
@@ -175,12 +175,19 @@ if status is-login
     set -e GTK_THEME
     set -gx MOZ_ENABLE_WAYLAND 1
     set -gx QT_QPA_PLATFORM wayland
-    # Qt reads one platform theme name and each major version only finds its own
-    # plugin, so qt5ct and qt6ct cannot both be named here. Nearly everything Qt
-    # on this machine is Qt 6 — krita, okular, flameshot, kdenlive, obs,
-    # kdeconnect — so Qt 6 gets it. The qt5ct config is installed alongside for
-    # the few Qt 5 holdouts, and swapping this to qt5ct is all it takes.
-    set -gx QT_QPA_PLATFORMTHEME qt6ct
+    # Qt takes its palette from the GTK theme, which config/gtk-3.0/gtk.css has
+    # already made gruvbox. qgtk3 is the one platform theme that ships for both
+    # Qt 5 and Qt 6, so a single name covers both and nothing extra is needed.
+    #
+    # KDE's own apps — okular, kdenlive, kdeconnect, kwave — ignore this and
+    # paint themselves in Breeze. They read config/qt/kdeglobals instead, but
+    # only once plasma-integration provides the theme that hands it to them:
+    #
+    #     sudo pacman -S plasma-integration
+    #     set -gx QT_QPA_PLATFORMTHEME kde
+    #
+    # That name then covers every Qt app, KDE or not, straight from kdeglobals.
+    set -gx QT_QPA_PLATFORMTHEME gtk3
     set -gx SDL_VIDEODRIVER wayland
     set -gx _JAVA_AWT_WM_NONREPARENTING 1
 

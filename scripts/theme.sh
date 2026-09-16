@@ -186,7 +186,7 @@ EOF
 }
 
 # fish takes colours without '#'. The __prompt_color_* ones are read by the
-# prompt functions in fish/functions.
+# prompt functions in config/fish/functions.
 render_fish() {
     local bg=${THEME_BG#\#} bg_alt=${THEME_BG_ALT#\#} raised=${THEME_BG_RAISED#\#}
     local fg=${THEME_FG#\#} fg_alt=${THEME_FG_ALT#\#} dim=${THEME_DIM#\#}
@@ -245,8 +245,227 @@ render_tmux() {
     printf 'set -g status-bg "%s"\nset -g status-fg "%s"\n' "$THEME_BG_ALT" "$THEME_FG"
 }
 
+# KDE writes colours as "r,g,b" decimals rather than hex.
+kde_rgb() {
+    local h=${1#\#}
+    printf '%d,%d,%d' "0x${h:0:2}" "0x${h:2:2}" "0x${h:4:2}"
+}
+
+# One [Colors:*] set. $1 is the background, $2 the colour of the banded row or
+# the pressed state; every foreground is shared, since KDE expects the same
+# semantic colours in each set.
+kde_set() {
+    local bg=$1 alt=$2 fg=$3
+    cat <<EOF
+BackgroundNormal=$(kde_rgb "$bg")
+BackgroundAlternate=$(kde_rgb "$alt")
+ForegroundNormal=$(kde_rgb "$fg")
+ForegroundInactive=$(kde_rgb "$THEME_DIM")
+ForegroundActive=$(kde_rgb "$THEME_ACCENT")
+ForegroundLink=$(kde_rgb "$THEME_BLUE")
+ForegroundVisited=$(kde_rgb "$THEME_MAGENTA")
+ForegroundNegative=$(kde_rgb "$THEME_RED")
+ForegroundNeutral=$(kde_rgb "$THEME_YELLOW")
+ForegroundPositive=$(kde_rgb "$THEME_GREEN")
+DecorationFocus=$(kde_rgb "$THEME_BORDER")
+DecorationHover=$(kde_rgb "$THEME_BORDER")
+EOF
+}
+
+# The KDE colour scheme. Breeze reads these instead of the Qt palette, so the
+# same reading of the theme is spelled out again: window and view on the plain
+# background, buttons and tooltips a shade above, selection on the border
+# colour with dark text.
+render_kde() {
+    # The scheme is named for the dotfiles rather than the palette, so that
+    # switching themes rewrites its colours instead of leaving a scheme called
+    # "gruvbox" full of catppuccin.
+    printf '[General]\nName=Dotfiles\nColorScheme=Dotfiles\nAccentColor=%s\n\n' \
+        "$(kde_rgb "$THEME_BORDER")"
+    printf '[Colors:Window]\n%s\n\n' "$(kde_set "$THEME_BG" "$THEME_BG_ALT" "$THEME_FG")"
+    printf '[Colors:View]\n%s\n\n' "$(kde_set "$THEME_BG" "$THEME_BG_ALT" "$THEME_FG")"
+    printf '[Colors:Button]\n%s\n\n' "$(kde_set "$THEME_BG_ALT" "$THEME_BG_RAISED" "$THEME_FG")"
+    printf '[Colors:Tooltip]\n%s\n\n' "$(kde_set "$THEME_BG_ALT" "$THEME_BG_RAISED" "$THEME_FG")"
+    printf '[Colors:Complementary]\n%s\n\n' "$(kde_set "$THEME_BG" "$THEME_BG_ALT" "$THEME_FG")"
+    printf '[Colors:Header]\n%s\n\n' "$(kde_set "$THEME_BG_ALT" "$THEME_BG_RAISED" "$THEME_FG")"
+    printf '[Colors:Selection]\n%s\n\n' "$(kde_set "$THEME_BORDER" "$THEME_BORDER" "$THEME_BG")"
+    # The window frame that KWin draws, for the rare KDE app that is not tiled.
+    printf '[WM]\nactiveBackground=%s\nactiveForeground=%s\ninactiveBackground=%s\ninactiveForeground=%s\n' \
+        "$(kde_rgb "$THEME_BG_ALT")" "$(kde_rgb "$THEME_FG")" \
+        "$(kde_rgb "$THEME_BG")" "$(kde_rgb "$THEME_DIM")"
+}
+
 render_helix() {
     printf 'theme = "%s"\n' "$THEME_HELIX"
+}
+
+# GTK. The three versions share one reading of the palette: the window is the
+# background, anything that sits above it — titlebars, sidebars, menus, popovers
+# — is the alt background, and the border colour is the selection. Dark text is
+# laid on the accent and on yellow and green, which are too bright to carry the
+# light foreground.
+render_gtk2() {
+    local scheme
+    scheme+="fg_color:$THEME_FG\n"
+    scheme+="bg_color:$THEME_BG\n"
+    scheme+="base_color:$THEME_BG\n"
+    scheme+="text_color:$THEME_FG\n"
+    scheme+="selected_fg_color:$THEME_BG\n"
+    scheme+="selected_bg_color:$THEME_BORDER\n"
+    scheme+="tooltip_fg_color:$THEME_FG\n"
+    scheme+="tooltip_bg_color:$THEME_BG_ALT"
+    printf 'gtk_color_scheme = "%s"\n\n' "$scheme"
+    cat <<EOF
+style "gruvbox-default" {
+    fg[NORMAL]        = "$THEME_FG"
+    fg[PRELIGHT]      = "$THEME_FG"
+    fg[SELECTED]      = "$THEME_BG"
+    fg[ACTIVE]        = "$THEME_FG"
+    fg[INSENSITIVE]   = "$THEME_DIM"
+    bg[NORMAL]        = "$THEME_BG"
+    bg[PRELIGHT]      = "$THEME_BG_ALT"
+    bg[SELECTED]      = "$THEME_BORDER"
+    bg[ACTIVE]        = "$THEME_BG_ALT"
+    bg[INSENSITIVE]   = "$THEME_BG"
+    base[NORMAL]      = "$THEME_BG"
+    base[PRELIGHT]    = "$THEME_BG_ALT"
+    base[SELECTED]    = "$THEME_BORDER"
+    base[ACTIVE]      = "$THEME_BG_RAISED"
+    base[INSENSITIVE] = "$THEME_BG"
+    text[NORMAL]      = "$THEME_FG"
+    text[PRELIGHT]    = "$THEME_FG"
+    text[SELECTED]    = "$THEME_BG"
+    text[ACTIVE]      = "$THEME_FG"
+    text[INSENSITIVE] = "$THEME_DIM"
+}
+
+class "GtkWidget" style "gruvbox-default"
+EOF
+}
+
+render_gtk3() {
+    cat <<EOF
+@define-color theme_bg_color $THEME_BG;
+@define-color theme_fg_color $THEME_FG;
+@define-color theme_base_color $THEME_BG;
+@define-color theme_text_color $THEME_FG;
+@define-color theme_selected_bg_color $THEME_BORDER;
+@define-color theme_selected_fg_color $THEME_BG;
+
+/* Anything a shade above the window: titlebars, menus, popovers, sidebars. */
+@define-color raised_bg_color $THEME_BG_ALT;
+
+@define-color insensitive_bg_color $THEME_BG;
+@define-color insensitive_fg_color $THEME_DIM;
+@define-color insensitive_base_color $THEME_BG;
+@define-color unfocused_insensitive_color $THEME_DIM;
+
+@define-color theme_unfocused_bg_color $THEME_BG;
+@define-color theme_unfocused_fg_color $THEME_SUBTLE;
+@define-color theme_unfocused_base_color $THEME_BG;
+@define-color theme_unfocused_text_color $THEME_SUBTLE;
+@define-color theme_unfocused_selected_bg_color $THEME_BG_RAISED;
+@define-color theme_unfocused_selected_fg_color $THEME_FG;
+
+@define-color borders $THEME_BG_RAISED;
+@define-color unfocused_borders $THEME_BG_ALT;
+@define-color content_view_bg $THEME_BG;
+@define-color text_view_bg $THEME_BG;
+@define-color placeholder_text_color $THEME_DIM;
+
+@define-color accent_color $THEME_ACCENT;
+@define-color warning_color $THEME_YELLOW;
+@define-color error_color $THEME_RED;
+@define-color success_color $THEME_GREEN;
+
+/* The window manager colours, which GTK draws into client-side decorations. */
+@define-color wm_bg_a $THEME_BG_ALT;
+@define-color wm_bg_b $THEME_BG_ALT;
+@define-color wm_border $THEME_BG_RAISED;
+@define-color wm_borders_edge $THEME_BG_RAISED;
+@define-color wm_highlight $THEME_BG_RAISED;
+@define-color wm_shadow alpha(black, 0.35);
+@define-color wm_title $THEME_FG;
+@define-color wm_unfocused_title $THEME_SUBTLE;
+@define-color wm_button_hover_color_a $THEME_BG_RAISED;
+@define-color wm_button_hover_color_b $THEME_BG_RAISED;
+@define-color wm_button_active_color_a $THEME_BORDER;
+@define-color wm_button_active_color_b $THEME_BORDER;
+@define-color wm_button_active_color_c $THEME_BORDER;
+EOF
+}
+
+render_gtk4() {
+    cat <<EOF
+@define-color window_bg_color $THEME_BG;
+@define-color window_fg_color $THEME_FG;
+@define-color view_bg_color $THEME_BG;
+@define-color view_fg_color $THEME_FG;
+
+@define-color headerbar_bg_color $THEME_BG_ALT;
+@define-color headerbar_fg_color $THEME_FG;
+@define-color headerbar_border_color $THEME_BG_RAISED;
+@define-color headerbar_backdrop_color $THEME_BG;
+@define-color headerbar_shade_color alpha(black, 0.3);
+@define-color headerbar_darker_shade_color alpha(black, 0.5);
+
+@define-color sidebar_bg_color $THEME_BG_ALT;
+@define-color sidebar_fg_color $THEME_FG;
+@define-color sidebar_backdrop_color $THEME_BG;
+@define-color sidebar_border_color $THEME_BG_RAISED;
+@define-color sidebar_shade_color alpha(black, 0.25);
+@define-color secondary_sidebar_bg_color $THEME_BG_ALT;
+@define-color secondary_sidebar_fg_color $THEME_FG;
+@define-color secondary_sidebar_backdrop_color $THEME_BG;
+@define-color secondary_sidebar_border_color $THEME_BG_RAISED;
+@define-color secondary_sidebar_shade_color alpha(black, 0.25);
+
+@define-color card_bg_color $THEME_BG_ALT;
+@define-color card_fg_color $THEME_FG;
+@define-color card_shade_color alpha(black, 0.3);
+@define-color dialog_bg_color $THEME_BG_ALT;
+@define-color dialog_fg_color $THEME_FG;
+@define-color popover_bg_color $THEME_BG_ALT;
+@define-color popover_fg_color $THEME_FG;
+@define-color popover_shade_color alpha(black, 0.25);
+@define-color thumbnail_bg_color $THEME_BG_RAISED;
+@define-color thumbnail_fg_color $THEME_FG;
+@define-color overview_bg_color $THEME_BG_ALT;
+@define-color overview_fg_color $THEME_FG;
+@define-color shade_color alpha(black, 0.25);
+@define-color scrollbar_outline_color $THEME_BG_RAISED;
+
+/* Solid backgrounds carry dark text; the standalone ones are text on the
+ * window, so they take the bright half of the palette. */
+@define-color accent_bg_color $THEME_BORDER;
+@define-color accent_fg_color $THEME_BG;
+@define-color accent_color $THEME_ACCENT;
+@define-color destructive_bg_color ${THEME_ANSI[1]};
+@define-color destructive_fg_color $THEME_ON_COLOR;
+@define-color destructive_color $THEME_RED;
+@define-color error_bg_color ${THEME_ANSI[1]};
+@define-color error_fg_color $THEME_ON_COLOR;
+@define-color error_color $THEME_RED;
+@define-color success_bg_color ${THEME_ANSI[2]};
+@define-color success_fg_color $THEME_BG;
+@define-color success_color $THEME_GREEN;
+@define-color warning_bg_color ${THEME_ANSI[3]};
+@define-color warning_fg_color $THEME_BG;
+@define-color warning_color $THEME_YELLOW;
+
+/* The GTK 3 names, for the GTK 4 apps that are not libadwaita apps. */
+@define-color theme_bg_color $THEME_BG;
+@define-color theme_fg_color $THEME_FG;
+@define-color theme_base_color $THEME_BG;
+@define-color theme_text_color $THEME_FG;
+@define-color theme_selected_bg_color $THEME_BORDER;
+@define-color theme_selected_fg_color $THEME_BG;
+@define-color insensitive_bg_color $THEME_BG;
+@define-color insensitive_fg_color $THEME_DIM;
+@define-color insensitive_base_color $THEME_BG;
+@define-color borders $THEME_BG_RAISED;
+@define-color unfocused_borders $THEME_BG_ALT;
+EOF
 }
 
 render_rofi() {

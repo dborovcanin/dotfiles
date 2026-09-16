@@ -1,0 +1,327 @@
+/* GTK 3 — the colours are written by scripts/theme.sh from config/themes.
+ *
+ * Goes to ~/.config/gtk-3.0/gtk.css. GTK 3 loads it above the theme, so the
+ * names below win over whatever Adwaita defined. The rules after the block are
+ * hand-written and only ever name these colours, so they hold for any theme.
+ *
+ * Brave reads this one: brave://settings/appearance → Themes → GTK. Chromium
+ * samples a rendered headerbar for the browser frame and a rendered menu for
+ * its menus, which is why both are repainted below.
+ */
+
+/* theme:begin gtk3 */
+@define-color theme_bg_color #282828;
+@define-color theme_fg_color #ebdbb2;
+@define-color theme_base_color #282828;
+@define-color theme_text_color #ebdbb2;
+@define-color theme_selected_bg_color #d79921;
+@define-color theme_selected_fg_color #282828;
+
+/* Anything a shade above the window: titlebars, menus, popovers, sidebars. */
+@define-color raised_bg_color #3c3836;
+
+@define-color insensitive_bg_color #282828;
+@define-color insensitive_fg_color #928374;
+@define-color insensitive_base_color #282828;
+@define-color unfocused_insensitive_color #928374;
+
+@define-color theme_unfocused_bg_color #282828;
+@define-color theme_unfocused_fg_color #a89984;
+@define-color theme_unfocused_base_color #282828;
+@define-color theme_unfocused_text_color #a89984;
+@define-color theme_unfocused_selected_bg_color #504945;
+@define-color theme_unfocused_selected_fg_color #ebdbb2;
+
+@define-color borders #504945;
+@define-color unfocused_borders #3c3836;
+@define-color content_view_bg #282828;
+@define-color text_view_bg #282828;
+@define-color placeholder_text_color #928374;
+
+@define-color accent_color #fabd2f;
+@define-color warning_color #fabd2f;
+@define-color error_color #fb4934;
+@define-color success_color #b8bb26;
+
+/* The window manager colours, which GTK draws into client-side decorations. */
+@define-color wm_bg_a #3c3836;
+@define-color wm_bg_b #3c3836;
+@define-color wm_border #504945;
+@define-color wm_borders_edge #504945;
+@define-color wm_highlight #504945;
+@define-color wm_shadow alpha(black, 0.35);
+@define-color wm_title #ebdbb2;
+@define-color wm_unfocused_title #a89984;
+@define-color wm_button_hover_color_a #504945;
+@define-color wm_button_hover_color_b #504945;
+@define-color wm_button_active_color_a #d79921;
+@define-color wm_button_active_color_b #d79921;
+@define-color wm_button_active_color_c #d79921;
+/* theme:end */
+
+/* Adwaita's own rules never reference the names above — every colour in its
+ * stylesheet is a literal — so the block only serves apps that read the names,
+ * and every surface that should turn gruvbox has to be named explicitly below.
+ * That is what the rest of this file is. */
+
+/* Windows, dialogs and the plain containers inside them. */
+window,
+window.background,
+.background,
+dialog,
+messagedialog,
+assistant,
+popover.background,
+scrolledwindow,
+toolbar,
+searchbar,
+actionbar,
+infobar,
+statusbar,
+expander,
+notebook,
+notebook > stack {
+    background-color: @theme_bg_color;
+    color: @theme_fg_color;
+}
+
+/* Lists, trees and text views — the big light patches under Adwaita. */
+treeview.view,
+list,
+columnview,
+gridview,
+iconview,
+textview,
+textview text,
+.view {
+    background-color: @theme_base_color;
+    color: @theme_text_color;
+}
+
+treeview.view:selected,
+list row:selected,
+iconview:selected,
+.view:selected {
+    background-color: @theme_selected_bg_color;
+    color: @theme_selected_fg_color;
+}
+
+/* Rows stay transparent so they take the colour of whatever holds them. */
+list row,
+.sidebar row,
+placessidebar row {
+    background-color: transparent;
+}
+
+treeview.view:hover,
+list row:hover {
+    background-color: @raised_bg_color;
+}
+
+treeview.view header button,
+columnview header button {
+    background-color: @raised_bg_color;
+    color: @theme_fg_color;
+    border-color: @borders;
+    background-image: none;
+}
+
+/* Buttons and the controls that sit on them. */
+button,
+spinbutton,
+combobox button,
+combobox arrow {
+    background-image: none;
+    background-color: @raised_bg_color;
+    color: @theme_fg_color;
+    border-color: @borders;
+    text-shadow: none;
+}
+
+button:hover {
+    background-color: @wm_button_hover_color_a;
+}
+
+button:checked,
+button:active {
+    background-color: @theme_selected_bg_color;
+    color: @theme_selected_fg_color;
+}
+
+button:disabled {
+    background-color: @insensitive_bg_color;
+    color: @insensitive_fg_color;
+}
+
+button.flat,
+button.titlebutton {
+    background-image: none;
+    background-color: transparent;
+}
+
+/* Indicators. */
+progressbar progress,
+levelbar block.filled,
+scale highlight,
+switch:checked {
+    background-color: @theme_selected_bg_color;
+    border-color: @theme_selected_bg_color;
+}
+
+progressbar trough,
+levelbar block.empty,
+scale trough,
+switch {
+    background-color: @raised_bg_color;
+    border-color: @borders;
+}
+
+check:checked,
+radio:checked {
+    background-color: @theme_selected_bg_color;
+    border-color: @theme_selected_bg_color;
+    color: @theme_selected_fg_color;
+}
+
+/* Notebook tabs: Adwaita dims every label, which leaves them unreadable once
+ * the background is this dark. */
+notebook > header {
+    background-color: @theme_bg_color;
+    border-color: @borders;
+}
+
+notebook > header > tabs > tab {
+    background-color: transparent;
+    color: @theme_unfocused_fg_color;
+}
+
+notebook > header > tabs > tab:hover {
+    color: @theme_fg_color;
+}
+
+notebook > header > tabs > tab:checked {
+    color: @theme_fg_color;
+    box-shadow: inset 0 -3px @theme_selected_bg_color;
+}
+
+menubar,
+menubar > menuitem {
+    background-color: @raised_bg_color;
+    color: @theme_fg_color;
+}
+
+menubar > menuitem:hover {
+    background-color: @theme_selected_bg_color;
+    color: @theme_selected_fg_color;
+}
+
+separator,
+paned > separator {
+    background-color: @borders;
+}
+
+label:disabled,
+.dim-label {
+    color: @insensitive_fg_color;
+}
+
+*:link,
+label:link {
+    color: @accent_color;
+}
+
+/* Adwaita paints the titlebar with a hardcoded gradient instead of the named
+ * colours, so it is painted again here. */
+headerbar,
+.titlebar,
+headerbar.titlebar {
+    background-image: none;
+    background-color: @raised_bg_color;
+    color: @theme_fg_color;
+    border-color: @borders;
+    box-shadow: none;
+    text-shadow: none;
+}
+
+headerbar:backdrop,
+.titlebar:backdrop {
+    background-image: none;
+    background-color: @theme_unfocused_bg_color;
+    color: @theme_unfocused_fg_color;
+}
+
+/* Menus and popovers sit a shade above the window, like the titlebar. */
+menu,
+.menu,
+.context-menu,
+popover.background,
+popover.background > contents {
+    background-image: none;
+    background-color: @raised_bg_color;
+    color: @theme_fg_color;
+    border: 1px solid @borders;
+}
+
+menu menuitem:hover,
+.menu menuitem:hover,
+popover.background modelbutton:hover {
+    background-image: none;
+    background-color: @theme_selected_bg_color;
+    color: @theme_selected_fg_color;
+}
+
+menu menuitem:disabled,
+.menu menuitem:disabled {
+    color: @insensitive_fg_color;
+}
+
+menu separator,
+.menu separator {
+    background-color: @borders;
+}
+
+tooltip,
+tooltip.background {
+    background-color: @raised_bg_color;
+    color: @theme_fg_color;
+    border: 1px solid @borders;
+}
+
+/* Entries and lists, so the omnibox and the file chooser match the window. */
+entry {
+    background-image: none;
+    background-color: @theme_base_color;
+    color: @theme_text_color;
+    border-color: @borders;
+}
+
+entry:focus {
+    border-color: @theme_selected_bg_color;
+    box-shadow: none;
+}
+
+entry selection,
+textview text selection,
+label selection {
+    background-color: @theme_selected_bg_color;
+    color: @theme_selected_fg_color;
+}
+
+notebook > header,
+notebook > header tab:checked {
+    background-color: @theme_bg_color;
+}
+
+.sidebar,
+placessidebar list {
+    background-color: @raised_bg_color;
+    color: @theme_fg_color;
+}
+
+scrollbar slider {
+    background-color: @insensitive_fg_color;
+}
+
+scrollbar slider:hover {
+    background-color: @theme_fg_color;
+}

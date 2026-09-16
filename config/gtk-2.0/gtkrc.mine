@@ -1,0 +1,40 @@
+# GTK 2 — goes to ~/.gtkrc-2.0.mine.
+#
+# ~/.gtkrc-2.0 carries a "DO NOT EDIT" header because LXAppearance rewrites it,
+# but it includes this file, so gruvbox lives here and survives.
+#
+# GTK 2 engines bake a lot of their colours in, so this is as close as GTK 2
+# gets. Breeze-Dark is the base because it is the darkest engine theme already
+# installed that reads gtk_color_scheme.
+
+gtk-theme-name = "Breeze-Dark"
+gtk-icon-theme-name = "Adwaita"
+
+# theme:begin gtk2
+gtk_color_scheme = "fg_color:#ebdbb2\nbg_color:#282828\nbase_color:#282828\ntext_color:#ebdbb2\nselected_fg_color:#282828\nselected_bg_color:#d79921\ntooltip_fg_color:#ebdbb2\ntooltip_bg_color:#3c3836"
+
+style "gruvbox-default" {
+    fg[NORMAL]        = "#ebdbb2"
+    fg[PRELIGHT]      = "#ebdbb2"
+    fg[SELECTED]      = "#282828"
+    fg[ACTIVE]        = "#ebdbb2"
+    fg[INSENSITIVE]   = "#928374"
+    bg[NORMAL]        = "#282828"
+    bg[PRELIGHT]      = "#3c3836"
+    bg[SELECTED]      = "#d79921"
+    bg[ACTIVE]        = "#3c3836"
+    bg[INSENSITIVE]   = "#282828"
+    base[NORMAL]      = "#282828"
+    base[PRELIGHT]    = "#3c3836"
+    base[SELECTED]    = "#d79921"
+    base[ACTIVE]      = "#504945"
+    base[INSENSITIVE] = "#282828"
+    text[NORMAL]      = "#ebdbb2"
+    text[PRELIGHT]    = "#ebdbb2"
+    text[SELECTED]    = "#282828"
+    text[ACTIVE]      = "#ebdbb2"
+    text[INSENSITIVE] = "#928374"
+}
+
+class "GtkWidget" style "gruvbox-default"
+# theme:end

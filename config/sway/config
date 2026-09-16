@@ -16,12 +16,9 @@ set $alert #cc241d
 set $disabled #928374
 # theme:end
 
-# Set GTK theme
-set $GTK_THEME Adwaita
 set $desktop_env sway
 seat seat0 xcursor_theme BreezeX-Light 28
 
-exec export GTK_THEME=$GTK_THEME
 exec export GTK2_RC_FILES=$HOME/.gtkrc-2.0
 exec export GTK3_MODULES=$HOME/.config/gtk-3.0/settings.ini
 

@@ -1,0 +1,308 @@
+/* GTK 4 and libadwaita — the colours are written by scripts/theme.sh.
+ *
+ * Goes to ~/.config/gtk-4.0/gtk.css. libadwaita builds its CSS variables out of
+ * these @define-color names, so redefining them repaints everything built on
+ * them; this is what dresses Nautilus. The legacy theme_* names below are for
+ * the GTK 4 apps that are not libadwaita apps.
+ */
+
+/* theme:begin gtk4 */
+@define-color window_bg_color #282828;
+@define-color window_fg_color #ebdbb2;
+@define-color view_bg_color #282828;
+@define-color view_fg_color #ebdbb2;
+
+@define-color headerbar_bg_color #3c3836;
+@define-color headerbar_fg_color #ebdbb2;
+@define-color headerbar_border_color #504945;
+@define-color headerbar_backdrop_color #282828;
+@define-color headerbar_shade_color alpha(black, 0.3);
+@define-color headerbar_darker_shade_color alpha(black, 0.5);
+
+@define-color sidebar_bg_color #3c3836;
+@define-color sidebar_fg_color #ebdbb2;
+@define-color sidebar_backdrop_color #282828;
+@define-color sidebar_border_color #504945;
+@define-color sidebar_shade_color alpha(black, 0.25);
+@define-color secondary_sidebar_bg_color #3c3836;
+@define-color secondary_sidebar_fg_color #ebdbb2;
+@define-color secondary_sidebar_backdrop_color #282828;
+@define-color secondary_sidebar_border_color #504945;
+@define-color secondary_sidebar_shade_color alpha(black, 0.25);
+
+@define-color card_bg_color #3c3836;
+@define-color card_fg_color #ebdbb2;
+@define-color card_shade_color alpha(black, 0.3);
+@define-color dialog_bg_color #3c3836;
+@define-color dialog_fg_color #ebdbb2;
+@define-color popover_bg_color #3c3836;
+@define-color popover_fg_color #ebdbb2;
+@define-color popover_shade_color alpha(black, 0.25);
+@define-color thumbnail_bg_color #504945;
+@define-color thumbnail_fg_color #ebdbb2;
+@define-color overview_bg_color #3c3836;
+@define-color overview_fg_color #ebdbb2;
+@define-color shade_color alpha(black, 0.25);
+@define-color scrollbar_outline_color #504945;
+
+/* Solid backgrounds carry dark text; the standalone ones are text on the
+ * window, so they take the bright half of the palette. */
+@define-color accent_bg_color #d79921;
+@define-color accent_fg_color #282828;
+@define-color accent_color #fabd2f;
+@define-color destructive_bg_color #cc241d;
+@define-color destructive_fg_color #ebdbb2;
+@define-color destructive_color #fb4934;
+@define-color error_bg_color #cc241d;
+@define-color error_fg_color #ebdbb2;
+@define-color error_color #fb4934;
+@define-color success_bg_color #98971a;
+@define-color success_fg_color #282828;
+@define-color success_color #b8bb26;
+@define-color warning_bg_color #d79921;
+@define-color warning_fg_color #282828;
+@define-color warning_color #fabd2f;
+
+/* The GTK 3 names, for the GTK 4 apps that are not libadwaita apps. */
+@define-color theme_bg_color #282828;
+@define-color theme_fg_color #ebdbb2;
+@define-color theme_base_color #282828;
+@define-color theme_text_color #ebdbb2;
+@define-color theme_selected_bg_color #d79921;
+@define-color theme_selected_fg_color #282828;
+@define-color insensitive_bg_color #282828;
+@define-color insensitive_fg_color #928374;
+@define-color insensitive_base_color #282828;
+@define-color borders #504945;
+@define-color unfocused_borders #3c3836;
+/* theme:end */
+
+/* libadwaita builds its rules out of the names above, so libadwaita apps such as
+ * Nautilus are already dressed by the block alone. Plain GTK 4 apps are not:
+ * GTK's own Adwaita stylesheet never references the names, every colour in it is
+ * a literal, so each surface has to be named. Brave is one of these — Chromium
+ * samples a rendered headerbar, window, entry and popover to colour its  * toolbar, omnibox and menus. */
+window,
+window.background,
+.background,
+dialog,
+scrolledwindow,
+toolbar,
+searchbar,
+actionbar,
+infobar,
+notebook,
+notebook > stack {
+    background-color: @window_bg_color;
+    color: @window_fg_color;
+}
+
+headerbar,
+.titlebar {
+    background-image: none;
+    background-color: @headerbar_bg_color;
+    color: @headerbar_fg_color;
+    border-color: @headerbar_border_color;
+    box-shadow: none;
+}
+
+headerbar:backdrop,
+.titlebar:backdrop {
+    background-color: @headerbar_backdrop_color;
+}
+
+popover > contents,
+popover > arrow,
+menu,
+.menu {
+    background-color: @popover_bg_color;
+    color: @popover_fg_color;
+    border-color: @borders;
+}
+
+popover modelbutton:hover,
+menuitem:hover {
+    background-color: @accent_bg_color;
+    color: @accent_fg_color;
+}
+
+listview,
+columnview,
+gridview,
+list,
+textview,
+textview text,
+.view {
+    background-color: @view_bg_color;
+    color: @view_fg_color;
+}
+
+/* Rows stay transparent so they take the colour of whatever holds them: the
+ * view in a file list, the sidebar in a sidebar. Painting them directly draws a
+ * visible rectangle per row wherever the two differ. */
+list row,
+listview row,
+.navigation-sidebar,
+.navigation-sidebar row,
+.navigation-sidebar list {
+    background-color: transparent;
+}
+
+/* libadwaita separates sidebar rows with a near-invisible shade. The generic
+ * separator rule further down would repaint those as hard lines, so rows keep
+ * their own borders off. */
+.navigation-sidebar row,
+.navigation-sidebar row separator,
+list row separator {
+    border: none;
+    box-shadow: none;
+    background-color: transparent;
+}
+
+list row:selected,
+listview row:selected,
+.view:selected {
+    background-color: @accent_bg_color;
+    color: @accent_fg_color;
+}
+
+list row:hover,
+listview row:hover {
+    background-color: @card_bg_color;
+}
+
+columnview header button,
+treeview header button {
+    background-image: none;
+    background-color: @card_bg_color;
+    color: @window_fg_color;
+    border-color: @borders;
+}
+
+entry,
+spinbutton,
+searchentry,
+text {
+    background-image: none;
+    background-color: @view_bg_color;
+    color: @view_fg_color;
+    border-color: @borders;
+}
+
+entry:focus,
+text:focus {
+    border-color: @accent_bg_color;
+    box-shadow: none;
+}
+
+selection,
+entry selection,
+textview text selection {
+    background-color: @accent_bg_color;
+    color: @accent_fg_color;
+}
+
+button,
+combobox button,
+dropdown button {
+    background-image: none;
+    background-color: @card_bg_color;
+    color: @window_fg_color;
+    border-color: @borders;
+    text-shadow: none;
+}
+
+button:hover {
+    background-color: @thumbnail_bg_color;
+}
+
+button:checked,
+button:active {
+    background-color: @accent_bg_color;
+    color: @accent_fg_color;
+}
+
+button:disabled {
+    color: @insensitive_fg_color;
+}
+
+button.flat,
+button.titlebutton {
+    background-image: none;
+    background-color: transparent;
+}
+
+progressbar progress,
+levelbar block.filled,
+scale highlight,
+switch:checked {
+    background-color: @accent_bg_color;
+}
+
+progressbar trough,
+levelbar block.empty,
+scale trough,
+switch {
+    background-color: @card_bg_color;
+    border-color: @borders;
+}
+
+check:checked,
+radio:checked {
+    background-color: @accent_bg_color;
+    color: @accent_fg_color;
+    border-color: @accent_bg_color;
+}
+
+notebook > header {
+    background-color: @window_bg_color;
+    border-color: @borders;
+}
+
+notebook > header > tabs > tab:checked {
+    color: @window_fg_color;
+    box-shadow: inset 0 -3px @accent_bg_color;
+}
+
+paned > separator,
+separator.horizontal,
+separator.vertical {
+    background-color: @borders;
+}
+
+label:disabled {
+    color: @insensitive_fg_color;
+}
+
+/* What follows covers the few places libadwaita itself hardcodes. */
+window.background,
+.background {
+    background-color: @window_bg_color;
+    color: @window_fg_color;
+}
+
+tooltip,
+tooltip.background {
+    background-color: @popover_bg_color;
+    color: @popover_fg_color;
+}
+
+/* Nautilus tints the path bar and the rubberband with the accent. */
+.navigation-sidebar {
+    background-color: @sidebar_bg_color;
+    color: @sidebar_fg_color;
+}
+
+rubberband,
+.rubberband {
+    background-color: alpha(@accent_bg_color, 0.25);
+    border: 1px solid @accent_bg_color;
+}
+
+scrollbar slider {
+    background-color: alpha(@window_fg_color, 0.4);
+}
+
+scrollbar slider:hover {
+    background-color: alpha(@window_fg_color, 0.7);
+}
