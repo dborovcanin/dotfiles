@@ -3,9 +3,10 @@ set -euo pipefail
 
 # Copies the configs that programs insist on reading from their own locations.
 #
-# Usage: install.sh [--dry-run] [--no-backup]
+# Usage: install.sh [--dry-run] [--no-backup] [--no-reload]
 #        --dry-run   print what would happen and change nothing
 #        --no-backup overwrite without keeping the file that was there
+#        --no-reload copy the files and leave running programs alone
 #
 # Colours are not written here: scripts/theme.sh writes them into the repo, and
 # this copies the result out. Run theme.sh first if a theme has just changed.
@@ -39,18 +40,36 @@ set -euo pipefail
 # background with libadwaita's light-on-dark text over it - unreadable, and the
 # reason this is done here rather than left as advice.
 #
-# One thing is left to do by hand, printed on the way out: tlp.conf belongs to
-# /etc and needs root. X11 clients also want `xrdb -merge ~/.Xresources` before
-# the cursor and colours in it take effect, which this runs when xrdb is there.
+# What is running is then told to re-read its configuration, so that a copy and
+# a visible change are the same step. Only programs that are actually running
+# are touched, and only through the mechanism each one documents: sway and i3
+# reload over their IPC, dunst over dunstctl, picom on SIGUSR1, polybar by
+# restarting its bars, tmux by sourcing its file again, and foot by switching
+# between the theme blocks its config already carries. niri watches its own
+# config file and needs nobody's help. dbar has no reload path and is therefore
+# restarted, with the argv it was started with.
+#
+# This runs whether or not a file changed here, because the configs that are
+# read from the clone - dbar, dunst, picom, polybar, the i3 status bar - are
+# rewritten by theme.sh without this script seeing it. Reloading is cheap and
+# repeatable; --no-reload turns it off.
+#
+# Two things are left to do by hand, printed on the way out: tlp.conf belongs to
+# /etc and needs root, and a running helix re-reads its config on `:config-reload`
+# - it is not signalled here, because an editor that does not handle the signal
+# dies of it and takes unsaved buffers with it. X11 clients also want
+# `xrdb -merge ~/.Xresources` before the cursor and colours in it take effect,
+# which this runs when xrdb is there.
 
 usage() {
-    sed -n '4,40s/^# \{0,1\}//p' "$0"
+    sed -n '4,${/^#/!q;s/^# \{0,1\}//p}' "$0"
 }
 
 root=$(realpath "$(dirname "$(realpath "${BASH_SOURCE[0]}")")/..")
 backup=$HOME/.config/dotfiles-backup-$(date +%Y%m%d-%H%M%S)
 dry_run=0
 keep_backup=1
+do_reload=1
 
 # src|dst, one per line. src is relative to the repo, dst absolute.
 targets() {
@@ -157,6 +176,7 @@ while (($#)); do
     case $1 in
         --dry-run) dry_run=1 ;;
         --no-backup) keep_backup=0 ;;
+        --no-reload) do_reload=0 ;;
         -h | --help) usage; exit 0 ;;
         *) usage >&2; exit 2 ;;
     esac
@@ -171,24 +191,35 @@ while IFS='|' read -r src dst; do
 done < <(targets)
 put_fish
 
-# The theme applied last decides whether the desktop asks for light or dark.
-sync_scheme() {
-    local name file want have
+# light or dark, as the theme applied last asked for; empty when there is no
+# readable theme to ask. Both the desktop setting and foot's colours want this.
+theme_scheme() {
+    local name file
     name=$(cat "$root/themes/current" 2>/dev/null) || return 0
     [[ -n ${name:-} ]] || return 0
     if [[ $name == */* ]]; then file=$name; else file=$root/themes/$name.sh; fi
     [[ -r $file ]] || return 0
-    command -v gsettings >/dev/null || return 0
 
     # Sourced in a subshell: these files set THEME_* wholesale and this script
     # has no business carrying them afterwards.
-    want=$(
+    (
         # shellcheck disable=SC1090
         THEME_SCHEME=dark
         source "$root/themes/gruvbox.sh" 2>/dev/null
         source "$file" 2>/dev/null
-        [[ $THEME_SCHEME == light ]] && echo prefer-light || echo prefer-dark
+        [[ $THEME_SCHEME == light ]] && echo light || echo dark
     )
+}
+
+# The theme applied last decides whether the desktop asks for light or dark.
+sync_scheme() {
+    local name scheme want have
+    name=$(cat "$root/themes/current" 2>/dev/null) || return 0
+    scheme=$(theme_scheme)
+    [[ -n $scheme ]] || return 0
+    command -v gsettings >/dev/null || return 0
+
+    [[ $scheme == light ]] && want=prefer-light || want=prefer-dark
     have=$(gsettings get org.gnome.desktop.interface color-scheme 2>/dev/null | tr -d \')
     [[ $have == "$want" ]] && return 0
     say "scheme" "$want (was $have), for $name"
@@ -205,8 +236,125 @@ sync_xrdb() {
     xrdb -merge "$HOME/.Xresources" 2>/dev/null || true
 }
 
+# --- Telling what is running to re-read what was just written ---------------
+#
+# Every one of these is a no-op unless that program is running, so the same
+# script is correct on a machine that has none of them, and a failure to reload
+# is never a failure to install: the files are already on disk by this point.
+
+running() { pgrep -x "$1" >/dev/null 2>&1; }
+
+reload_sway() {
+    [[ -n ${SWAYSOCK:-} ]] || return 0
+    command -v swaymsg >/dev/null || return 0
+    say "reload" "sway"
+    ((dry_run)) || swaymsg -q reload || true
+}
+
+reload_i3() {
+    command -v i3-msg >/dev/null || return 0
+    running i3 || return 0
+    say "reload" "i3"
+    ((dry_run)) || i3-msg -q reload >/dev/null 2>&1 || true
+}
+
+# dunst was started with -config pointing into the clone, so the reload has to
+# name the same file. Left bare it would re-read the default path instead and
+# quietly forget the theme.
+reload_dunst() {
+    command -v dunstctl >/dev/null || return 0
+    running dunst || return 0
+    say "reload" "dunst"
+    ((dry_run)) || dunstctl reload "$root/config/dunst/dunstrc" >/dev/null 2>&1 || true
+}
+
+reload_picom() {
+    running picom || return 0
+    say "reload" "picom"
+    ((dry_run)) || pkill -USR1 -x picom || true
+}
+
+reload_polybar() {
+    command -v polybar-msg >/dev/null || return 0
+    running polybar || return 0
+    say "reload" "polybar"
+    ((dry_run)) || polybar-msg cmd restart >/dev/null 2>&1 || true
+}
+
+reload_tmux() {
+    command -v tmux >/dev/null || return 0
+    tmux has-session >/dev/null 2>&1 || return 0
+    say "reload" "tmux"
+    ((dry_run)) || tmux source-file "$HOME/.tmux.conf" >/dev/null 2>&1 || true
+}
+
+# foot has no config reload. What it does have is [colors-dark] and
+# [colors-light] in the file it already read, and a signal that chooses between
+# them - which is the half of foot.ini a theme change actually moves.
+reload_foot() {
+    local scheme
+    running foot || return 0
+    scheme=$(theme_scheme)
+    [[ -n $scheme ]] || return 0
+    say "reload" "foot ($scheme colours)"
+    ((dry_run)) && return 0
+    if [[ $scheme == light ]]; then
+        pkill -USR2 -x foot || true
+    else
+        pkill -USR1 -x foot || true
+    fi
+}
+
+# dbar reads its config once and has no reload path, so it is restarted with the
+# argv it was started with, taken from the process itself: sway starts it
+# straight from the clone, while niri points it at a copy under $XDG_RUNTIME_DIR
+# with the layer rewritten. That copy is regenerated first, or the restart would
+# put the pre-theme file back on screen. The rewrite is the line in
+# config/niri/config.kdl, and the two have to move together.
+reload_dbar() {
+    local pid conf i argv
+    command -v dbar >/dev/null || return 0
+    running dbar || return 0
+    say "reload" "dbar (restart)"
+    ((dry_run)) && return 0
+    for pid in $(pgrep -x dbar); do
+        mapfile -d '' -t argv <"/proc/$pid/cmdline" 2>/dev/null || continue
+        ((${#argv[@]})) || continue
+        conf=""
+        for ((i = 0; i < ${#argv[@]}; i++)); do
+            [[ ${argv[i]} == -c ]] && conf=${argv[i + 1]:-}
+        done
+        if [[ -n $conf && $conf != "$root"/* && -f $root/config/dbar/config.toml ]]; then
+            sed 's/^layer = "bottom"$/layer = "top"/' \
+                "$root/config/dbar/config.toml" >"$conf"
+        fi
+        kill "$pid" 2>/dev/null || continue
+        # Wait for the surface to go before asking for another one.
+        for _ in $(seq 20); do
+            kill -0 "$pid" 2>/dev/null || break
+            sleep 0.1
+        done
+        setsid "${argv[@]}" >/dev/null 2>&1 &
+    done
+}
+
+reload_running() {
+    ((do_reload)) || return 0
+    # niri watches its own config file and has already reloaded from the copy
+    # above; alacritty and kitty watch theirs. None of the three is signalled.
+    reload_sway
+    reload_i3
+    reload_dunst
+    reload_picom
+    reload_polybar
+    reload_tmux
+    reload_foot
+    reload_dbar
+}
+
 sync_scheme
 sync_xrdb
+reload_running
 
 printf '\n%d %s, %d already current' "$installed" \
     "$( ((dry_run)) && echo "to install" || echo installed )" "$skipped"
@@ -221,7 +369,10 @@ Not copied, on purpose:
   dbar, dunst, picom, polybar, rofi, i3/status.toml, bin, scripts
                         read from the clone by the window manager configs
 
-Reload what is running: sway and niri re-read their config on reload, dunst and
-tmux need restarting, and GTK and Qt apps pick up colours when they next start.
-The desktop colour scheme and the X resource database were handled above.
+Reloaded above, where the program was running: sway, i3, dunst, picom, polybar,
+tmux, foot's colour block, and dbar by restarting it. niri, alacritty and kitty
+watch their own config files. Left by hand: a running helix wants
+`:config-reload` typed into it, since an editor that does not handle the signal
+dies of it, and GTK and Qt apps pick up colours when they next start. The
+desktop colour scheme and the X resource database were handled above.
 EOF

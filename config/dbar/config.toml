@@ -25,6 +25,15 @@ layer = "bottom"
 margin = 3
 font = "Adwaita Sans 18"
 
+# Read this file again without restarting the bar: `pkill -RTMIN+6 dbar`, which is what
+# scripts/install.sh sends once a theme has been copied out. A restart would show the same
+# colours, but it takes the tray with it - every application has to register with the new
+# bar, and some do not until they are restarted themselves. Wording, colours, styles,
+# formats and geometry are taken. A changed source, interval, signal or tray still needs a
+# restart, and dbar applies none of the file rather than half of it, saying which key
+# wanted one.
+reload_signal = 6
+
 # What to draw a character the bar's own font has no glyph for.
 #
 # A bar shows text it did not write: workspace names carrying Nerd Font glyphs, a window
