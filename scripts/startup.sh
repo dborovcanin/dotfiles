@@ -27,7 +27,7 @@ if [ -z "${WAYLAND_DISPLAY:-}" ]; then
         fi
     fi
 
-    wallpaper="$HOME/Downloads/bg2.jpg"
+    wallpaper="$HOME/dotfiles/themes/bg.jpg"
     if [ -f "$wallpaper" ] && command -v feh >/dev/null 2>&1; then
         feh --bg-scale "$wallpaper" >/dev/null 2>&1 &
     fi

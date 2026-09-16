@@ -205,7 +205,9 @@ bindsym $mod+r mode "resize"
 
 set $mode_system System (l) lock, (e) logout, (s) suspend, (h) hibernate, (r) reboot, (Shift+s) shutdown
 mode "$mode_system" {
-     bindsym l exec --no-startup-id i3exit lock, mode "default"
+     # i3lock reads only PNG, so it gets the PNG copy of the blurred background
+     # that scripts/background.sh renders.
+     bindsym l exec --no-startup-id i3lock -i $HOME/dotfiles/themes/bg-blur.png, mode "default"
      bindsym e exec --no-startup-id i3exit logout, mode "default"
      bindsym s exec --no-startup-id i3exit suspend, mode "default"
      bindsym h exec --no-startup-id i3exit hibernate, mode "default"

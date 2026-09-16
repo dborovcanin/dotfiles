@@ -68,7 +68,10 @@ C_REBOOT=${POWER_REBOOT_COLOR:-"#fe8019"}
 C_SHUTDOWN=${POWER_SHUTDOWN_COLOR:-"#fb4934"}
 # theme:end
 
-LOCK_IMAGE=${POWER_LOCK_IMAGE:-"$HOME/Downloads/bg-blur.jpg"}
+# The blurred background scripts/background.sh renders. i3lock reads only PNG,
+# so it is given the other copy of the same picture.
+LOCK_IMAGE=${POWER_LOCK_IMAGE:-"$HOME/dotfiles/themes/bg-blur.jpg"}
+LOCK_IMAGE_PNG=${POWER_LOCK_IMAGE_PNG:-"$HOME/dotfiles/themes/bg-blur.png"}
 CONFIRM=${POWER_CONFIRM:-"logout reboot shutdown"}
 
 # Nerd Font glyphs, spelled as code points so the file survives an editor that
@@ -93,9 +96,13 @@ lock_cmd() {
                 swaylock -f -c "${BG#\#}"
             fi
             ;;
-        # i3lock reads only PNG, so the blurred JPEG sway locks with is no use to
-        # it and it gets the plain background instead.
-        i3) i3lock -c "${BG#\#}" ;;
+        i3)
+            if [[ -f $LOCK_IMAGE_PNG ]]; then
+                i3lock -i "$LOCK_IMAGE_PNG"
+            else
+                i3lock -c "${BG#\#}"
+            fi
+            ;;
         *) loginctl lock-session ;;
     esac
 }

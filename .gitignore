@@ -1,2 +1,10 @@
 config/i3/autoload.txt
 bin
+
+# The backgrounds scripts/background.sh renders. They are megabytes each and a
+# new one every time, so the picture stays where it was picked from and only
+# themes/bg.source, which names it, is kept.
+themes/bg.jpg
+themes/bg.png
+themes/bg-blur.jpg
+themes/bg-blur.png

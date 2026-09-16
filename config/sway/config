@@ -224,11 +224,10 @@ mode "resize" {
 }
 bindsym $mod+r mode "resize"
 
-# set $bg /home/dusan/Downloads/bg.jpg
-# set $lockbg /home/dusan/Downloads/bg-blur.jpg
-
-set $bg ~/Pictures/backgrounds/gruvbox-wallpapers/wallpapers/mix/Powerline.png
-set $lockbg ~/Pictures/backgrounds/gruvbox-wallpapers/wallpapers/mix/Powerline-blur.png
+# The backgrounds scripts/background.sh renders from a picture: the wallpaper
+# and the same picture blurred, which is what the lock screen shows.
+set $bg $dotfiles/themes/bg.jpg
+set $lockbg $dotfiles/themes/bg-blur.jpg
 
 set $mode_system System (l) lock, (t) travel lock, (e) logout, (s) suspend, (h) hibernate, (r) reboot, (Shift+s) shutdown
 
