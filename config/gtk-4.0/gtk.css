@@ -287,6 +287,22 @@ tooltip.background {
     color: @popover_fg_color;
 }
 
+/* The desktop carries an accent colour of its own, and libadwaita rewrites its
+ * accent variables from it through a provider that outranks this file - so a
+ * selected sidebar row came out in the desktop's blue whatever the palette said,
+ * which is what this is for. The variables cannot be won back, but an ordinary
+ * rule can: rules here outrank the theme's, so naming the colour directly
+ * sticks. The row keeps libadwaita's tinted-not-filled look, in our accent. */
+.navigation-sidebar row:selected {
+    background-color: alpha(@accent_bg_color, 0.25);
+    color: @accent_color;
+}
+
+.navigation-sidebar row:selected label,
+.navigation-sidebar row:selected image {
+    color: @accent_color;
+}
+
 /* Nautilus tints the path bar and the rubberband with the accent. */
 .navigation-sidebar {
     background-color: @sidebar_bg_color;
