@@ -11,7 +11,7 @@
     separator_height = 2
     padding = 10
     horizontal_padding = 12
-    frame_width = 3
+    frame_width = 4
     corner_radius = 10
     # theme:begin dunst-global
     frame_color = "#d79921"
