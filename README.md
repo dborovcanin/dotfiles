@@ -1,3 +1,72 @@
-# My config files
+# dotfiles
 
-This is my conifg for `zsh`, `tmux`, `i3wm` and some tools I use on a daily basis. Repo contains config files and themes. This config is highly inspired by [this one](https://github.com/mijicd/dotfiles).
+Config for my Linux desktop: window managers (niri, sway, Hyprland, i3), terminals,
+shells, editors and the scripts that hold them together. Every colour in the repo
+comes from one theme file, so a single command restyles the whole desktop.
+
+## Layout
+
+| Path                    | What                                                                                                                                |
+| ----------------------- | ----------------------------------------------------------------------------------------------------------------------------------- |
+| `config/`               | per-program configs (niri, sway, hypr, i3, foot, alacritty, fish, helix, nvim, rofi, dunst, polybar, dbar, btop, gtk, qt, starship) |
+| `scripts/`              | launcher, screenshot, clipboard, power, brightness, background, theme, startup                                                      |
+| `themes/`               | colour themes (`nord.sh`, `gruvbox-dark.sh`, …) and the wallpaper                                                                   |
+| `tools/`                | Go helpers, built into `bin/`                                                                                                       |
+| `zsh/`, `tmux/`, `etc/` | shell, tmux and system files                                                                                                        |
+
+## Requirements
+
+- Core: `bash`, `git`, `fish` or `zsh`, `tmux`
+- Desktop: one of `niri` / `sway` / `hyprland` / `i3`, plus `rofi`, `dunst`,
+  a bar (`dbar`, `polybar` or i3status) and a terminal (`foot`, `alacritty`)
+- Scripts: `fzf`, `jq`, `fd`, `magick` (ImageMagick), `wl-clipboard` or `xclip`,
+  `swaybg`/`feh`, `gsettings`, `xrdb` (X11)
+- Tools: Go 1.26+ to build `tools/`
+
+Everything is probed at runtime; missing programs are skipped, not fatal.
+
+## Install
+
+```sh
+git clone https://github.com/dborovcanin/dotfiles ~/dotfiles
+cd ~/dotfiles
+./scripts/install.sh --dry-run   # see what would be replaced
+./scripts/install.sh
+```
+
+`install.sh` copies the configs that programs insist on reading from their own
+paths, backs up what it replaces under `~/.config/dotfiles-backup-<timestamp>`,
+and reloads whatever is running. Flags: `--dry-run`, `--no-backup`, `--no-reload`.
+
+The clone must live at `~/dotfiles`: the window manager configs run `scripts/`,
+`bin/` and the bar, notification and launcher configs straight out of it, so
+those are deliberately not copied.
+
+`etc/tlp.conf` needs root: `sudo cp etc/tlp.conf /etc/tlp.conf`.
+
+## Setup
+
+Build the Go tools (`bin/search`, used by the launcher):
+
+```sh
+make -C tools install       # builds bin/, installs into ~/.local/bin
+```
+
+Pick a theme, then install so the copies land in `~`:
+
+```sh
+./scripts/theme.sh list
+./scripts/theme.sh apply nord
+./scripts/install.sh
+```
+
+`theme.sh` rewrites every block marked `theme:begin` / `theme:end` in the repo;
+`theme.sh current` shows the theme in use, `theme.sh check` verifies the blocks.
+
+Pick a wallpaper (renders sharp and blurred copies for the lock screen):
+
+```sh
+./scripts/background.sh
+```
+
+Note: Make backups of your config files if you want to make sure nothing is lost.
