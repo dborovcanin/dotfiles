@@ -8,6 +8,7 @@ set -euo pipefail
 #        -b, --blur SPEC   the blur passed to magick (default 0x6)
 #        -q, --quality N   JPEG quality (default 92)
 #        -y, --yes         write without asking
+#        -n, --no-reload   write the files and leave the screen alone
 #            --show        print what is installed now and stop
 #
 # With no image, every picture under DIR is listed in fzf: type to narrow, the
@@ -24,11 +25,14 @@ set -euo pipefail
 # Both formats are kept because the lock screens disagree: swaylock reads either
 # and gets the JPEG, i3lock reads only PNG.
 #
-# The sway, niri and i3 configs name these paths, so a new background is live
-# after the window manager restarts what draws it - nothing here reloads it.
+# The sway, niri and i3 configs name these paths, so whatever is drawing the old
+# picture is told to draw the new one once the files are written: sway is asked
+# to reload, a swaybg started by anything else is started again with its own
+# argv, and feh is run again on X11. The lock screens open the file when they
+# lock, so they are already current. --no-reload leaves all of that alone.
 
 usage() {
-    sed -n '4,27s/^# \{0,1\}//p' "$0"
+    sed -n '4,32s/^# \{0,1\}//p' "$0"
 }
 
 root=$(realpath "$(dirname "$(realpath "${BASH_SOURCE[0]}")")/..")
@@ -39,6 +43,7 @@ dir=${BACKGROUND_DIR:-$HOME/Pictures}
 blur=0x6
 quality=92
 assume_yes=0
+do_reload=1
 picture=
 
 # The extensions worth offering. webp and avif are read by magick and turned
@@ -201,9 +206,66 @@ apply() {
         printf '  %-12s %s\n' "$name" "$(identify -format '%wx%h  %b' "$themes/$name")"
     done
 
+    reload_backgrounds
+}
+
+# ---------------------------------------------------------------------------
+# Putting the new picture on screen. Every one of these is a no-op unless that
+# program is running here, so the same script is right on any of the three
+# desktops, and a reload that fails is never a write that failed: the files are
+# on disk by the time any of this runs.
+# ---------------------------------------------------------------------------
+
+# sway spawns swaybg itself from the `bg` lines in its output blocks and starts
+# it again on every reload, so asking sway is enough and the paths stay in one
+# place. No exec_always in the config, so nothing else is started twice.
+reload_sway() {
+    [[ -n ${SWAYSOCK:-} ]] || return 0
+    command -v swaymsg >/dev/null || return 0
+    echo "  reload       sway"
+    swaymsg -q reload || true
+    return 0
+}
+
+# A swaybg nothing owns - niri spawns one at startup and never touches it
+# again - is replaced by one started with the same argv, so the outputs and
+# modes it was given survive. The new surface is up before the old one goes,
+# which is what keeps the desktop from flashing black in between.
+reload_swaybg() {
+    local pid argv had=0
+    command -v swaybg >/dev/null || return 0
+    for pid in $(pgrep -x swaybg 2>/dev/null); do
+        mapfile -d '' -t argv <"/proc/$pid/cmdline" 2>/dev/null || continue
+        ((${#argv[@]})) || continue
+        setsid "${argv[@]}" >/dev/null 2>&1 &
+        sleep 0.3
+        kill "$pid" 2>/dev/null || true
+        had=1
+    done
+    ((had)) && echo "  reload       swaybg"
+    return 0
+}
+
+# X11: feh writes the root pixmap and exits, so there is no feh to signal - it
+# is run again the way scripts/startup.sh runs it. Skipped under a compositor,
+# where DISPLAY is Xwayland's and its root window is on no screen.
+reload_feh() {
+    [[ -n ${DISPLAY:-} && -z ${WAYLAND_DISPLAY:-} ]] || return 0
+    command -v feh >/dev/null || return 0
+    echo "  reload       feh"
+    feh --bg-scale "$themes/bg.jpg" >/dev/null 2>&1 || true
+    return 0
+}
+
+reload_backgrounds() {
+    ((do_reload)) || return 0
     echo
-    echo "Reload the wallpaper: sway and niri redraw it when they restart swaybg,"
-    echo "or run 'swaybg -i $themes/bg.jpg -m fill' over the one running."
+    if [[ -n ${SWAYSOCK:-} ]]; then
+        reload_sway
+    else
+        reload_swaybg
+    fi
+    reload_feh
 }
 
 case ${1:-} in
@@ -223,6 +285,7 @@ while (($#)); do
         -b | --blur) blur=${2:?--blur needs a spec like 0x6}; shift ;;
         -q | --quality) quality=${2:?--quality needs a number}; shift ;;
         -y | --yes) assume_yes=1 ;;
+        -n | --no-reload) do_reload=0 ;;
         --show) show; exit 0 ;;
         -h | --help) usage; exit 0 ;;
         -*) usage >&2; exit 2 ;;
