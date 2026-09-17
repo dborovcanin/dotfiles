@@ -10,7 +10,7 @@ set -euo pipefail
 # Logging out, rebooting and shutting down ask once more before they happen,
 # because a stray Return here costs everything that was open.
 #
-# Usage: power.sh [--wm sway|niri|i3|hyprland|generic]
+# Usage: power.sh [--wm sway|niri|hyprland|i3|generic]
 #
 # Only locking, logging out and the travel lock depend on the window manager.
 # Without --wm (or POWER_WM) it is worked out from the sockets each one leaves
@@ -69,9 +69,12 @@ C_SHUTDOWN=${POWER_SHUTDOWN_COLOR:-"#fb4934"}
 # theme:end
 
 # The blurred background scripts/background.sh renders. i3lock reads only PNG,
-# so it is given the other copy of the same picture.
+# so it is given the other copy of the same picture. hyprlock is the odd one
+# out: it takes no picture on the command line and reads the path from its own
+# config, which is themed and lives in the clone.
 LOCK_IMAGE=${POWER_LOCK_IMAGE:-"$HOME/dotfiles/themes/bg-blur.jpg"}
 LOCK_IMAGE_PNG=${POWER_LOCK_IMAGE_PNG:-"$HOME/dotfiles/themes/bg-blur.png"}
+HYPRLOCK_CONF=${POWER_HYPRLOCK_CONF:-"$HOME/dotfiles/config/hypr/hyprlock.conf"}
 CONFIRM=${POWER_CONFIRM:-"logout reboot shutdown"}
 
 # Nerd Font glyphs, spelled as code points so the file survives an editor that
@@ -89,7 +92,14 @@ here=$(dirname "$(realpath "${BASH_SOURCE[0]}")")
 
 lock_cmd() {
     case $WM in
-        sway | niri | hyprland)
+        hyprland)
+            # hyprlock names its own picture, in the config beside hyprland's,
+            # and has no -f: it is detached here so that the menu can exit, and
+            # guarded so that a second press does not stack another locker on
+            # top of the first.
+            pidof hyprlock >/dev/null || setsid -f hyprlock -c "$HYPRLOCK_CONF" >/dev/null 2>&1
+            ;;
+        sway | niri)
             if [[ -f $LOCK_IMAGE ]]; then
                 swaylock -f -i "$LOCK_IMAGE"
             else
@@ -117,9 +127,9 @@ logout_cmd() {
     esac
 }
 
-# The travel lock blanks outputs through sway or niri and shoots them with grim,
-# so it is offered only where it can work: under those two, or wherever POWER_TRAVEL_CMD
-# names something that does the same job.
+# The travel lock blanks outputs through sway, niri or hyprland and shoots them with
+# grim, so it is offered only where it can work: under those three, or wherever
+# POWER_TRAVEL_CMD names something that does the same job.
 travel_cmd() {
     if [[ -n ${POWER_TRAVEL_CMD:-} ]]; then
         eval "$POWER_TRAVEL_CMD"
@@ -162,7 +172,7 @@ add() {
 }
 
 add lock "$I_LOCK" "$C_LOCK" Lock l l
-if [[ $WM == sway || $WM == niri || -n ${POWER_TRAVEL_CMD:-} ]]; then
+if [[ $WM == sway || $WM == niri || $WM == hyprland || -n ${POWER_TRAVEL_CMD:-} ]]; then
     add travel "$I_TRAVEL" "$C_TRAVEL" Travel t t
 fi
 can Suspend && add suspend "$I_SUSPEND" "$C_SUSPEND" Suspend s s

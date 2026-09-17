@@ -13,7 +13,7 @@ start_once() {
 }
 
 # Under i3 (X11): turn the built-in monitor off when an external one is
-# connected, and set the wallpaper. Sway and niri do both in their configs.
+# connected, and set the wallpaper. Sway, niri and hyprland do both in their configs.
 if [ -z "${WAYLAND_DISPLAY:-}" ]; then
     if command -v xrandr >/dev/null 2>&1; then
         xr_state="$(xrandr --query 2>/dev/null || true)"

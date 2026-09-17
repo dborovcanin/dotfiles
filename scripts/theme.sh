@@ -65,6 +65,51 @@ render_niri_tabs() {
 EOF
 }
 
+# Hyprland writes a colour as rgb(RRGGBB), with no '#' and no quotes. It has no
+# urgent colour to set: an urgent window is reached with focusurgentorlast
+# rather than shown.
+hypr_rgb() { printf 'rgb(%s)' "${1#\#}"; }
+
+render_hypr_background() {
+  printf '    background_color = %s\n' "$(hypr_rgb "$THEME_BG")"
+}
+
+render_hypr_border() {
+  printf '    col.active_border = %s\n' "$(hypr_rgb "$THEME_BORDER")"
+  printf '    col.inactive_border = %s\n' "$(hypr_rgb "$THEME_BG_ALT")"
+}
+
+render_hypr_group() {
+  printf '    col.border_active = %s\n' "$(hypr_rgb "$THEME_BORDER")"
+  printf '    col.border_inactive = %s\n' "$(hypr_rgb "$THEME_BG_ALT")"
+}
+
+# The tab strip on a grouped window, which is what $mod+w makes. Inactive tabs
+# take the dim colour the niri tab indicator uses, so the two agree on screen.
+render_hypr_groupbar() {
+  printf '        col.active = %s\n' "$(hypr_rgb "$THEME_BORDER")"
+  printf '        col.inactive = %s\n' "$(hypr_rgb "$THEME_DIM")"
+}
+
+# hyprlock. The password box borrows the window border colour, so the thing that
+# has the keyboard looks the same locked as it does unlocked, and turns blue
+# while the password is being checked and red when it is refused.
+render_hyprlock_input() {
+  printf '    inner_color = %s\n' "$(hypr_rgb "$THEME_BG_ALT")"
+  printf '    outer_color = %s\n' "$(hypr_rgb "$THEME_BORDER")"
+  printf '    check_color = %s\n' "$(hypr_rgb "$THEME_BLUE")"
+  printf '    fail_color = %s\n' "$(hypr_rgb "$THEME_RED")"
+  printf '    font_color = %s\n' "$(hypr_rgb "$THEME_FG")"
+}
+
+render_hyprlock_clock() {
+  printf '    color = %s\n' "$(hypr_rgb "$THEME_FG")"
+}
+
+render_hyprlock_date() {
+  printf '    color = %s\n' "$(hypr_rgb "$THEME_DIM")"
+}
+
 # foot wants the sixteen colours without '#'. Since foot 1.27 there is no plain
 # [colors] section: there is [colors-dark] and [colors-light], and foot picks
 # between them by what the desktop asks for. Both get the same colours, so the

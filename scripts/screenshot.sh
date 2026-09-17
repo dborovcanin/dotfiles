@@ -3,7 +3,8 @@ set -euo pipefail
 
 # Select an area, annotate it, and copy the result to the clipboard.
 #
-# Wayland (sway, niri): grim + slurp, annotated in satty, copied with wl-copy.
+# Wayland (sway, niri, hyprland): grim + slurp, annotated in satty, copied with
+# wl-copy.
 # X11 (i3): flameshot, copied with xclip, then focus goes back where it was.
 
 if [[ -n ${WAYLAND_DISPLAY:-} ]]; then

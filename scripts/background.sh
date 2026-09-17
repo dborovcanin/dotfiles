@@ -25,10 +25,11 @@ set -euo pipefail
 # Both formats are kept because the lock screens disagree: swaylock reads either
 # and gets the JPEG, i3lock reads only PNG.
 #
-# The sway, niri and i3 configs name these paths, so whatever is drawing the old
-# picture is told to draw the new one once the files are written: sway is asked
-# to reload, a swaybg started by anything else is started again with its own
-# argv, and feh is run again on X11. The lock screens open the file when they
+# The sway, niri, hyprland and i3 configs name these paths, so whatever is
+# drawing the old picture is told to draw the new one once the files are
+# written: sway is asked to reload, hyprpaper is told to drop and preload the
+# file it is holding, a swaybg started by anything else is started again with
+# its own argv, and feh is run again on X11. The lock screens open the file when they
 # lock, so they are already current. --no-reload leaves all of that alone.
 
 usage() {
@@ -246,6 +247,36 @@ reload_swaybg() {
     return 0
 }
 
+# hyprpaper holds the picture in memory, so a file that changed underneath it is
+# not enough - it has to be told to read the path again. That is one IPC call,
+# and hyprctl answers "ok" when it lands.
+#
+# When it does not - an older hyprpaper, a renamed request - the daemon is
+# started again with the argv it already had, which is what reload_swaybg does
+# and is correct whatever the IPC happens to be called. The new instance is up
+# before the old one goes, so the desktop does not flash.
+reload_hyprpaper() {
+    local bg=$themes/bg.jpg pid argv
+    [[ -n ${HYPRLAND_INSTANCE_SIGNATURE:-} ]] || return 0
+    command -v hyprctl >/dev/null || return 0
+    pgrep -x hyprpaper >/dev/null 2>&1 || return 0
+
+    if [[ $(hyprctl hyprpaper reload ",$bg" 2>/dev/null) == ok* ]]; then
+        echo "  reload       hyprpaper"
+        return 0
+    fi
+
+    for pid in $(pgrep -x hyprpaper 2>/dev/null); do
+        mapfile -d '' -t argv <"/proc/$pid/cmdline" 2>/dev/null || continue
+        ((${#argv[@]})) || continue
+        setsid "${argv[@]}" >/dev/null 2>&1 &
+        sleep 0.3
+        kill "$pid" 2>/dev/null || true
+    done
+    echo "  reload       hyprpaper (restart)"
+    return 0
+}
+
 # X11: feh writes the root pixmap and exits, so there is no feh to signal - it
 # is run again the way scripts/startup.sh runs it. Skipped under a compositor,
 # where DISPLAY is Xwayland's and its root window is on no screen.
@@ -262,6 +293,8 @@ reload_backgrounds() {
     echo
     if [[ -n ${SWAYSOCK:-} ]]; then
         reload_sway
+    elif [[ -n ${HYPRLAND_INSTANCE_SIGNATURE:-} ]]; then
+        reload_hyprpaper
     else
         reload_swaybg
     fi

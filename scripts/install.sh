@@ -13,9 +13,11 @@ set -euo pipefail
 #
 # Only half the repo is listed below, because only half of it is copied. Every
 # config a window manager reads by path — dbar, dunst, picom, polybar, rofi, the
-# i3status bar, bin/search and all of scripts/ — is referenced as
-# $HOME/dotfiles/... from the sway, i3 and niri configs, so it runs from the
-# clone and must not be duplicated into ~/.config, where it would go stale.
+# i3status bar, hyprland's hyprlock, hypridle and hyprpaper files, bin/search and
+# all of scripts/ — is referenced as $HOME/dotfiles/... from the sway, i3, niri
+# and hyprland configs, so it runs from the clone and must not be duplicated into
+# ~/.config, where it would go stale. hyprland.conf itself is copied, because
+# that is the one path hyprland reads without being told.
 #
 # Anything already identical is left alone, so a second run reports nothing.
 #
@@ -47,8 +49,8 @@ set -euo pipefail
 #
 # What is running is then told to re-read its configuration, so that a copy and
 # a visible change are the same step. Only programs that are actually running
-# are touched, and only through the mechanism each one documents: sway and i3
-# reload over their IPC, dunst over dunstctl, picom on SIGUSR1, polybar by
+# are touched, and only through the mechanism each one documents: sway, i3 and
+# hyprland reload over their IPC, dunst over dunstctl, picom on SIGUSR1, polybar by
 # restarting its bars, tmux by sourcing its file again, and foot by switching
 # between the theme blocks its config already carries. niri watches its own
 # config file and needs nobody's help. dbar is sent the realtime signal its config
@@ -57,8 +59,9 @@ set -euo pipefail
 # restarted with its own argv otherwise.
 #
 # This runs whether or not a file changed here, because the configs that are
-# read from the clone - dbar, dunst, picom, polybar, the i3 status bar - are
-# rewritten by theme.sh without this script seeing it. Reloading is cheap and
+# read from the clone - dbar, dunst, picom, polybar, the i3 status bar,
+# hyprland's hyprlock.conf - are rewritten by theme.sh without this script
+# seeing it. Reloading is cheap and
 # repeatable; --no-reload turns it off.
 #
 # Two things are left to do by hand, printed on the way out: tlp.conf belongs to
@@ -83,6 +86,7 @@ targets() {
     cat <<EOF
 config/niri/config.kdl|$HOME/.config/niri/config.kdl
 config/sway/config|$HOME/.config/sway/config
+config/hypr/hyprland.conf|$HOME/.config/hypr/hyprland.conf
 config/i3/config|$HOME/.config/i3/config
 config/foot/foot.ini|$HOME/.config/foot/foot.ini
 config/alacritty/alacritty.toml|$HOME/.config/alacritty/alacritty.toml
@@ -267,6 +271,17 @@ reload_i3() {
     ((dry_run)) || i3-msg -q reload >/dev/null 2>&1 || true
 }
 
+# Hyprland watches its own config, but this replaces the file rather than writing
+# through it - rm then cp, so the watcher can be left holding the old inode. It is
+# cheap to ask outright, and the ask is what makes a copy and a visible change one
+# step.
+reload_hyprland() {
+    [[ -n ${HYPRLAND_INSTANCE_SIGNATURE:-} ]] || return 0
+    command -v hyprctl >/dev/null || return 0
+    say "reload" "hyprland"
+    ((dry_run)) || hyprctl reload >/dev/null 2>&1 || true
+}
+
 # dunst was started with -config pointing into the clone, so the reload has to
 # name the same file. Left bare it would re-read the default path instead and
 # quietly forget the theme.
@@ -388,6 +403,7 @@ reload_running() {
     # above; alacritty and kitty watch theirs. None of the three is signalled.
     reload_sway
     reload_i3
+    reload_hyprland
     reload_dunst
     reload_picom
     reload_polybar
@@ -411,10 +427,11 @@ Not copied, on purpose:
   etc/tlp.conf          belongs to /etc and needs root:
                         sudo cp etc/tlp.conf /etc/tlp.conf
   dbar, dunst, picom, polybar, rofi, i3/status.toml, bin, scripts
+  hypr/hyprlock.conf, hypr/hypridle.conf, hypr/hyprpaper.conf
                         read from the clone by the window manager configs
 
-Reloaded above, where the program was running: sway, i3, dunst, picom, polybar,
-tmux, foot's colour block, and dbar on its reload signal, or by restarting it
+Reloaded above, where the program was running: sway, i3, hyprland, dunst, picom,
+polybar, tmux, foot's colour block, and dbar on its reload signal, or by restarting it
 when the running bar predates the signal. niri, alacritty and kitty
 watch their own config files. Left by hand: a running helix wants
 `:config-reload` typed into it, since an editor that does not handle the signal

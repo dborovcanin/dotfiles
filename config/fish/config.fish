@@ -55,7 +55,7 @@ set -g fish_color_error fb4934
 set -g fish_color_param d5c4a1
 set -g fish_color_option d5c4a1
 set -g fish_color_comment 928374
-set -g fish_color_operator fe8019
+set -g fish_color_operator d5c4a1
 set -g fish_color_escape d3869b
 set -g fish_color_autosuggestion 928374
 set -g fish_color_valid_path --underline
