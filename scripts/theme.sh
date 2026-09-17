@@ -417,6 +417,39 @@ render_helix() {
   printf 'theme = "%s"\n' "$THEME_HELIX"
 }
 
+# neovim. Unlike helix, which has its themes built in, neovim is given the palette
+# itself and config/nvim/colors/dotfiles.lua says what each colour is for - so no
+# colourscheme plugin is installed and every theme in themes/ reaches neovim the
+# same way it reaches foot and btop.
+render_nvim() {
+  local i
+  printf 'local c = {\n'
+  printf '  scheme = "%s",\n' "$THEME_SCHEME"
+  printf '  bg = "%s",\n' "$THEME_BG"
+  printf '  bg_alt = "%s",\n' "$THEME_BG_ALT"
+  printf '  bg_raised = "%s",\n' "$THEME_BG_RAISED"
+  printf '  fg = "%s",\n' "$THEME_FG"
+  printf '  fg_alt = "%s",\n' "$THEME_FG_ALT"
+  printf '  subtle = "%s",\n' "$THEME_SUBTLE"
+  printf '  dim = "%s",\n' "$THEME_DIM"
+  printf '  border = "%s",\n' "$THEME_BORDER"
+  printf '  accent = "%s",\n' "$THEME_ACCENT"
+  printf '  red = "%s",\n' "$THEME_RED"
+  printf '  green = "%s",\n' "$THEME_GREEN"
+  printf '  yellow = "%s",\n' "$THEME_YELLOW"
+  printf '  blue = "%s",\n' "$THEME_BLUE"
+  printf '  magenta = "%s",\n' "$THEME_MAGENTA"
+  printf '  cyan = "%s",\n' "$THEME_CYAN"
+  printf '  orange = "%s",\n' "$THEME_ORANGE"
+  printf '  ansi = {\n'
+  for i in 0 4 8 12; do
+    printf '    "%s", "%s", "%s", "%s",\n' \
+      "${THEME_ANSI[i]}" "${THEME_ANSI[i + 1]}" "${THEME_ANSI[i + 2]}" "${THEME_ANSI[i + 3]}"
+  done
+  printf '  },\n'
+  printf '}\n'
+}
+
 # GTK. The three versions share one reading of the palette: the window is the
 # background, anything that sits above it — titlebars, sidebars, menus, popovers
 # — is the alt background, and the border colour is the selection. Dark text is

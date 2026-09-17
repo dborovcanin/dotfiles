@@ -91,6 +91,8 @@ config/i3/config|$HOME/.config/i3/config
 config/foot/foot.ini|$HOME/.config/foot/foot.ini
 config/alacritty/alacritty.toml|$HOME/.config/alacritty/alacritty.toml
 config/helix/config.toml|$HOME/.config/helix/config.toml
+config/nvim/lua/plugins/theme.lua|$HOME/.config/nvim/lua/plugins/theme.lua
+config/nvim/colors/dotfiles.lua|$HOME/.config/nvim/colors/dotfiles.lua
 config/btop/btop.conf|$HOME/.config/btop/btop.conf
 config/btop/themes/dotfiles.theme|$HOME/.config/btop/themes/dotfiles.theme
 config/starship/starship.toml|$HOME/.config/starship.toml
