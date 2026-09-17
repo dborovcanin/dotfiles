@@ -196,7 +196,7 @@ tile() {
 # leaving a hole in it.
 theme() {
     local count=$1 frame=$2
-    local tile_ch=10 gap=12 pad=24 border=2
+    local tile_ch=10 gap=12 pad=24 border=4
     cat <<EOF
 window {
     location: center;
@@ -219,7 +219,7 @@ listview {
 }
 element {
     padding: 14px 0;
-    border: 2px solid;
+    border: 4px solid;
     border-radius: 12px;
     orientation: vertical;
 }

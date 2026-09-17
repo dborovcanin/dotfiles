@@ -42,7 +42,7 @@ DIM=${CAL_DIM:-"#928374"}           # what the keys do
 # an icon and a space: thirty columns. The grid is only twenty, and the hint at
 # its smaller size fits comfortably inside the same thirty.
 WIDTH=30
-BORDER_WIDTH=2
+BORDER_WIDTH=4
 PADDING=18
 
 # The bar clock that opens this sits at the top middle, so the window belongs up
