@@ -1,0 +1,132 @@
+#:schema https://yazi-rs.github.io/schemas/theme.json
+#
+# The dotfiles palette as a yazi theme. Written by scripts/theme.sh - edit the
+# render_yazi block there, not this file.
+#
+# yazi has no way to be told about a colour change and no X resources to read
+# from, so this is copied out by scripts/install.sh and picked up by the next
+# yazi that starts; the ones already running keep the colours they opened with.
+#
+# Everything not named here - the icons, the layout, the file-type globs - is
+# left as yazi ships it, and is merged under this on startup.
+
+# theme:begin yazi
+[mgr]
+cwd = { fg = "#8ec07c" }
+
+# What a search leaves behind.
+find_keyword  = { fg = "#fabd2f", bold = true, italic = true, underline = true }
+find_position = { fg = "#d3869b", bg = "reset", bold = true, italic = true }
+
+symlink_target = { fg = "#928374", italic = true }
+
+# The bar down the left of a file that is waiting to be copied, cut or pasted.
+# Foreground and background are the same colour on purpose: the marker is a
+# solid block, not a glyph.
+marker_copied   = { fg = "#b8bb26", bg = "#b8bb26" }
+marker_cut      = { fg = "#fb4934", bg = "#fb4934" }
+marker_marked   = { fg = "#8ec07c", bg = "#8ec07c" }
+marker_selected = { fg = "#fabd2f", bg = "#fabd2f" }
+
+# The same four counted in the status bar.
+count_copied   = { fg = "#282828", bg = "#b8bb26" }
+count_cut      = { fg = "#282828", bg = "#fb4934" }
+count_selected = { fg = "#282828", bg = "#fabd2f" }
+
+border_style = { fg = "#504945" }
+
+[tabs]
+active   = { fg = "#282828", bg = "#d79921", bold = true }
+inactive = { fg = "#d5c4a1", bg = "#3c3836" }
+
+# The mode badge at the left of the status bar, and the wedge that carries its
+# colour into the bar.
+[mode]
+normal_main = { fg = "#282828", bg = "#d79921", bold = true }
+normal_alt  = { fg = "#d79921", bg = "#3c3836" }
+select_main = { fg = "#282828", bg = "#fb4934", bold = true }
+select_alt  = { fg = "#fb4934", bg = "#3c3836" }
+unset_main  = { fg = "#282828", bg = "#d3869b", bold = true }
+unset_alt   = { fg = "#d3869b", bg = "#3c3836" }
+
+[status]
+# The permission bits, one colour each, read before they are read.
+perm_sep   = { fg = "#928374" }
+perm_type  = { fg = "#b8bb26" }
+perm_read  = { fg = "#fabd2f" }
+perm_write = { fg = "#fb4934" }
+perm_exec  = { fg = "#8ec07c" }
+progress_label  = { fg = "#ebdbb2", bold = true }
+progress_normal = { fg = "#b8bb26", bg = "#3c3836" }
+progress_error  = { fg = "#282828", bg = "#fb4934" }
+
+[which]
+border          = { fg = "#d79921" }
+cand            = { fg = "#8ec07c" }
+rest            = { fg = "#928374" }
+desc            = { fg = "#ebdbb2" }
+separator_style = { fg = "#928374" }
+
+[confirm]
+border  = { fg = "#d79921" }
+title   = { fg = "#fabd2f" }
+body    = { fg = "#ebdbb2" }
+list    = { fg = "#d5c4a1" }
+btn_yes = { fg = "#282828", bg = "#fb4934", bold = true }
+btn_no  = { fg = "#ebdbb2" }
+
+[spot]
+border   = { fg = "#d79921" }
+title    = { fg = "#fabd2f" }
+tbl_col  = { fg = "#83a598" }
+tbl_cell = { fg = "#282828", bg = "#fabd2f" }
+
+[notify]
+title_info  = { fg = "#b8bb26" }
+title_warn  = { fg = "#fabd2f" }
+title_error = { fg = "#fb4934" }
+
+[pick]
+border   = { fg = "#d79921" }
+active   = { fg = "#fabd2f", bold = true }
+inactive = { fg = "#ebdbb2" }
+
+[input]
+border   = { fg = "#d79921" }
+title    = { fg = "#fabd2f" }
+value    = { fg = "#ebdbb2" }
+selected = { fg = "#282828", bg = "#fabd2f" }
+
+[cmp]
+border   = { fg = "#d79921" }
+active   = { fg = "#ebdbb2", bg = "#3c3836", bold = true }
+inactive = { fg = "#d5c4a1" }
+
+[tasks]
+border  = { fg = "#d79921" }
+title   = { fg = "#fabd2f" }
+hovered = { fg = "#fabd2f", bold = true }
+
+[help]
+border  = { fg = "#d79921" }
+chord   = { fg = "#8ec07c" }
+action  = { fg = "#ebdbb2" }
+hovered = { fg = "#ebdbb2", bg = "#3c3836", bold = true }
+
+# A whole list, because naming one rule replaces the lot; these are yazi's own
+# rules with this palette in place of its ANSI names.
+[filetype]
+rules = [
+	{ mime = "**/image/*", fg = "#fabd2f" },
+	{ mime = "**/{audio,video}/*", fg = "#d3869b" },
+	{ mime = "**/application/{zip,rar,7z*,tar,gzip,xz,zstd,bzip*,lzma,compress,archive,cpio,arj,xar,ms-cab*}", fg = "#fb4934" },
+	{ mime = "**/application/{pdf,doc,rtf}", fg = "#8ec07c" },
+	{ mime = "vfs/{absent,stale}", fg = "#928374" },
+	# A link with nothing at the far end, and a file yazi could not stat.
+	{ url = "*", is = "orphan", fg = "#ebdbb2", bg = "#fb4934" },
+	{ url = "*", is = "exec", fg = "#b8bb26" },
+	{ url = "*", is = "dummy", fg = "#ebdbb2", bg = "#fb4934" },
+	{ url = "*/", is = "dummy", fg = "#ebdbb2", bg = "#fb4934" },
+	{ url = "*/", fg = "#83a598" },
+]
+# theme:end

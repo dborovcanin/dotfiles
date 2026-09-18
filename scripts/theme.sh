@@ -242,6 +242,133 @@ EOF
 }
 
 # i3status-rust ships no theme for most palettes, so every state is overridden.
+# yazi keeps the keys it is not given, so only what carries a colour is written
+# here; the icons, the layout and the file-type globs stay as yazi ships them.
+# Anything a terminal palette has no slot for - the frame, the accent, the row
+# under the cursor - is why this is hex rather than the ANSI names yazi defaults to.
+render_yazi() {
+  cat <<EOF
+[mgr]
+cwd = { fg = "$THEME_CYAN" }
+
+# What a search leaves behind.
+find_keyword  = { fg = "$THEME_ACCENT", bold = true, italic = true, underline = true }
+find_position = { fg = "$THEME_MAGENTA", bg = "reset", bold = true, italic = true }
+
+symlink_target = { fg = "$THEME_DIM", italic = true }
+
+# The bar down the left of a file that is waiting to be copied, cut or pasted.
+# Foreground and background are the same colour on purpose: the marker is a
+# solid block, not a glyph.
+marker_copied   = { fg = "$THEME_GREEN", bg = "$THEME_GREEN" }
+marker_cut      = { fg = "$THEME_RED", bg = "$THEME_RED" }
+marker_marked   = { fg = "$THEME_CYAN", bg = "$THEME_CYAN" }
+marker_selected = { fg = "$THEME_ACCENT", bg = "$THEME_ACCENT" }
+
+# The same four counted in the status bar.
+count_copied   = { fg = "$THEME_BG", bg = "$THEME_GREEN" }
+count_cut      = { fg = "$THEME_BG", bg = "$THEME_RED" }
+count_selected = { fg = "$THEME_BG", bg = "$THEME_ACCENT" }
+
+border_style = { fg = "$THEME_BG_RAISED" }
+
+[tabs]
+active   = { fg = "$THEME_BG", bg = "$THEME_BORDER", bold = true }
+inactive = { fg = "$THEME_FG_ALT", bg = "$THEME_BG_ALT" }
+
+# The mode badge at the left of the status bar, and the wedge that carries its
+# colour into the bar.
+[mode]
+normal_main = { fg = "$THEME_BG", bg = "$THEME_BORDER", bold = true }
+normal_alt  = { fg = "$THEME_BORDER", bg = "$THEME_BG_ALT" }
+select_main = { fg = "$THEME_BG", bg = "$THEME_RED", bold = true }
+select_alt  = { fg = "$THEME_RED", bg = "$THEME_BG_ALT" }
+unset_main  = { fg = "$THEME_BG", bg = "$THEME_MAGENTA", bold = true }
+unset_alt   = { fg = "$THEME_MAGENTA", bg = "$THEME_BG_ALT" }
+
+[status]
+# The permission bits, one colour each, read before they are read.
+perm_sep   = { fg = "$THEME_DIM" }
+perm_type  = { fg = "$THEME_GREEN" }
+perm_read  = { fg = "$THEME_YELLOW" }
+perm_write = { fg = "$THEME_RED" }
+perm_exec  = { fg = "$THEME_CYAN" }
+progress_label  = { fg = "$THEME_FG", bold = true }
+progress_normal = { fg = "$THEME_GREEN", bg = "$THEME_BG_ALT" }
+progress_error  = { fg = "$THEME_BG", bg = "$THEME_RED" }
+
+[which]
+border          = { fg = "$THEME_BORDER" }
+cand            = { fg = "$THEME_CYAN" }
+rest            = { fg = "$THEME_DIM" }
+desc            = { fg = "$THEME_FG" }
+separator_style = { fg = "$THEME_DIM" }
+
+[confirm]
+border  = { fg = "$THEME_BORDER" }
+title   = { fg = "$THEME_ACCENT" }
+body    = { fg = "$THEME_FG" }
+list    = { fg = "$THEME_FG_ALT" }
+btn_yes = { fg = "$THEME_BG", bg = "$THEME_RED", bold = true }
+btn_no  = { fg = "$THEME_FG" }
+
+[spot]
+border   = { fg = "$THEME_BORDER" }
+title    = { fg = "$THEME_ACCENT" }
+tbl_col  = { fg = "$THEME_BLUE" }
+tbl_cell = { fg = "$THEME_BG", bg = "$THEME_ACCENT" }
+
+[notify]
+title_info  = { fg = "$THEME_GREEN" }
+title_warn  = { fg = "$THEME_YELLOW" }
+title_error = { fg = "$THEME_RED" }
+
+[pick]
+border   = { fg = "$THEME_BORDER" }
+active   = { fg = "$THEME_ACCENT", bold = true }
+inactive = { fg = "$THEME_FG" }
+
+[input]
+border   = { fg = "$THEME_BORDER" }
+title    = { fg = "$THEME_ACCENT" }
+value    = { fg = "$THEME_FG" }
+selected = { fg = "$THEME_BG", bg = "$THEME_ACCENT" }
+
+[cmp]
+border   = { fg = "$THEME_BORDER" }
+active   = { fg = "$THEME_FG", bg = "$THEME_BG_ALT", bold = true }
+inactive = { fg = "$THEME_FG_ALT" }
+
+[tasks]
+border  = { fg = "$THEME_BORDER" }
+title   = { fg = "$THEME_ACCENT" }
+hovered = { fg = "$THEME_ACCENT", bold = true }
+
+[help]
+border  = { fg = "$THEME_BORDER" }
+chord   = { fg = "$THEME_CYAN" }
+action  = { fg = "$THEME_FG" }
+hovered = { fg = "$THEME_FG", bg = "$THEME_BG_ALT", bold = true }
+
+# A whole list, because naming one rule replaces the lot; these are yazi's own
+# rules with this palette in place of its ANSI names.
+[filetype]
+rules = [
+	{ mime = "**/image/*", fg = "$THEME_YELLOW" },
+	{ mime = "**/{audio,video}/*", fg = "$THEME_MAGENTA" },
+	{ mime = "**/application/{zip,rar,7z*,tar,gzip,xz,zstd,bzip*,lzma,compress,archive,cpio,arj,xar,ms-cab*}", fg = "$THEME_RED" },
+	{ mime = "**/application/{pdf,doc,rtf}", fg = "$THEME_CYAN" },
+	{ mime = "vfs/{absent,stale}", fg = "$THEME_DIM" },
+	# A link with nothing at the far end, and a file yazi could not stat.
+	{ url = "*", is = "orphan", fg = "$THEME_ON_COLOR", bg = "$THEME_RED" },
+	{ url = "*", is = "exec", fg = "$THEME_GREEN" },
+	{ url = "*", is = "dummy", fg = "$THEME_ON_COLOR", bg = "$THEME_RED" },
+	{ url = "*/", is = "dummy", fg = "$THEME_ON_COLOR", bg = "$THEME_RED" },
+	{ url = "*/", fg = "$THEME_BLUE" },
+]
+EOF
+}
+
 render_i3status() {
   cat <<EOF
 separator_fg = "$THEME_FG"

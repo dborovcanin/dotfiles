@@ -95,6 +95,7 @@ config/nvim/lua/plugins/theme.lua|$HOME/.config/nvim/lua/plugins/theme.lua
 config/nvim/colors/dotfiles.lua|$HOME/.config/nvim/colors/dotfiles.lua
 config/btop/btop.conf|$HOME/.config/btop/btop.conf
 config/btop/themes/dotfiles.theme|$HOME/.config/btop/themes/dotfiles.theme
+config/yazi/theme.toml|$HOME/.config/yazi/theme.toml
 config/starship/starship.toml|$HOME/.config/starship.toml
 config/gtk-3.0/gtk.css|$HOME/.config/gtk-3.0/gtk.css
 config/gtk-3.0/settings.ini|$HOME/.config/gtk-3.0/settings.ini
