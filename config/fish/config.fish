@@ -45,50 +45,50 @@ set -g fish_transient_prompt 1
 # Colours, written by scripts/theme.sh
 # -------------------------------------------------------------------
 # theme:begin fish
-set -g fish_color_normal ebdbb2
-set -g fish_color_command b8bb26
-set -g fish_color_keyword fb4934
-set -g fish_color_quote fabd2f
-set -g fish_color_redirection 8ec07c
-set -g fish_color_end fe8019
-set -g fish_color_error fb4934
-set -g fish_color_param d5c4a1
-set -g fish_color_option d5c4a1
-set -g fish_color_comment 928374
-set -g fish_color_operator d5c4a1
-set -g fish_color_escape d3869b
-set -g fish_color_autosuggestion 928374
+set -g fish_color_normal eceff4
+set -g fish_color_command a3be8c
+set -g fish_color_keyword bf616a
+set -g fish_color_quote ebcb8b
+set -g fish_color_redirection 88c0d0
+set -g fish_color_end d08770
+set -g fish_color_error bf616a
+set -g fish_color_param e5e9f0
+set -g fish_color_option e5e9f0
+set -g fish_color_comment 7b88a1
+set -g fish_color_operator e5e9f0
+set -g fish_color_escape b48ead
+set -g fish_color_autosuggestion 7b88a1
 set -g fish_color_valid_path --underline
-set -g fish_color_cancel fb4934 --reverse
-set -g fish_color_selection --background=3c3836
-set -g fish_color_search_match --background=504945
+set -g fish_color_cancel bf616a --reverse
+set -g fish_color_selection --background=3b4252
+set -g fish_color_search_match --background=434c5e
 set -g fish_color_history_current --bold
-set -g fish_color_cwd b8bb26
-set -g fish_color_cwd_root fb4934
-set -g fish_color_user b8bb26
-set -g fish_color_host 83a598
-set -g fish_color_host_remote fabd2f
-set -g fish_color_status fb4934
-set -g fish_pager_color_prefix fabd2f --bold --underline
-set -g fish_pager_color_completion ebdbb2
-set -g fish_pager_color_description 928374
-set -g fish_pager_color_progress 282828 --background=fabd2f
-set -g fish_pager_color_selected_background --background=3c3836
-set -g fish_pager_color_selected_completion fabd2f
+set -g fish_color_cwd a3be8c
+set -g fish_color_cwd_root bf616a
+set -g fish_color_user a3be8c
+set -g fish_color_host 81a1c1
+set -g fish_color_host_remote ebcb8b
+set -g fish_color_status bf616a
+set -g fish_pager_color_prefix 8fbcbb --bold --underline
+set -g fish_pager_color_completion eceff4
+set -g fish_pager_color_description 7b88a1
+set -g fish_pager_color_progress 2e3440 --background=8fbcbb
+set -g fish_pager_color_selected_background --background=3b4252
+set -g fish_pager_color_selected_completion 8fbcbb
 
-set -g __prompt_color_parent 458588
-set -g __prompt_color_dir 83a598
-set -g __prompt_color_ok b8bb26
-set -g __prompt_color_error fb4934
-set -g __prompt_color_clean b8bb26
-set -g __prompt_color_modified fabd2f
-set -g __prompt_color_conflicted fb4934
-set -g __prompt_color_meta 928374
-set -g __prompt_color_duration cc241d
-set -g __prompt_color_jobs 98971a
-set -g __prompt_color_root fabd2f
-set -g __prompt_color_remote fe8019
-set -g __prompt_color_time 689d6a
+set -g __prompt_color_parent 81a1c1
+set -g __prompt_color_dir 81a1c1
+set -g __prompt_color_ok a3be8c
+set -g __prompt_color_error bf616a
+set -g __prompt_color_clean a3be8c
+set -g __prompt_color_modified ebcb8b
+set -g __prompt_color_conflicted bf616a
+set -g __prompt_color_meta 7b88a1
+set -g __prompt_color_duration bf616a
+set -g __prompt_color_jobs a3be8c
+set -g __prompt_color_root ebcb8b
+set -g __prompt_color_remote d08770
+set -g __prompt_color_time 88c0d0
 # theme:end
 
 # -------------------------------------------------------------------

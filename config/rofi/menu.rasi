@@ -11,14 +11,14 @@
 
 * {
     /* theme:begin rofi */
-    bg: #282828;
-    bg-alt: #3c3836;
-    fg: #ebdbb2;
-    fg-alt: #d5c4a1;
-    dim: #928374;
-    frame: #d79921;
-    accent: #fabd2f;
-    urgent: #fb4934;
+    bg: #2e3440;
+    bg-alt: #3b4252;
+    fg: #eceff4;
+    fg-alt: #e5e9f0;
+    dim: #7b88a1;
+    frame: #88c0d0;
+    accent: #8fbcbb;
+    urgent: #bf616a;
     /* theme:end */
 
     /* theme:begin rofi-metrics */

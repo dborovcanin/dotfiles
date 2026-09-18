@@ -5,13 +5,13 @@ set $mod Mod4
 new_window pixel
 
 # theme:begin wm
-set $background #282828
-set $background_alt #3c3836
-set $foreground #ebdbb2
-set $primary #d79921
-set $secondary #8ec07c
-set $alert #cc241d
-set $disabled #928374
+set $background #2e3440
+set $background_alt #3b4252
+set $foreground #eceff4
+set $primary #88c0d0
+set $secondary #88c0d0
+set $alert #bf616a
+set $disabled #7b88a1
 # theme:end
 
 set $desktop_env i3
@@ -41,7 +41,7 @@ floating_modifier $mod
 smart_borders on
 smart_gaps on
 # theme:begin i3-look
-font pango:JetBrainsMonoNL NF 14
+font pango:JetBrainsMonoNL NF 12
 default_border pixel 4
 default_floating_border pixel 4
 gaps inner 10
@@ -52,7 +52,7 @@ gaps inner 10
 # st takes its transparency on the command line, so the terminal binding is
 # written by scripts/theme.sh along with everything else THEME_ALPHA reaches.
 # theme:begin i3-terminal
-bindsym $mod+Return exec st -A 0.8
+bindsym $mod+Return exec st -A 0.98
 # theme:end
 # bindsym $mod+Return exec alacritty
 bindsym $mod+Shift+Return exec $HOME/dotfiles/scripts/sticky_term.sh

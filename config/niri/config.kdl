@@ -68,7 +68,7 @@ layout {
     // theme:end
     center-focused-column "never"
     // theme:begin niri-background
-    background-color "#282828"
+    background-color "#2e3440"
     // theme:end
 
     preset-column-widths {
@@ -88,17 +88,17 @@ layout {
         width 4
         // theme:end
         // theme:begin niri-border
-        active-color "#d79921"
-        inactive-color "#3c3836"
-        urgent-color "#cc241d"
+        active-color "#88c0d0"
+        inactive-color "#3b4252"
+        urgent-color "#bf616a"
         // theme:end
     }
 
     tab-indicator {
         // theme:begin niri-tabs
-        active-color "#d79921"
-        inactive-color "#928374"
-        urgent-color "#cc241d"
+        active-color "#88c0d0"
+        inactive-color "#7b88a1"
+        urgent-color "#bf616a"
         // theme:end
     }
 }

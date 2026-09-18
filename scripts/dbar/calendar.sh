@@ -29,18 +29,18 @@ HINT_SIZE=${CAL_HINT_SIZE:-11pt}
 # calendar belongs to the rest of the desktop rather than to rofi's own theme.
 # Every colour can still be swapped from the environment without touching the file.
 # theme:begin calendar
-BG=${CAL_BG:-"#282828"}             # window, and the text on the selected day
+BG=${CAL_BG:-"#2e3440"}             # window, and the text on the selected day
 BG_ALPHA=${CAL_BG_ALPHA:-ff}        # the last byte of the window colour
-FG=${CAL_FG:-"#ebdbb2"}             # the days themselves
-BORDER=${CAL_BORDER:-"#d79921"}     # the frame around the window
-ACCENT=${CAL_ACCENT:-"#fabd2f"}     # the date line at the top
-SELECTED=${CAL_SELECTED:-"#d79921"} # behind the day under the cursor
-TODAY=${CAL_TODAY:-"#8ec07c"}       # today, when it is not the day under the cursor
-WEEKEND=${CAL_WEEKEND:-"#fb4934"}   # Sunday
-HEADING=${CAL_HEADING:-"#a89984"}   # the names of the weekdays
-RULE=${CAL_RULE:-"#504945"}         # the lines between the parts
-KEY=${CAL_KEY:-"#d5c4a1"}           # the keys in the hint line
-DIM=${CAL_DIM:-"#928374"}           # what the keys do
+FG=${CAL_FG:-"#eceff4"}             # the days themselves
+BORDER=${CAL_BORDER:-"#88c0d0"}     # the frame around the window
+ACCENT=${CAL_ACCENT:-"#8fbcbb"}     # the date line at the top
+SELECTED=${CAL_SELECTED:-"#88c0d0"} # behind the day under the cursor
+TODAY=${CAL_TODAY:-"#88c0d0"}       # today, when it is not the day under the cursor
+WEEKEND=${CAL_WEEKEND:-"#bf616a"}   # Sunday
+HEADING=${CAL_HEADING:-"#d8dee9"}   # the names of the weekdays
+RULE=${CAL_RULE:-"#434c5e"}         # the lines between the parts
+KEY=${CAL_KEY:-"#e5e9f0"}           # the keys in the hint line
+DIM=${CAL_DIM:-"#7b88a1"}           # what the keys do
 # theme:end
 
 # The longest date line there can be is "Wednesday, 30 September 2026" behind

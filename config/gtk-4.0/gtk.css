@@ -7,74 +7,74 @@
  */
 
 /* theme:begin gtk4 */
-@define-color window_bg_color #282828;
-@define-color window_fg_color #ebdbb2;
-@define-color view_bg_color #282828;
-@define-color view_fg_color #ebdbb2;
+@define-color window_bg_color #2e3440;
+@define-color window_fg_color #eceff4;
+@define-color view_bg_color #2e3440;
+@define-color view_fg_color #eceff4;
 
-@define-color headerbar_bg_color #3c3836;
-@define-color headerbar_fg_color #ebdbb2;
-@define-color headerbar_border_color #504945;
-@define-color headerbar_backdrop_color #282828;
+@define-color headerbar_bg_color #3b4252;
+@define-color headerbar_fg_color #eceff4;
+@define-color headerbar_border_color #434c5e;
+@define-color headerbar_backdrop_color #2e3440;
 @define-color headerbar_shade_color alpha(black, 0.3);
 @define-color headerbar_darker_shade_color alpha(black, 0.5);
 
-@define-color sidebar_bg_color #3c3836;
-@define-color sidebar_fg_color #ebdbb2;
-@define-color sidebar_backdrop_color #282828;
-@define-color sidebar_border_color #504945;
+@define-color sidebar_bg_color #3b4252;
+@define-color sidebar_fg_color #eceff4;
+@define-color sidebar_backdrop_color #2e3440;
+@define-color sidebar_border_color #434c5e;
 @define-color sidebar_shade_color alpha(black, 0.25);
-@define-color secondary_sidebar_bg_color #3c3836;
-@define-color secondary_sidebar_fg_color #ebdbb2;
-@define-color secondary_sidebar_backdrop_color #282828;
-@define-color secondary_sidebar_border_color #504945;
+@define-color secondary_sidebar_bg_color #3b4252;
+@define-color secondary_sidebar_fg_color #eceff4;
+@define-color secondary_sidebar_backdrop_color #2e3440;
+@define-color secondary_sidebar_border_color #434c5e;
 @define-color secondary_sidebar_shade_color alpha(black, 0.25);
 
-@define-color card_bg_color #3c3836;
-@define-color card_fg_color #ebdbb2;
+@define-color card_bg_color #3b4252;
+@define-color card_fg_color #eceff4;
 @define-color card_shade_color alpha(black, 0.3);
-@define-color dialog_bg_color #3c3836;
-@define-color dialog_fg_color #ebdbb2;
-@define-color popover_bg_color #3c3836;
-@define-color popover_fg_color #ebdbb2;
+@define-color dialog_bg_color #3b4252;
+@define-color dialog_fg_color #eceff4;
+@define-color popover_bg_color #3b4252;
+@define-color popover_fg_color #eceff4;
 @define-color popover_shade_color alpha(black, 0.25);
-@define-color thumbnail_bg_color #504945;
-@define-color thumbnail_fg_color #ebdbb2;
-@define-color overview_bg_color #3c3836;
-@define-color overview_fg_color #ebdbb2;
+@define-color thumbnail_bg_color #434c5e;
+@define-color thumbnail_fg_color #eceff4;
+@define-color overview_bg_color #3b4252;
+@define-color overview_fg_color #eceff4;
 @define-color shade_color alpha(black, 0.25);
-@define-color scrollbar_outline_color #504945;
+@define-color scrollbar_outline_color #434c5e;
 
 /* Solid backgrounds carry dark text; the standalone ones are text on the
  * window, so they take the bright half of the palette. */
-@define-color accent_bg_color #d79921;
-@define-color accent_fg_color #282828;
-@define-color accent_color #fabd2f;
-@define-color destructive_bg_color #cc241d;
-@define-color destructive_fg_color #ebdbb2;
-@define-color destructive_color #fb4934;
-@define-color error_bg_color #cc241d;
-@define-color error_fg_color #ebdbb2;
-@define-color error_color #fb4934;
-@define-color success_bg_color #98971a;
-@define-color success_fg_color #282828;
-@define-color success_color #b8bb26;
-@define-color warning_bg_color #d79921;
-@define-color warning_fg_color #282828;
-@define-color warning_color #fabd2f;
+@define-color accent_bg_color #88c0d0;
+@define-color accent_fg_color #2e3440;
+@define-color accent_color #8fbcbb;
+@define-color destructive_bg_color #bf616a;
+@define-color destructive_fg_color #2e3440;
+@define-color destructive_color #bf616a;
+@define-color error_bg_color #bf616a;
+@define-color error_fg_color #2e3440;
+@define-color error_color #bf616a;
+@define-color success_bg_color #a3be8c;
+@define-color success_fg_color #2e3440;
+@define-color success_color #a3be8c;
+@define-color warning_bg_color #ebcb8b;
+@define-color warning_fg_color #2e3440;
+@define-color warning_color #ebcb8b;
 
 /* The GTK 3 names, for the GTK 4 apps that are not libadwaita apps. */
-@define-color theme_bg_color #282828;
-@define-color theme_fg_color #ebdbb2;
-@define-color theme_base_color #282828;
-@define-color theme_text_color #ebdbb2;
-@define-color theme_selected_bg_color #d79921;
-@define-color theme_selected_fg_color #282828;
-@define-color insensitive_bg_color #282828;
-@define-color insensitive_fg_color #928374;
-@define-color insensitive_base_color #282828;
-@define-color borders #504945;
-@define-color unfocused_borders #3c3836;
+@define-color theme_bg_color #2e3440;
+@define-color theme_fg_color #eceff4;
+@define-color theme_base_color #2e3440;
+@define-color theme_text_color #eceff4;
+@define-color theme_selected_bg_color #88c0d0;
+@define-color theme_selected_fg_color #2e3440;
+@define-color insensitive_bg_color #2e3440;
+@define-color insensitive_fg_color #7b88a1;
+@define-color insensitive_base_color #2e3440;
+@define-color borders #434c5e;
+@define-color unfocused_borders #3b4252;
 /* theme:end */
 
 /* libadwaita builds its rules out of the names above, so libadwaita apps such as

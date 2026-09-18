@@ -91,6 +91,7 @@ config/hypr/hyprland.conf|$HOME/.config/hypr/hyprland.conf
 config/i3/config|$HOME/.config/i3/config
 config/foot/foot.ini|$HOME/.config/foot/foot.ini
 config/alacritty/alacritty.toml|$HOME/.config/alacritty/alacritty.toml
+config/kitty/kitty.conf|$HOME/.config/kitty/kitty.conf
 config/helix/config.toml|$HOME/.config/helix/config.toml
 config/nvim/lua/plugins/theme.lua|$HOME/.config/nvim/lua/plugins/theme.lua
 config/nvim/colors/dotfiles.lua|$HOME/.config/nvim/colors/dotfiles.lua

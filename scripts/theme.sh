@@ -158,6 +158,29 @@ render_alacritty() {
   for i in {0..7}; do printf "%-7s = '%s'\n" "${names[i]}" "${THEME_ANSI[i + 8]}"; done
 }
 
+# kitty. One flat list of keys, '#' and all, and a few of its own beyond the
+# sixteen: the cursor, the window borders it draws around splits, and the tab
+# strip. Dark text rides on the accent and the border, which are too bright to
+# carry the foreground.
+render_kitty() {
+  local i
+  printf 'foreground %s\nbackground %s\n\n' "$THEME_FG" "$THEME_BG"
+  printf 'cursor %s\ncursor_text_color %s\n\n' "$THEME_ACCENT" "$THEME_ON_COLOR"
+  printf 'selection_foreground %s\nselection_background %s\n\n' "$THEME_FG" "$THEME_BG_ALT"
+  printf 'url_color %s\n\n' "$THEME_BLUE"
+  printf 'active_border_color   %s\n' "$THEME_BORDER"
+  printf 'inactive_border_color %s\n' "$THEME_BG_ALT"
+  printf 'bell_border_color     %s\n\n' "$THEME_RED"
+  printf 'tab_bar_background       %s\n' "$THEME_BG_ALT"
+  printf 'active_tab_foreground    %s\n' "$THEME_ON_COLOR"
+  printf 'active_tab_background    %s\n' "$THEME_BORDER"
+  printf 'inactive_tab_foreground  %s\n' "$THEME_DIM"
+  printf 'inactive_tab_background  %s\n\n' "$THEME_BG_ALT"
+  for i in {0..7}; do printf 'color%-2d %s\n' "$i" "${THEME_ANSI[i]}"; done
+  echo
+  for i in {8..15}; do printf 'color%-2d %s\n' "$i" "${THEME_ANSI[i]}"; done
+}
+
 # The [90] in front of the background is the terminal's transparency.
 render_urxvt() {
   local i
@@ -399,7 +422,8 @@ EOF
 # does. Add a "gaps outer" line inside the block below to have one here too.
 render_sway_look() {
   cat <<EOF
-font pango:$THEME_FONT $THEME_FONT_SIZE
+font pango:$THEME_FONT $THEME_FONT_TITLE_SIZE
+titlebar_padding $THEME_TITLEBAR_PADDING
 default_border pixel $THEME_BORDER_WIDTH
 default_floating_border pixel $THEME_BORDER_WIDTH
 gaps inner $THEME_GAPS_IN
@@ -412,7 +436,7 @@ render_sway_corners() {
 
 render_i3_look() {
   cat <<EOF
-font pango:$THEME_FONT $THEME_FONT_SIZE
+font pango:$THEME_FONT $THEME_FONT_TITLE_SIZE
 default_border pixel $THEME_BORDER_WIDTH
 default_floating_border pixel $THEME_BORDER_WIDTH
 gaps inner $THEME_GAPS_IN
@@ -492,6 +516,19 @@ EOF
 
 render_alacritty_opacity() {
   printf 'opacity = %s\n' "$THEME_ALPHA"
+}
+
+# kitty takes the bold and italic faces from the family itself, so only the
+# family and the size are written here; the file keeps `auto` for the rest.
+render_kitty_font() {
+  cat <<EOF
+font_family      $THEME_FONT_TERM
+font_size        $THEME_FONT_TERM_SIZE
+EOF
+}
+
+render_kitty_opacity() {
+  printf 'background_opacity %s\n' "$THEME_ALPHA"
 }
 
 # urxvt is asked for the same font through X resources, and keeps the fallbacks

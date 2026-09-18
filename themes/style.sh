@@ -21,14 +21,24 @@
 THEME_FONT="JetBrainsMonoNL NF"
 THEME_FONT_SIZE=14
 
+# The window title bars alone: a sway or i3 tab is as tall as this font plus
+# the padding below it, and a tab is glanced at rather than read, so it is set
+# smaller than the menu font rather than sharing it.
+THEME_FONT_TITLE_SIZE=12
+
+# Around the text in a sway title bar: horizontal first, then vertical, in
+# pixels. i3 has no setting of its own for this, so its bars are as tall as the
+# font alone makes them.
+THEME_TITLEBAR_PADDING="6 1"
+
 # The icon in a menu's prompt, and the emoji grid. The proportional cut of the
 # same patched font: the monospaced one squeezes an icon into one cell and rofi
 # clips what does not fit.
 THEME_FONT_ICON="JetBrainsMonoNL NFP"
 THEME_FONT_ICON_SIZE=18
 
-# The terminals: foot, alacritty, urxvt. A patched font, because the prompt and
-# the TUIs draw glyphs that a plain one has no room for.
+# The terminals: foot, alacritty, kitty, urxvt. A patched font, because the prompt
+# and the TUIs draw glyphs that a plain one has no room for.
 THEME_FONT_TERM="JetBrainsMonoNL NF"
 THEME_FONT_TERM_SIZE=14
 
@@ -71,7 +81,7 @@ THEME_GAPS_OUT=10
 
 # Terminals. The compositors blur what is behind a transparent window, which is
 # what keeps text on top of it readable.
-THEME_ALPHA=0.8
+THEME_ALPHA=0.98
 
 # Menus and notifications. Opaque by default: these are read in a glance and
 # sit over whatever was already on the screen.

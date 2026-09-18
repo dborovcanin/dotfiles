@@ -13,29 +13,29 @@
 ! URxvt*underlineColor:                 color
 ! URxvt*troughColor:                    color
 ! theme:begin urxvt
-URxvt*background:                     [90]#282828
-URxvt*foreground:                     #ebdbb2
-URxvt*cursorColor:                    #fabd2f
-URxvt*scrollColor:                    #ebdbb2
-URxvt*highlightColor:                 #3c3836
-URxvt*highlightTextColor:             #ebdbb2
+URxvt*background:                     [90]#2e3440
+URxvt*foreground:                     #eceff4
+URxvt*cursorColor:                    #8fbcbb
+URxvt*scrollColor:                    #eceff4
+URxvt*highlightColor:                 #3b4252
+URxvt*highlightTextColor:             #eceff4
 
-URxvt*color0:                         #282828
-URxvt*color1:                         #cc241d
-URxvt*color2:                         #98971a
-URxvt*color3:                         #d79921
-URxvt*color4:                         #458588
-URxvt*color5:                         #b16286
-URxvt*color6:                         #689d6a
-URxvt*color7:                         #a89984
-URxvt*color8:                         #928374
-URxvt*color9:                         #fb4934
-URxvt*color10:                        #b8bb26
-URxvt*color11:                        #fabd2f
-URxvt*color12:                        #83a598
-URxvt*color13:                        #d3869b
-URxvt*color14:                        #8ec07c
-URxvt*color15:                        #ebdbb2
+URxvt*color0:                         #3b4252
+URxvt*color1:                         #bf616a
+URxvt*color2:                         #a3be8c
+URxvt*color3:                         #ebcb8b
+URxvt*color4:                         #81a1c1
+URxvt*color5:                         #b48ead
+URxvt*color6:                         #88c0d0
+URxvt*color7:                         #e5e9f0
+URxvt*color8:                         #4c566a
+URxvt*color9:                         #bf616a
+URxvt*color10:                        #a3be8c
+URxvt*color11:                        #ebcb8b
+URxvt*color12:                        #81a1c1
+URxvt*color13:                        #b48ead
+URxvt*color14:                        #8fbcbb
+URxvt*color15:                        #eceff4
 ! theme:end
 
 ! plugins

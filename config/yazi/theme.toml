@@ -12,121 +12,121 @@
 
 # theme:begin yazi
 [mgr]
-cwd = { fg = "#8ec07c" }
+cwd = { fg = "#88c0d0" }
 
 # What a search leaves behind.
-find_keyword  = { fg = "#fabd2f", bold = true, italic = true, underline = true }
-find_position = { fg = "#d3869b", bg = "reset", bold = true, italic = true }
+find_keyword  = { fg = "#8fbcbb", bold = true, italic = true, underline = true }
+find_position = { fg = "#b48ead", bg = "reset", bold = true, italic = true }
 
-symlink_target = { fg = "#928374", italic = true }
+symlink_target = { fg = "#7b88a1", italic = true }
 
 # The bar down the left of a file that is waiting to be copied, cut or pasted.
 # Foreground and background are the same colour on purpose: the marker is a
 # solid block, not a glyph.
-marker_copied   = { fg = "#b8bb26", bg = "#b8bb26" }
-marker_cut      = { fg = "#fb4934", bg = "#fb4934" }
-marker_marked   = { fg = "#8ec07c", bg = "#8ec07c" }
-marker_selected = { fg = "#fabd2f", bg = "#fabd2f" }
+marker_copied   = { fg = "#a3be8c", bg = "#a3be8c" }
+marker_cut      = { fg = "#bf616a", bg = "#bf616a" }
+marker_marked   = { fg = "#88c0d0", bg = "#88c0d0" }
+marker_selected = { fg = "#8fbcbb", bg = "#8fbcbb" }
 
 # The same four counted in the status bar.
-count_copied   = { fg = "#282828", bg = "#b8bb26" }
-count_cut      = { fg = "#282828", bg = "#fb4934" }
-count_selected = { fg = "#282828", bg = "#fabd2f" }
+count_copied   = { fg = "#2e3440", bg = "#a3be8c" }
+count_cut      = { fg = "#2e3440", bg = "#bf616a" }
+count_selected = { fg = "#2e3440", bg = "#8fbcbb" }
 
-border_style = { fg = "#504945" }
+border_style = { fg = "#434c5e" }
 
 [tabs]
-active   = { fg = "#282828", bg = "#d79921", bold = true }
-inactive = { fg = "#d5c4a1", bg = "#3c3836" }
+active   = { fg = "#2e3440", bg = "#88c0d0", bold = true }
+inactive = { fg = "#e5e9f0", bg = "#3b4252" }
 
 # The mode badge at the left of the status bar, and the wedge that carries its
 # colour into the bar.
 [mode]
-normal_main = { fg = "#282828", bg = "#d79921", bold = true }
-normal_alt  = { fg = "#d79921", bg = "#3c3836" }
-select_main = { fg = "#282828", bg = "#fb4934", bold = true }
-select_alt  = { fg = "#fb4934", bg = "#3c3836" }
-unset_main  = { fg = "#282828", bg = "#d3869b", bold = true }
-unset_alt   = { fg = "#d3869b", bg = "#3c3836" }
+normal_main = { fg = "#2e3440", bg = "#88c0d0", bold = true }
+normal_alt  = { fg = "#88c0d0", bg = "#3b4252" }
+select_main = { fg = "#2e3440", bg = "#bf616a", bold = true }
+select_alt  = { fg = "#bf616a", bg = "#3b4252" }
+unset_main  = { fg = "#2e3440", bg = "#b48ead", bold = true }
+unset_alt   = { fg = "#b48ead", bg = "#3b4252" }
 
 [status]
 # The permission bits, one colour each, read before they are read.
-perm_sep   = { fg = "#928374" }
-perm_type  = { fg = "#b8bb26" }
-perm_read  = { fg = "#fabd2f" }
-perm_write = { fg = "#fb4934" }
-perm_exec  = { fg = "#8ec07c" }
-progress_label  = { fg = "#ebdbb2", bold = true }
-progress_normal = { fg = "#b8bb26", bg = "#3c3836" }
-progress_error  = { fg = "#282828", bg = "#fb4934" }
+perm_sep   = { fg = "#7b88a1" }
+perm_type  = { fg = "#a3be8c" }
+perm_read  = { fg = "#ebcb8b" }
+perm_write = { fg = "#bf616a" }
+perm_exec  = { fg = "#88c0d0" }
+progress_label  = { fg = "#eceff4", bold = true }
+progress_normal = { fg = "#a3be8c", bg = "#3b4252" }
+progress_error  = { fg = "#2e3440", bg = "#bf616a" }
 
 [which]
-border          = { fg = "#d79921" }
-cand            = { fg = "#8ec07c" }
-rest            = { fg = "#928374" }
-desc            = { fg = "#ebdbb2" }
-separator_style = { fg = "#928374" }
+border          = { fg = "#88c0d0" }
+cand            = { fg = "#88c0d0" }
+rest            = { fg = "#7b88a1" }
+desc            = { fg = "#eceff4" }
+separator_style = { fg = "#7b88a1" }
 
 [confirm]
-border  = { fg = "#d79921" }
-title   = { fg = "#fabd2f" }
-body    = { fg = "#ebdbb2" }
-list    = { fg = "#d5c4a1" }
-btn_yes = { fg = "#282828", bg = "#fb4934", bold = true }
-btn_no  = { fg = "#ebdbb2" }
+border  = { fg = "#88c0d0" }
+title   = { fg = "#8fbcbb" }
+body    = { fg = "#eceff4" }
+list    = { fg = "#e5e9f0" }
+btn_yes = { fg = "#2e3440", bg = "#bf616a", bold = true }
+btn_no  = { fg = "#eceff4" }
 
 [spot]
-border   = { fg = "#d79921" }
-title    = { fg = "#fabd2f" }
-tbl_col  = { fg = "#83a598" }
-tbl_cell = { fg = "#282828", bg = "#fabd2f" }
+border   = { fg = "#88c0d0" }
+title    = { fg = "#8fbcbb" }
+tbl_col  = { fg = "#81a1c1" }
+tbl_cell = { fg = "#2e3440", bg = "#8fbcbb" }
 
 [notify]
-title_info  = { fg = "#b8bb26" }
-title_warn  = { fg = "#fabd2f" }
-title_error = { fg = "#fb4934" }
+title_info  = { fg = "#a3be8c" }
+title_warn  = { fg = "#ebcb8b" }
+title_error = { fg = "#bf616a" }
 
 [pick]
-border   = { fg = "#d79921" }
-active   = { fg = "#fabd2f", bold = true }
-inactive = { fg = "#ebdbb2" }
+border   = { fg = "#88c0d0" }
+active   = { fg = "#8fbcbb", bold = true }
+inactive = { fg = "#eceff4" }
 
 [input]
-border   = { fg = "#d79921" }
-title    = { fg = "#fabd2f" }
-value    = { fg = "#ebdbb2" }
-selected = { fg = "#282828", bg = "#fabd2f" }
+border   = { fg = "#88c0d0" }
+title    = { fg = "#8fbcbb" }
+value    = { fg = "#eceff4" }
+selected = { fg = "#2e3440", bg = "#8fbcbb" }
 
 [cmp]
-border   = { fg = "#d79921" }
-active   = { fg = "#ebdbb2", bg = "#3c3836", bold = true }
-inactive = { fg = "#d5c4a1" }
+border   = { fg = "#88c0d0" }
+active   = { fg = "#eceff4", bg = "#3b4252", bold = true }
+inactive = { fg = "#e5e9f0" }
 
 [tasks]
-border  = { fg = "#d79921" }
-title   = { fg = "#fabd2f" }
-hovered = { fg = "#fabd2f", bold = true }
+border  = { fg = "#88c0d0" }
+title   = { fg = "#8fbcbb" }
+hovered = { fg = "#8fbcbb", bold = true }
 
 [help]
-border  = { fg = "#d79921" }
-chord   = { fg = "#8ec07c" }
-action  = { fg = "#ebdbb2" }
-hovered = { fg = "#ebdbb2", bg = "#3c3836", bold = true }
+border  = { fg = "#88c0d0" }
+chord   = { fg = "#88c0d0" }
+action  = { fg = "#eceff4" }
+hovered = { fg = "#eceff4", bg = "#3b4252", bold = true }
 
 # A whole list, because naming one rule replaces the lot; these are yazi's own
 # rules with this palette in place of its ANSI names.
 [filetype]
 rules = [
-	{ mime = "**/image/*", fg = "#fabd2f" },
-	{ mime = "**/{audio,video}/*", fg = "#d3869b" },
-	{ mime = "**/application/{zip,rar,7z*,tar,gzip,xz,zstd,bzip*,lzma,compress,archive,cpio,arj,xar,ms-cab*}", fg = "#fb4934" },
-	{ mime = "**/application/{pdf,doc,rtf}", fg = "#8ec07c" },
-	{ mime = "vfs/{absent,stale}", fg = "#928374" },
+	{ mime = "**/image/*", fg = "#ebcb8b" },
+	{ mime = "**/{audio,video}/*", fg = "#b48ead" },
+	{ mime = "**/application/{zip,rar,7z*,tar,gzip,xz,zstd,bzip*,lzma,compress,archive,cpio,arj,xar,ms-cab*}", fg = "#bf616a" },
+	{ mime = "**/application/{pdf,doc,rtf}", fg = "#88c0d0" },
+	{ mime = "vfs/{absent,stale}", fg = "#7b88a1" },
 	# A link with nothing at the far end, and a file yazi could not stat.
-	{ url = "*", is = "orphan", fg = "#ebdbb2", bg = "#fb4934" },
-	{ url = "*", is = "exec", fg = "#b8bb26" },
-	{ url = "*", is = "dummy", fg = "#ebdbb2", bg = "#fb4934" },
-	{ url = "*/", is = "dummy", fg = "#ebdbb2", bg = "#fb4934" },
-	{ url = "*/", fg = "#83a598" },
+	{ url = "*", is = "orphan", fg = "#2e3440", bg = "#bf616a" },
+	{ url = "*", is = "exec", fg = "#a3be8c" },
+	{ url = "*", is = "dummy", fg = "#2e3440", bg = "#bf616a" },
+	{ url = "*/", is = "dummy", fg = "#2e3440", bg = "#bf616a" },
+	{ url = "*/", fg = "#81a1c1" },
 ]
 # theme:end

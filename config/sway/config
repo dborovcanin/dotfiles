@@ -7,13 +7,13 @@ set $mod Mod4
 animation_duration_ms 150
 
 # theme:begin wm
-set $background #282828
-set $background_alt #3c3836
-set $foreground #ebdbb2
-set $primary #d79921
-set $secondary #8ec07c
-set $alert #cc241d
-set $disabled #928374
+set $background #2e3440
+set $background_alt #3b4252
+set $foreground #eceff4
+set $primary #88c0d0
+set $secondary #88c0d0
+set $alert #bf616a
+set $disabled #7b88a1
 # theme:end
 
 set $desktop_env sway
@@ -45,7 +45,8 @@ floating_modifier $mod
 smart_borders on
 smart_gaps on
 # theme:begin sway-look
-font pango:JetBrainsMonoNL NF 14
+font pango:JetBrainsMonoNL NF 12
+titlebar_padding 6 1
 default_border pixel 4
 default_floating_border pixel 4
 gaps inner 10
@@ -344,8 +345,8 @@ bindsym Ctrl+Shift+period exec dunstctl context
 
 # Enable blur
 blur disabled
-blur_radius 4
-blur_passes 1
+# blur_radius 4
+# blur_passes 1
 
 # Slight rounded corners
 # theme:begin sway-corners
