@@ -192,6 +192,11 @@ if status is-login
     set -gx _JAVA_AWT_WM_NONREPARENTING 1
 
     if test -z "$WAYLAND_DISPLAY" -a -z "$DISPLAY" -a "$XDG_VTNR" = 1
-        exec dbus-run-session sway
+        # dbus-run-session would spawn its own bus and keep sway as its child,
+        # which buries the whole session one level down in every process tree.
+        # systemd already provides the user bus on $XDG_RUNTIME_DIR/bus via the
+        # static dbus.socket, so point at that and exec sway as the root.
+        set -gx DBUS_SESSION_BUS_ADDRESS "unix:path=$XDG_RUNTIME_DIR/bus"
+        exec sway
     end
 end

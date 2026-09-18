@@ -51,7 +51,6 @@ default_floating_border pixel 4
 gaps inner 10
 smart_gaps on
 
-
 exec dbar -c $dotfiles/config/dbar/config.toml
 
 # start a terminal
@@ -345,7 +344,7 @@ bindsym Ctrl+Shift+period exec dunstctl context
 
 # Enable blur
 blur enable
-blur_radius 8
+blur_radius 4
 blur_passes 1
 
 # Optional: slight grain so blur looks nicer
