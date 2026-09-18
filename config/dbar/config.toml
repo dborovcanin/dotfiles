@@ -23,7 +23,9 @@ position = "top"
 # the exclusive zone keeps the strip to itself.
 layer = "bottom"
 margin = 3
+# theme:begin dbar-font
 font = "Adwaita Sans 18"
+# theme:end
 
 # Read this file again without restarting the bar: `pkill -RTMIN+6 dbar`, which is what
 # scripts/install.sh sends once a theme has been copied out. A restart would show the same

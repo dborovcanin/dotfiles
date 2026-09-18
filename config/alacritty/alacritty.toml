@@ -2,15 +2,19 @@
 TERM = "xterm-256color"
 
 [font]
-normal = { family = "CaskaydiaMono Nerd Font", style = "Regular" }
-bold = { family = "CaskaydiaMono Nerd Font", style = "Bold" }
-italic = { family = "CaskaydiaMono Nerd Font", style = "Italic" }
-size = 12
+# theme:begin alacritty-font
+normal = { family = "JetBrainsMonoNL NF", style = "Regular" }
+bold = { family = "JetBrainsMonoNL NF", style = "Bold" }
+italic = { family = "JetBrainsMonoNL NF", style = "Italic" }
+size = 14
+# theme:end
 
 [window]
 padding.x = 2
 padding.y = 2
+# theme:begin alacritty-opacity
 opacity = 0.8
+# theme:end
 
 [keyboard]
 bindings = [

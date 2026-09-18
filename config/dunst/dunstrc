@@ -11,8 +11,11 @@
     separator_height = 2
     padding = 10
     horizontal_padding = 12
+    # theme:begin dunst-geometry
     frame_width = 4
     corner_radius = 10
+    transparency = 0
+    # theme:end
     # theme:begin dunst-global
     frame_color = "#d79921"
     separator_color = "#504945"
@@ -38,7 +41,9 @@
     class = Dunst
 
     idle_threshold = 120
-    font = DejaVu Sans Mono 14
+    # theme:begin dunst-font
+    font = JetBrainsMonoNL NF 14
+    # theme:end
 
 # theme:begin dunst-urgency
 [urgency_low]

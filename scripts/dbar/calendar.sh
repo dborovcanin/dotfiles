@@ -14,10 +14,15 @@ set -euo pipefail
 # the first run reaches every later one, which is what makes the CAL_* overrides
 # below stick for the whole life of the window.
 
-# Same family as config/foot/foot.ini, one size up, because this is read at a
-# glance from across the desk. The hint line is not read so much as remembered,
-# so it gets out of the way at a size of its own.
+# The font, one size up from the menus because this is read at a glance from
+# across the desk, and the frame and corners that every menu here shares: all
+# written by scripts/theme.sh from themes/style.sh. The hint line is not read
+# so much as remembered, so it gets out of the way at a size of its own.
+# theme:begin calendar-style
 FONT=${CAL_FONT:-"JetBrainsMonoNL NF 18"}
+BORDER_WIDTH=${CAL_BORDER_WIDTH:-4}
+RADIUS=${CAL_RADIUS:-12}
+# theme:end
 HINT_SIZE=${CAL_HINT_SIZE:-11pt}
 
 # Colours are written by scripts/theme.sh between the theme markers, so the
@@ -25,7 +30,7 @@ HINT_SIZE=${CAL_HINT_SIZE:-11pt}
 # Every colour can still be swapped from the environment without touching the file.
 # theme:begin calendar
 BG=${CAL_BG:-"#282828"}             # window, and the text on the selected day
-BG_ALPHA=${CAL_BG_ALPHA:-ff}        # opaque; the last byte of the window colour
+BG_ALPHA=${CAL_BG_ALPHA:-ff}        # the last byte of the window colour
 FG=${CAL_FG:-"#ebdbb2"}             # the days themselves
 BORDER=${CAL_BORDER:-"#d79921"}     # the frame around the window
 ACCENT=${CAL_ACCENT:-"#fabd2f"}     # the date line at the top
@@ -42,7 +47,6 @@ DIM=${CAL_DIM:-"#928374"}           # what the keys do
 # an icon and a space: thirty columns. The grid is only twenty, and the hint at
 # its smaller size fits comfortably inside the same thirty.
 WIDTH=30
-BORDER_WIDTH=4
 PADDING=18
 
 # The bar clock that opens this sits at the top middle, so the window belongs up
@@ -69,7 +73,7 @@ window {
     background-color: $BG$BG_ALPHA;
     border: ${BORDER_WIDTH}px solid;
     border-color: $BORDER;
-    border-radius: 12px;
+    border-radius: ${RADIUS}px;
     padding: ${PADDING}px;
 }
 * { font: \"$FONT\"; text-color: $FG; background-color: transparent; }

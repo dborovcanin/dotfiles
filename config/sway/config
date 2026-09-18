@@ -36,20 +36,20 @@ client.urgent               $alert           $alert             $foreground     
 client.placeholder          $alert           $alert             $foreground        $background_alt     $background_alt
 
 
-# Font for window titles
-font pango:DejaVu Sans Mono, FontAwesome 12
-
 # Use Mouse+$mod to drag floating windows to their wanted position
 floating_modifier $mod
 
-# Default borders: 5px for all the windows; no borders for fullscreen
+# The title font, the border width and the gap between windows, all written by
+# scripts/theme.sh from themes/style.sh. smart_borders and smart_gaps stay
+# outside: they say when to draw these, not how big they are.
 smart_borders on
+smart_gaps on
+# theme:begin sway-look
+font pango:JetBrainsMonoNL NF 14
 default_border pixel 4
 default_floating_border pixel 4
-
-# Default gaps
 gaps inner 10
-smart_gaps on
+# theme:end
 
 exec dbar -c $dotfiles/config/dbar/config.toml
 
@@ -348,7 +348,9 @@ blur_radius 4
 blur_passes 1
 
 # Slight rounded corners
+# theme:begin sway-corners
 corner_radius 5
+# theme:end
 
 # Switch to urgent
 bindsym $mod+x [urgent=latest] focus

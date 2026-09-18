@@ -5,6 +5,9 @@
 # so they need this file on top of the Qt palette that other Qt apps take from
 # GTK. Colours are "r,g,b" decimals and are written by scripts/theme.sh.
 #
+# The fonts in [General] come from themes/style.sh, because these apps read
+# their font from here rather than from GTK.
+#
 # The settings outside the colour block are the file-dialog preferences that
 # were already here; KDE rewrites them as you use its dialogs.
 
@@ -27,11 +30,16 @@ View Style=DetailTree
 [PreviewSettings]
 MaximumRemoteSize=0
 
-# theme:begin kde
+# theme:begin kde-globals
 [General]
 Name=Dotfiles
 ColorScheme=Dotfiles
 AccentColor=215,153,33
+font=Adwaita Sans,11,-1,5,50,0,0,0,0,0
+fixed=JetBrainsMonoNL NF,14,-1,5,50,0,0,0,0,0
+menuFont=Adwaita Sans,11,-1,5,50,0,0,0,0,0
+toolBarFont=Adwaita Sans,11,-1,5,50,0,0,0,0,0
+smallestReadableFont=Adwaita Sans,8,-1,5,50,0,0,0,0,0
 
 [Colors:Window]
 BackgroundNormal=40,40,40

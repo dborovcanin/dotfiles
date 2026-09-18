@@ -11,6 +11,7 @@ here=$(dirname "$(realpath "${BASH_SOURCE[0]}")")
 
 # theme:begin emoji
 key_color="#d5c4a1"
+font="JetBrainsMonoNL NFP 16"
 # theme:end
 
 # nf-md-emoticon_happy_outline, spelled as a code point like the icons in power.sh.
@@ -456,10 +457,10 @@ selection=$(entries | rofi -dmenu -matching fuzzy -i \
     -display-columns 1 -display-column-separator '\t' \
     -mesg "<span foreground=\"$key_color\">Return</span> copy  ·  a name or a category matches" \
     -theme "$here/../config/rofi/menu.rasi" \
-    -theme-str 'window {width: 28em;}
+    -theme-str "window {width: 28em;}
                 listview {lines: 12; spacing: 2px;}
                 element {padding: 3px 12px;}
-                element-text {font: "JetBrainsMonoNL NFP 16";}')
+                element-text {font: \"$font\";}")
 
 [ -z "$selection" ] && exit 0
 

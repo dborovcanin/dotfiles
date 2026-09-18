@@ -1,15 +1,20 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-# Writes a colour theme into every config and script of these dotfiles.
+# Writes the look - the colours, and the fonts, borders, corners, gaps and
+# transparency - into every config and script of these dotfiles.
 #
 # Usage: theme.sh apply <name|path>   rewrite every theme block with that theme
 #        theme.sh list                the themes in themes/
 #        theme.sh current             the theme applied last
 #        theme.sh check               every theme block, and whether it can be drawn
 #
-# A theme is a file of THEME_* colours in themes/ (see gruvbox-dark.sh). A
-# themed file carries one or more blocks between two marker comments:
+# A theme is a file of THEME_* colours in themes/ (see gruvbox-dark.sh). The
+# fonts, border widths, corner radii, gaps and transparency live in
+# themes/style.sh instead, which is read before the theme and applies to all of
+# them; a theme that wants its own sets the same variable again.
+#
+# A themed file carries one or more blocks between two marker comments:
 #
 #     # theme:begin <block>
 #     ...whatever render_<block> below prints...
@@ -21,12 +26,24 @@ set -euo pipefail
 # or installed: copy the configs into place and reload what is running.
 
 usage() {
-  sed -n '4,21s/^# \{0,1\}//p' "$0"
+  sed -n '4,27s/^# \{0,1\}//p' "$0"
 }
 
 root=$(realpath "$(dirname "$(realpath "${BASH_SOURCE[0]}")")/..")
 themes=$root/themes
 self=$(realpath "${BASH_SOURCE[0]}")
+
+# ---------------------------------------------------------------------------
+# The same number in the spelling each format wants. THEME_ALPHA is a fraction,
+# because that is what most of these take; the two that do not get it converted
+# here rather than written out by hand in two places.
+# ---------------------------------------------------------------------------
+
+# 0.8 -> cc, the last byte of an #rrggbbaa colour. rofi and the rofi scripts.
+alpha_hex() { awk -v a="$1" 'BEGIN { printf "%02x", int(a * 255 + 0.5) }'; }
+
+# 0.8 -> 20, dunst's transparency, which counts the other way round.
+alpha_percent() { awk -v a="$1" 'BEGIN { printf "%d", int((1 - a) * 100 + 0.5) }'; }
 
 # ---------------------------------------------------------------------------
 # Blocks. Each prints the lines that go between its markers.
@@ -125,6 +142,8 @@ foot_colors() {
   printf '\nselection-foreground=%s\nselection-background=%s\n\n' \
     "${THEME_FG#\#}" "${THEME_BG_ALT#\#}"
   printf 'urls=%s\n' "${THEME_BLUE#\#}"
+  # foot spells transparency as a fraction, in the same section as the colours.
+  printf '\nalpha=%s\n' "$THEME_ALPHA"
 }
 
 render_foot_dark() { foot_colors; }
@@ -369,6 +388,171 @@ rules = [
 EOF
 }
 
+# ---------------------------------------------------------------------------
+# Style blocks: the fonts and the geometry from themes/style.sh. Nothing here
+# is a colour, and every one of them sits in a file that has a colour block of
+# its own somewhere else.
+# ---------------------------------------------------------------------------
+
+# sway and i3 take the same words for all of this. Neither is given an outer
+# gap, because neither has one today; THEME_GAPS_OUT reaches hyprland, which
+# does. Add a "gaps outer" line inside the block below to have one here too.
+render_sway_look() {
+  cat <<EOF
+font pango:$THEME_FONT $THEME_FONT_SIZE
+default_border pixel $THEME_BORDER_WIDTH
+default_floating_border pixel $THEME_BORDER_WIDTH
+gaps inner $THEME_GAPS_IN
+EOF
+}
+
+render_sway_corners() {
+  printf 'corner_radius %s\n' "$THEME_RADIUS"
+}
+
+render_i3_look() {
+  cat <<EOF
+font pango:$THEME_FONT $THEME_FONT_SIZE
+default_border pixel $THEME_BORDER_WIDTH
+default_floating_border pixel $THEME_BORDER_WIDTH
+gaps inner $THEME_GAPS_IN
+EOF
+}
+
+# i3 has no transparency of its own; st is asked for it on the command line.
+render_i3_terminal() {
+  printf 'bindsym $mod+Return exec st -A %s\n' "$THEME_ALPHA"
+}
+
+render_niri_gaps() {
+  printf '    gaps %s\n' "$THEME_GAPS_IN"
+}
+
+render_niri_border_width() {
+  printf '        width %s\n' "$THEME_BORDER_WIDTH"
+}
+
+render_niri_corners() {
+  printf '    geometry-corner-radius %s\n' "$THEME_RADIUS"
+}
+
+# hyprland counts the inner gap once per window, so two neighbours are twice
+# this far apart; it is halved here to sit the same distance apart as in sway.
+render_hypr_geometry() {
+  cat <<EOF
+    gaps_in = $((THEME_GAPS_IN / 2))
+    gaps_out = $THEME_GAPS_OUT
+    border_size = $THEME_BORDER_WIDTH
+EOF
+}
+
+render_hypr_rounding() {
+  printf '    rounding = %s\n' "$THEME_RADIUS"
+}
+
+render_hypr_groupbar_font() {
+  cat <<EOF
+        font_family = $THEME_FONT
+        font_size = $THEME_FONT_SIZE
+EOF
+}
+
+render_hyprlock_font() {
+  printf '$font = %s\n' "$THEME_FONT"
+}
+
+render_hyprlock_rounding() {
+  printf '    rounding = %s\n' "$THEME_RADIUS"
+}
+
+render_dunst_geometry() {
+  cat <<EOF
+    frame_width = $THEME_BORDER_WIDTH
+    corner_radius = $THEME_RADIUS_POPUP
+    transparency = $(alpha_percent "$THEME_ALPHA_MENU")
+EOF
+}
+
+render_dunst_font() {
+  printf '    font = %s %s\n' "$THEME_FONT" "$THEME_FONT_SIZE"
+}
+
+render_foot_font() {
+  printf 'font=%s:size=%s\n' "$THEME_FONT_TERM" "$THEME_FONT_TERM_SIZE"
+}
+
+render_alacritty_font() {
+  cat <<EOF
+normal = { family = "$THEME_FONT_TERM", style = "Regular" }
+bold = { family = "$THEME_FONT_TERM", style = "Bold" }
+italic = { family = "$THEME_FONT_TERM", style = "Italic" }
+size = $THEME_FONT_TERM_SIZE
+EOF
+}
+
+render_alacritty_opacity() {
+  printf 'opacity = %s\n' "$THEME_ALPHA"
+}
+
+# urxvt is asked for the same font through X resources, and keeps the fallbacks
+# that were already here for whatever the first one has no glyph for.
+render_urxvt_font() {
+  cat <<EOF
+URxvt.font: xft:$THEME_FONT_TERM:size=$THEME_FONT_TERM_SIZE, xft:DejaVu Sans Mono Nerd Font:size=$THEME_FONT_TERM_SIZE, xft:DejaVu Sans:size=$THEME_FONT_TERM_SIZE
+EOF
+}
+
+render_dbar_font() {
+  printf 'font = "%s %s"\n' "$THEME_FONT_BAR" "$THEME_FONT_BAR_SIZE"
+}
+
+# GTK 3 and GTK 4 read the same key out of their own settings.ini.
+render_gtk_font() {
+  printf 'gtk-font-name=%s %s\n' "$THEME_FONT_DESKTOP" "$THEME_FONT_DESKTOP_SIZE"
+}
+
+# The two rofi scripts that draw themselves rather than using menu.rasi. Both
+# keep their own sizes - a tile is not a calendar row - and take the font, the
+# frame and the corners from here.
+render_power_style() {
+  cat <<EOF
+FONT=\${POWER_FONT:-"$THEME_FONT $THEME_FONT_SIZE"}
+BORDER_WIDTH=\${POWER_BORDER_WIDTH:-$THEME_BORDER_WIDTH}
+RADIUS=\${POWER_RADIUS:-$THEME_RADIUS_MENU}
+RADIUS_ITEM=\${POWER_RADIUS_ITEM:-$THEME_RADIUS_ITEM}
+EOF
+}
+
+render_calendar_style() {
+  cat <<EOF
+FONT=\${CAL_FONT:-"$THEME_FONT $((THEME_FONT_SIZE + 4))"}
+BORDER_WIDTH=\${CAL_BORDER_WIDTH:-$THEME_BORDER_WIDTH}
+RADIUS=\${CAL_RADIUS:-$THEME_RADIUS_ITEM}
+EOF
+}
+
+# The emoji grid is drawn at a size of its own: the rows are pictures, and the
+# names beside them are read at whatever size the pictures need.
+render_emoji_style() {
+  printf 'font="%s %s"\n' "$THEME_FONT_ICON" "$((THEME_FONT_SIZE + 2))"
+}
+
+# The rofi menus, which is config/rofi/menu.rasi and everything drawn with it:
+# the launcher, the clipboard and the emoji picker. The metrics are rasi
+# variables the file refers to, so a border width is written once here rather
+# than at each of the places that draws one. bw carries "solid" with it because
+# rofi will not take a variable as part of a larger value: "border: @bw solid"
+# fails to parse, while "border: @bw" with the style inside the variable does not.
+render_rofi_metrics() {
+  cat <<EOF
+    font-main: "$THEME_FONT $THEME_FONT_SIZE";
+    font-prompt: "$THEME_FONT_ICON $THEME_FONT_ICON_SIZE";
+    bw: ${THEME_BORDER_WIDTH}px solid;
+    radius: ${THEME_RADIUS_MENU}px;
+    radius-item: ${THEME_RADIUS_ITEM}px;
+EOF
+}
+
 render_i3status() {
   cat <<EOF
 separator_fg = "$THEME_FG"
@@ -503,13 +687,31 @@ EOF
 # same reading of the theme is spelled out again: window and view on the plain
 # background, buttons and tooltips a shade above, selection on the border
 # colour with dark text.
-render_kde() {
+# The palette twice over: config/qt/Dotfiles.colors is the colour scheme KDE
+# apps pick by name, and config/qt/kdeglobals is what they read at startup. The
+# second carries the desktop fonts as well, which a colour scheme has no
+# business holding.
+kde_general() {
   # The scheme is named for the dotfiles rather than the palette, so that
   # switching themes rewrites its colours instead of leaving a scheme called
   # "gruvbox" full of catppuccin.
-  printf '[General]\nName=Dotfiles\nColorScheme=Dotfiles\nAccentColor=%s\n\n' \
+  printf '[General]\nName=Dotfiles\nColorScheme=Dotfiles\nAccentColor=%s\n' \
     "$(kde_rgb "$THEME_BORDER")"
-  printf '[Colors:Window]\n%s\n\n' "$(kde_set "$THEME_BG" "$THEME_BG_ALT" "$THEME_FG")"
+}
+
+# Qt spells a font as a comma-separated list whose first two fields are the
+# family and the point size; the rest are style bits meaning regular weight.
+kde_fonts() {
+  local desktop="$THEME_FONT_DESKTOP,$THEME_FONT_DESKTOP_SIZE,-1,5,50,0,0,0,0,0"
+  printf 'font=%s\nfixed=%s\nmenuFont=%s\ntoolBarFont=%s\nsmallestReadableFont=%s\n' \
+    "$desktop" \
+    "$THEME_FONT_TERM,$THEME_FONT_TERM_SIZE,-1,5,50,0,0,0,0,0" \
+    "$desktop" "$desktop" \
+    "$THEME_FONT_DESKTOP,$((THEME_FONT_DESKTOP_SIZE - 3)),-1,5,50,0,0,0,0,0"
+}
+
+kde_sections() {
+  printf '\n[Colors:Window]\n%s\n\n' "$(kde_set "$THEME_BG" "$THEME_BG_ALT" "$THEME_FG")"
   printf '[Colors:View]\n%s\n\n' "$(kde_set "$THEME_BG" "$THEME_BG_ALT" "$THEME_FG")"
   printf '[Colors:Button]\n%s\n\n' "$(kde_set "$THEME_BG_ALT" "$THEME_BG_RAISED" "$THEME_FG")"
   printf '[Colors:Tooltip]\n%s\n\n' "$(kde_set "$THEME_BG_ALT" "$THEME_BG_RAISED" "$THEME_FG")"
@@ -520,6 +722,17 @@ render_kde() {
   printf '[WM]\nactiveBackground=%s\nactiveForeground=%s\ninactiveBackground=%s\ninactiveForeground=%s\n' \
     "$(kde_rgb "$THEME_BG_ALT")" "$(kde_rgb "$THEME_FG")" \
     "$(kde_rgb "$THEME_BG")" "$(kde_rgb "$THEME_DIM")"
+}
+
+render_kde() {
+  kde_general
+  kde_sections
+}
+
+render_kde_globals() {
+  kde_general
+  kde_fonts
+  kde_sections
 }
 
 # GTK 3 has no light/dark variant to name, it has a flag. GTK 4 and libadwaita
@@ -762,7 +975,7 @@ EOF
 render_power() {
   cat <<EOF
 BG=\${POWER_BG:-"$THEME_BG"}           # window
-BG_ALPHA=\${POWER_BG_ALPHA:-ff}      # opaque; the last byte of the window colour
+BG_ALPHA=\${POWER_BG_ALPHA:-$(alpha_hex "$THEME_ALPHA_MENU")}      # the last byte of the window colour
 FG=\${POWER_FG:-"$THEME_FG"}           # tile labels
 BORDER=\${POWER_BORDER:-"$THEME_BORDER"}   # the frame around the window
 TILE=\${POWER_TILE:-"$THEME_BG_ALT"}       # behind the tile under the cursor
@@ -785,7 +998,7 @@ EOF
 render_calendar() {
   cat <<EOF
 BG=\${CAL_BG:-"$THEME_BG"}             # window, and the text on the selected day
-BG_ALPHA=\${CAL_BG_ALPHA:-ff}        # opaque; the last byte of the window colour
+BG_ALPHA=\${CAL_BG_ALPHA:-$(alpha_hex "$THEME_ALPHA_MENU")}        # the last byte of the window colour
 FG=\${CAL_FG:-"$THEME_FG"}             # the days themselves
 BORDER=\${CAL_BORDER:-"$THEME_BORDER"}     # the frame around the window
 ACCENT=\${CAL_ACCENT:-"$THEME_ACCENT"}     # the date line at the top
@@ -805,7 +1018,11 @@ render_clipboard() {
   printf 'key_color="%s"\n' "$THEME_FG_ALT"
 }
 
-render_emoji() { render_clipboard; }
+# The emoji picker takes the same hint colour and a font of its own.
+render_emoji() {
+  render_clipboard
+  render_emoji_style
+}
 
 # ---------------------------------------------------------------------------
 # Hooks that run after a file's blocks are written, for colours a format will
@@ -853,6 +1070,9 @@ load_theme() {
     echo "theme.sh: no theme at $file" >&2
     exit 1
   }
+  # style first, colours second: a theme file may override either.
+  # shellcheck source=../themes/style.sh
+  source "$themes/style.sh"
   # shellcheck source=../themes/gruvbox-dark.sh
   source "$themes/gruvbox-dark.sh"
   # shellcheck disable=SC1090

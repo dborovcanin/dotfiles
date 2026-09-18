@@ -8,8 +8,9 @@ set -euo pipefail
 #        --no-backup overwrite without keeping the file that was there
 #        --no-reload copy the files and leave running programs alone
 #
-# Colours are not written here: scripts/theme.sh writes them into the repo, and
-# this copies the result out. Run theme.sh first if a theme has just changed.
+# Colours, fonts and the rest of the look are not written here: scripts/theme.sh
+# writes them into the repo, and this copies the result out. Run theme.sh first
+# if a theme or themes/style.sh has just changed.
 #
 # Only half the repo is listed below, because only half of it is copied. Every
 # config a window manager reads by path — dbar, dunst, picom, polybar, rofi, the

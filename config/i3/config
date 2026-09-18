@@ -32,24 +32,28 @@ client.urgent               $alert           $alert             $foreground     
 client.placeholder          $alert           $alert             $foreground        $alert              $background_alt
 
 
-# Font for window titles
-font pango:DejaVu Sans Mono, FontAwesome 12
-
 # Use Mouse+$mod to drag floating windows to their wanted position
 floating_modifier $mod
 
-# Default borders: 5px for all the windows; no borders for fullscreen
+# The title font, the border width and the gap between windows, all written by
+# scripts/theme.sh from themes/style.sh. smart_borders and smart_gaps stay
+# outside: they say when to draw these, not how big they are.
 smart_borders on
-default_border pixel 5
-default_floating_border pixel 5
-
-# Default gaps
-gaps inner 10
 smart_gaps on
+# theme:begin i3-look
+font pango:JetBrainsMonoNL NF 14
+default_border pixel 4
+default_floating_border pixel 4
+gaps inner 10
+# theme:end
 
 # start a terminal
 # bindsym $mod+Return exec WINIT_X11_SCALE_FACTOR=1.0 alacritty -o font.size=12
+# st takes its transparency on the command line, so the terminal binding is
+# written by scripts/theme.sh along with everything else THEME_ALPHA reaches.
+# theme:begin i3-terminal
 bindsym $mod+Return exec st -A 0.8
+# theme:end
 # bindsym $mod+Return exec alacritty
 bindsym $mod+Shift+Return exec $HOME/dotfiles/scripts/sticky_term.sh
 bindsym $mod+Shift+space exec printf "toggle" | nc -U /run/user/1000/findy.sock

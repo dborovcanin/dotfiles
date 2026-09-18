@@ -2,7 +2,8 @@
 
 Config for my Linux desktop: window managers (niri, sway, Hyprland, i3), terminals,
 shells, editors and the scripts that hold them together. Every colour in the repo
-comes from one theme file, so a single command restyles the whole desktop.
+comes from one theme file, and the fonts, borders, corners, gaps and transparency
+from one style file, so a single command restyles the whole desktop.
 
 ## Layout
 
@@ -10,7 +11,7 @@ comes from one theme file, so a single command restyles the whole desktop.
 | ----------------------- | ----------------------------------------------------------------------------------------------------------------------------------- |
 | `config/`               | per-program configs (niri, sway, hypr, i3, foot, alacritty, fish, helix, nvim, rofi, dunst, polybar, dbar, btop, gtk, qt, starship) |
 | `scripts/`              | launcher, screenshot, clipboard, power, brightness, background, theme, startup                                                      |
-| `themes/`               | colour themes (`nord.sh`, `gruvbox-dark.sh`, …) and the wallpaper                                                                   |
+| `themes/`               | colour themes (`nord.sh`, `gruvbox-dark.sh`, …), `style.sh` for fonts and geometry, and the wallpaper                               |
 | `tools/`                | Go helpers, built into `bin/`                                                                                                       |
 | `zsh/`, `tmux/`, `etc/` | shell, tmux and system files                                                                                                        |
 
@@ -62,6 +63,12 @@ Pick a theme, then install so the copies land in `~`:
 
 `theme.sh` rewrites every block marked `theme:begin` / `theme:end` in the repo;
 `theme.sh current` shows the theme in use, `theme.sh check` verifies the blocks.
+
+What is not a colour lives in `themes/style.sh`: the font roles (menus, prompt
+icons, terminals, the bar, GTK and Qt applications), the border width, the radii,
+the gaps and the transparency. It is read before the theme, so it holds for all
+of them, and a theme that wants its own sets the same variable again. Change a
+value there and run `theme.sh apply` and `install.sh` as above.
 
 Pick a wallpaper (renders sharp and blurred copies for the lock screen):
 

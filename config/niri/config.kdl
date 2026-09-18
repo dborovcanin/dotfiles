@@ -63,7 +63,9 @@ output "HDMI-A-1" {
 }
 
 layout {
-    gaps 15
+    // theme:begin niri-gaps
+    gaps 10
+    // theme:end
     center-focused-column "never"
     // theme:begin niri-background
     background-color "#282828"
@@ -82,7 +84,9 @@ layout {
     }
 
     border {
+        // theme:begin niri-border-width
         width 4
+        // theme:end
         // theme:begin niri-border
         active-color "#d79921"
         inactive-color "#3c3836"
@@ -107,7 +111,9 @@ blur {
 
 // Slight rounded corners + blur behind translucent windows
 window-rule {
+    // theme:begin niri-corners
     geometry-corner-radius 5
+    // theme:end
     clip-to-geometry true
     background-effect {
         blur true

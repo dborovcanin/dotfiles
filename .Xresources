@@ -76,7 +76,9 @@ URxvt.iso14755_52: false
 URxvt.urgentOnBell: true
 URxvt.scrollBar: false
 URxvt.letterSpace: 0
-URxvt.font: xft:Source Code Pro:style=Semibold:size=12, xft:DejaVu Sans Mono Nerd Font:size=12, xft:hack:size=12, xft:DejaVu Sans:size=12
+! theme:begin urxvt-font
+URxvt.font: xft:JetBrainsMonoNL NF:size=14, xft:DejaVu Sans Mono Nerd Font:size=14, xft:DejaVu Sans:size=14
+! theme:end
 URxvt.depth: 32
 
 !bindings for arrow moves

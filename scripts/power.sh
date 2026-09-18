@@ -39,9 +39,16 @@ if [[ -z $WM ]]; then
     fi
 fi
 
-# Same family as config/foot/foot.ini; the icons are what is read first, so
-# they get a size of their own well above the labels.
+# The font, the frame and the corners are written by scripts/theme.sh from
+# themes/style.sh, so this menu is the same shape as every other one. The two
+# sizes below are the tiles' own: the icons are what is read first, so they get
+# a size well above the labels, and the keys sit below them.
+# theme:begin power-style
 FONT=${POWER_FONT:-"JetBrainsMonoNL NF 14"}
+BORDER_WIDTH=${POWER_BORDER_WIDTH:-4}
+RADIUS=${POWER_RADIUS:-16}
+RADIUS_ITEM=${POWER_RADIUS_ITEM:-12}
+# theme:end
 ICON_SIZE=${POWER_ICON_SIZE:-30pt}
 KEY_SIZE=${POWER_KEY_SIZE:-10pt}
 
@@ -49,7 +56,7 @@ KEY_SIZE=${POWER_KEY_SIZE:-10pt}
 # one can still be swapped from the environment without touching the file.
 # theme:begin power
 BG=${POWER_BG:-"#282828"}           # window
-BG_ALPHA=${POWER_BG_ALPHA:-ff}      # opaque; the last byte of the window colour
+BG_ALPHA=${POWER_BG_ALPHA:-ff}      # the last byte of the window colour
 FG=${POWER_FG:-"#ebdbb2"}           # tile labels
 BORDER=${POWER_BORDER:-"#d79921"}   # the frame around the window
 TILE=${POWER_TILE:-"#3c3836"}       # behind the tile under the cursor
@@ -196,7 +203,7 @@ tile() {
 # leaving a hole in it.
 theme() {
     local count=$1 frame=$2
-    local tile_ch=10 gap=12 pad=24 border=4
+    local tile_ch=10 gap=12 pad=24 border=$BORDER_WIDTH
     cat <<EOF
 window {
     location: center;
@@ -205,7 +212,7 @@ window {
     background-color: $BG$BG_ALPHA;
     border: ${border}px solid;
     border-color: $BORDER;
-    border-radius: 16px;
+    border-radius: ${RADIUS}px;
     padding: ${pad}px;
 }
 * { font: "$FONT"; text-color: $FG; background-color: transparent; }
@@ -219,8 +226,8 @@ listview {
 }
 element {
     padding: 14px 0;
-    border: 4px solid;
-    border-radius: 12px;
+    border: ${BORDER_WIDTH}px solid;
+    border-radius: ${RADIUS_ITEM}px;
     orientation: vertical;
 }
 element normal.normal, element alternate.normal,
