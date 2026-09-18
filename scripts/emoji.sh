@@ -1,6 +1,21 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
+# The emoji picker, drawn by config/rofi/menu.rasi.
+#
+# Return copies the emoji to the clipboard; the name and the category behind
+# each one are matched but never shown, so "cat", "animal" and "🐱" all find
+# the same row.
+
+here=$(dirname "$(realpath "${BASH_SOURCE[0]}")")
+
+# theme:begin emoji
+key_color="#d5c4a1"
+# theme:end
+
+# nf-md-emoticon_happy_outline, spelled as a code point like the icons in power.sh.
+icon=$'\U000F01F5'
+
 copy_emoji() {
     local emoji="$1"
 
@@ -22,11 +37,24 @@ copy_emoji() {
     exit 1
 }
 
-# ---- pick emoji ----
-# choice="$(rofi -dmenu -i -matching fuzzy -p "Emoji" <<'EOF'
-choice="$(rofi -dmenu \
-    -i -matching fuzzy -p "Emoji" \
-    -theme-str 'window { width: 400px; } listview { lines: 15; } element-text { font: "JetBrainsMono Nerd Font 16, monospace 16"; }' <<'EOF'
+# The list below is "emoji name..." under a "# category" heading. Every row
+# leaves rofi as "emoji  name<tab>name category": the first column is shown,
+# the second is only matched, which is what makes a category searchable
+# without a heading taking up a row of its own.
+entries() {
+    awk '
+        /^[[:space:]]*$/ { next }
+        /^#/ {
+            category = substr($0, 2)
+            gsub(/^[[:space:]]+|[[:space:]]+$/, "", category)
+            next
+        }
+        {
+            name = substr($0, index($0, " ") + 1)
+            printf "%s  %s\t%s %s\n", $1, name, name, category
+        }
+    ' <<'EOF'
+# smileys faces
 😀 grinning
 😁 smile eyes
 😂 joy
@@ -76,7 +104,7 @@ choice="$(rofi -dmenu \
 😓 sweat
 🤝 handshake
 
-#health
+# health
 🥶 cold face
 🧊 ice
 ❄️ snowflake
@@ -127,7 +155,7 @@ choice="$(rofi -dmenu \
 🦧 orangutan
 🐾 paw prints
 
-# birds
+# birds animals
 🐔 chicken
 🐓 rooster
 🐣 chick
@@ -139,7 +167,7 @@ choice="$(rofi -dmenu \
 🦉 owl
 🦜 parrot
 
-# reptiles / bugs
+# reptiles bugs animals
 🐍 snake
 🐢 turtle
 🦎 lizard
@@ -153,6 +181,19 @@ choice="$(rofi -dmenu \
 🦗 cricket
 🕷 spider
 🦂 scorpion
+
+# sea animals
+🐳 whale
+🐋 whale2
+🐬 dolphin
+🦈 shark
+🐙 octopus
+🦑 squid
+🦀 crab
+🦞 lobster
+🐠 fish
+🐟 fish2
+🐡 blowfish
 
 # arrows
 ➡️ right arrow
@@ -173,26 +214,26 @@ choice="$(rofi -dmenu \
 🔚 end arrow
 🔜 soon arrow
 
-# clock
-🕐 one o’clock
-🕑 two o’clock
-🕒 three o’clock
-🕓 four o’clock
-🕔 five o’clock
-🕕 six o’clock
-🕖 seven o’clock
-🕗 eight o’clock
-🕘 nine o’clock
-🕙 ten o’clock
-🕚 eleven o’clock
-🕛 twelve o’clock
+# clock time
+🕐 one o'clock
+🕑 two o'clock
+🕒 three o'clock
+🕓 four o'clock
+🕔 five o'clock
+🕕 six o'clock
+🕖 seven o'clock
+🕗 eight o'clock
+🕘 nine o'clock
+🕙 ten o'clock
+🕚 eleven o'clock
+🕛 twelve o'clock
 ⏰ alarm clock
 ⏱️ stopwatch
 ⏲️ timer clock
 🕰️ mantelpiece clock
 ⌚ watch
 
-#spooky
+# spooky
 👻 ghost
 🧛 vampire
 🧛‍♂️ man vampire
@@ -216,19 +257,6 @@ choice="$(rofi -dmenu \
 🌫️ fog
 🕯️ candle
 🔮 crystal ball
-
-# sea
-🐳 whale
-🐋 whale2
-🐬 dolphin
-🦈 shark
-🐙 octopus
-🦑 squid
-🦀 crab
-🦞 lobster
-🐠 fish
-🐟 fish2
-🐡 blowfish
 
 # weapons
 🔪 kitchen knife
@@ -410,25 +438,35 @@ choice="$(rofi -dmenu \
 🪝 hook
 🔗 chain
 
-#flags
+# flags
 🚩 red flag
 🏳 white flag
 🏴 black flag
 ⚑ flag
 ⚐ flag outline
 
-#custom
+# custom
 󰣇 arch
  gopher
 EOF
-)"
+}
 
-[ -z "$choice" ] && exit 0
+selection=$(entries | rofi -dmenu -matching fuzzy -i \
+    -p "$icon" \
+    -display-columns 1 -display-column-separator '\t' \
+    -mesg "<span foreground=\"$key_color\">Return</span> copy  ·  a name or a category matches" \
+    -theme "$here/../config/rofi/menu.rasi" \
+    -theme-str 'window {width: 28em;}
+                listview {lines: 12; spacing: 2px;}
+                element {padding: 3px 12px;}
+                element-text {font: "JetBrainsMonoNL NFP 16";}')
 
-emoji="${choice%% *}"
+[ -z "$selection" ] && exit 0
 
-# copy to clipboard
+# rofi prints the whole row, hidden column and all; the emoji is what stands
+# before the two spaces the row was built with.
+emoji=${selection%% *}
+
 copy_emoji "$emoji"
 
-# notification
 notify-send "Emoji copied" "$emoji"

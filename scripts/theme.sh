@@ -672,9 +672,13 @@ DIM=\${CAL_DIM:-"$THEME_DIM"}           # what the keys do
 EOF
 }
 
+# The keys in the hint line of scripts/clipboard.sh and scripts/emoji.sh;
+# everything else in those two menus is painted by the rofi block above.
 render_clipboard() {
   printf 'key_color="%s"\n' "$THEME_FG_ALT"
 }
+
+render_emoji() { render_clipboard; }
 
 # ---------------------------------------------------------------------------
 # Hooks that run after a file's blocks are written, for colours a format will
