@@ -343,7 +343,7 @@ bindsym Mod1+grave exec dunstctl history-pop
 bindsym Ctrl+Shift+period exec dunstctl context
 
 # Enable blur
-blur enable
+blur disabled
 blur_radius 4
 blur_passes 1
 
