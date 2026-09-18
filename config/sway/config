@@ -347,9 +347,6 @@ blur enable
 blur_radius 4
 blur_passes 1
 
-# Optional: slight grain so blur looks nicer
-blur_noise 0.02
-
 # Slight rounded corners
 corner_radius 5
 
