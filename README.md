@@ -7,20 +7,20 @@ from one style file, so a single command restyles the whole desktop.
 
 ## Layout
 
-| Path                    | What                                                                                                                                       |
-| ----------------------- | ------------------------------------------------------------------------------------------------------------------------------------------ |
-| `config/`               | per-program configs (niri, sway, hypr, i3, foot, alacritty, kitty, fish, helix, nvim, rofi, dunst, polybar, dbar, btop, gtk, qt, starship) |
-| `scripts/`              | launcher, screenshot, clipboard, power, brightness, background, theme, startup                                                             |
-| `themes/`               | colour themes (`nord.sh`, `gruvbox-dark.sh`, …), `style.sh` for fonts and geometry, and the wallpaper                                      |
-| `tools/`                | Go helpers, built into `bin/`                                                                                                              |
-| `zsh/`, `tmux/`, `etc/` | shell, tmux and system files                                                                                                               |
+| Path                    | What                                                                                                                                                |
+| ----------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `config/`               | per-program configs (niri, sway, hypr, i3, foot, alacritty, kitty, ghostty, fish, helix, nvim, rofi, dunst, polybar, dbar, btop, gtk, qt, starship) |
+| `scripts/`              | launcher, screenshot, clipboard, power, brightness, background, theme, startup                                                                      |
+| `themes/`               | colour themes (`nord.sh`, `gruvbox-dark.sh`, …), `style.sh` for fonts and geometry, and the wallpaper                                               |
+| `tools/`                | Go helpers, built into `bin/`                                                                                                                       |
+| `zsh/`, `tmux/`, `etc/` | shell, tmux and system files                                                                                                                        |
 
 ## Requirements
 
 - Core: `bash`, `git`, `fish` or `zsh`, `tmux`
 - Desktop: one of `niri` / `sway` / `hyprland` / `i3`, plus `rofi`, `dunst`,
   a bar (`dbar`, `polybar` or i3status) and a terminal (`foot`, `alacritty`,
-  `kitty`)
+  `kitty`, `ghostty`)
 - Scripts: `fzf`, `jq`, `fd`, `magick` (ImageMagick), `wl-clipboard` or `xclip`,
   `swaybg`/`feh`, `gsettings`, `xrdb` (X11)
 - Tools: Go 1.26+ to build `tools/`
