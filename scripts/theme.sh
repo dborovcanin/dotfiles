@@ -181,6 +181,18 @@ render_kitty() {
   for i in {8..15}; do printf 'color%-2d %s\n' "$i" "${THEME_ANSI[i]}"; done
 }
 
+# ghostty. Key-value like kitty, but the sixteen are one repeated `palette`
+# key, numbered, and it has no border or tab colours of its own to set.
+render_ghostty() {
+  local i
+  printf 'background = %s\nforeground = %s\n\n' "$THEME_BG" "$THEME_FG"
+  printf 'cursor-color = %s\ncursor-text = %s\n\n' "$THEME_ACCENT" "$THEME_ON_COLOR"
+  printf 'selection-foreground = %s\nselection-background = %s\n\n' "$THEME_FG" "$THEME_BG_ALT"
+  for i in {0..7}; do printf 'palette = %d=%s\n' "$i" "${THEME_ANSI[i]}"; done
+  echo
+  for i in {8..15}; do printf 'palette = %d=%s\n' "$i" "${THEME_ANSI[i]}"; done
+}
+
 # The [90] in front of the background is the terminal's transparency.
 render_urxvt() {
   local i
@@ -529,6 +541,18 @@ EOF
 
 render_kitty_opacity() {
   printf 'background_opacity %s\n' "$THEME_ALPHA"
+}
+
+# ghostty, like kitty, takes the bold and italic faces from the family.
+render_ghostty_font() {
+  cat <<EOF
+font-family = $THEME_FONT_TERM
+font-size = $THEME_FONT_TERM_SIZE
+EOF
+}
+
+render_ghostty_opacity() {
+  printf 'background-opacity = %s\n' "$THEME_ALPHA"
 }
 
 # urxvt is asked for the same font through X resources, and keeps the fallbacks

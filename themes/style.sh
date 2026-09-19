@@ -81,7 +81,7 @@ THEME_GAPS_OUT=10
 
 # Terminals. The compositors blur what is behind a transparent window, which is
 # what keeps text on top of it readable.
-THEME_ALPHA=0.98
+THEME_ALPHA=1.0
 
 # Menus and notifications. Opaque by default: these are read in a glance and
 # sit over whatever was already on the screen.

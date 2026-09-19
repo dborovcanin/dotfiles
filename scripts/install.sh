@@ -92,6 +92,7 @@ config/i3/config|$HOME/.config/i3/config
 config/foot/foot.ini|$HOME/.config/foot/foot.ini
 config/alacritty/alacritty.toml|$HOME/.config/alacritty/alacritty.toml
 config/kitty/kitty.conf|$HOME/.config/kitty/kitty.conf
+config/ghostty/config|$HOME/.config/ghostty/config
 config/helix/config.toml|$HOME/.config/helix/config.toml
 config/nvim/lua/plugins/theme.lua|$HOME/.config/nvim/lua/plugins/theme.lua
 config/nvim/colors/dotfiles.lua|$HOME/.config/nvim/colors/dotfiles.lua
@@ -334,6 +335,15 @@ reload_foot() {
     fi
 }
 
+# ghostty does not watch its config file, but it rereads it on SIGUSR2, which
+# covers the colours and the font. Its own windows are one process under
+# gtk-single-instance, so one signal reaches all of them.
+reload_ghostty() {
+    running ghostty || return 0
+    say "reload" "ghostty"
+    ((dry_run)) || pkill -USR2 -x ghostty || true
+}
+
 # The realtime signal offset the bar's config asks to be re-read on, if it asks.
 dbar_reload_offset() {
     sed -n 's/^[[:space:]]*reload_signal[[:space:]]*=[[:space:]]*\([0-9]\{1,\}\).*/\1/p' \
@@ -414,6 +424,7 @@ reload_running() {
     reload_polybar
     reload_tmux
     reload_foot
+    reload_ghostty
     reload_dbar
 }
 
@@ -436,8 +447,8 @@ Not copied, on purpose:
                         read from the clone by the window manager configs
 
 Reloaded above, where the program was running: sway, i3, hyprland, dunst, picom,
-polybar, tmux, foot's colour block, and dbar on its reload signal, or by restarting it
-when the running bar predates the signal. niri, alacritty and kitty
+polybar, tmux, foot's colour block, ghostty, and dbar on its reload signal, or by
+restarting it when the running bar predates the signal. niri, alacritty and kitty
 watch their own config files. Left by hand: a running helix wants
 `:config-reload` typed into it, since an editor that does not handle the signal
 dies of it, and GTK and Qt apps pick up colours when they next start. The

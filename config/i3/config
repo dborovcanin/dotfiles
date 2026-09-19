@@ -52,7 +52,7 @@ gaps inner 10
 # st takes its transparency on the command line, so the terminal binding is
 # written by scripts/theme.sh along with everything else THEME_ALPHA reaches.
 # theme:begin i3-terminal
-bindsym $mod+Return exec st -A 0.98
+bindsym $mod+Return exec st -A 1.0
 # theme:end
 # bindsym $mod+Return exec alacritty
 bindsym $mod+Shift+Return exec $HOME/dotfiles/scripts/sticky_term.sh
