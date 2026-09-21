@@ -96,6 +96,12 @@ set -g __prompt_color_time 88c0d0
 # -------------------------------------------------------------------
 abbr -a ec emacsclient
 
+# bash-style history expansion: !! is the previous command, !$ its last
+# argument. Abbreviations rather than real expansion, so the line is rewritten
+# in place and visible before it runs -- `sudo !!` becomes the full command.
+abbr -a !! --position anywhere --function __history_bang_last
+abbr -a '!$' --position anywhere --function __history_bang_arg
+
 # tmux
 abbr -a t tmux
 abbr -a tma 'tmux attach -t'
@@ -109,14 +115,11 @@ abbr -a tmkw 'tmux kill-window'
 # directory movement; `..` and `dir/` already cd on their own
 abbr -a ... 'cd ../..'
 abbr -a .... 'cd ../../..'
-abbr -a bk 'cd -'
 abbr -a dh dirh
 abbr -a m 'cd ~/go/src/github.com/absmach/magistrala'
-abbr -a mui 'cd ~/magistrala-ui'
 abbr -a fx 'cd ~/go/src/github.com/absmach/fluxmq'
 
 # directory information
-abbr -a lh 'ls -d .*'
 abbr -a lsd 'ls -aFhlG'
 abbr -a l 'ls -al'
 abbr -a ll 'ls -GFhl'
@@ -151,13 +154,7 @@ abbr -a gms 'git merge --squash'
 abbr -a gmf 'git merge --no-ff'
 abbr -a gmt 'git mergetool'
 
-# docker
-abbr -a dps 'docker ps'
-abbr -a dl 'docker logs'
-abbr -a drma 'docker rm (docker ps -a -q) -f'
-
 # other
-abbr -a terminal alacritty
 abbr -a code codium
 
 # -------------------------------------------------------------------

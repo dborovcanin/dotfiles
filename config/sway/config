@@ -57,7 +57,7 @@ exec dbar -c $dotfiles/config/dbar/config.toml
 # start a terminal
 bindsym $mod+Return exec footclient -T "~"
 
-bindsym $mod+Shift+Return exec footclient -T "term" --app-id float_term
+bindsym $mod+Shift+Return exec footclient -T "~" --app-id float_term
 for_window [app_id="float_term"] floating enable, resize set 1400 1000, move position center
 
 bindsym $mod+ctrl+Shift+Return exec footclient --app-id sticky_term
