@@ -11,8 +11,9 @@ set -euo pipefail
 #        -n, --no-reload   write the files and leave the screen alone
 #            --show        print what is installed now and stop
 #
-# With no image, every picture under DIR is listed in fzf: type to narrow, the
-# preview pane draws the image, ctrl-o opens the highlighted one in a real
+# With no image, DIR is opened in yazi and Enter picks the highlighted file.
+# Without yazi every picture under DIR is listed in fzf instead: type to narrow,
+# the preview pane draws the image, ctrl-o opens the highlighted one in a real
 # viewer, Enter picks. With an image, that file is used and nothing is asked
 # except the confirmation.
 #
@@ -73,7 +74,19 @@ preview() {
     identify -format '%wx%h  %b  %m\n\n' "$file[0]" 2>/dev/null || echo
 
     if command -v chafa >/dev/null; then
-        chafa --size "${FZF_PREVIEW_COLUMNS:-80}x$((${FZF_PREVIEW_LINES:-24} - 2))" "$file"
+        # Run by hand chafa probes the terminal and picks sixels and true
+        # colour. fzf hands the preview command a pipe instead of a tty, the
+        # probe gets nothing back, and chafa drops to its safe fallback of
+        # low-colour text symbols, which is the grain. Say what the terminal
+        # can do rather than letting it ask.
+        local fmt=symbols
+        if [[ -n ${KITTY_WINDOW_ID:-} ]]; then
+            fmt=kitty
+        elif [[ ${TERM:-} == foot* || ${TERM:-} == xterm* || ${TERM:-} == wezterm* || ${TERM:-} == mlterm* || ${TERM:-} == contour* ]]; then
+            fmt=sixels
+        fi
+        chafa -f "$fmt" -c full --polite on \
+            --size "${FZF_PREVIEW_COLUMNS:-80}x$((${FZF_PREVIEW_LINES:-24} - 2))" "$file"
     elif [[ -n ${KITTY_WINDOW_ID:-} ]] && command -v kitten >/dev/null; then
         kitten icat --clear --transfer-mode=memory --unicode-placeholder \
             --stdin=no --place="${FZF_PREVIEW_COLUMNS:-80}x$((${FZF_PREVIEW_LINES:-24} - 2))@0x2" "$file"
@@ -113,16 +126,44 @@ list_pictures() {
     find -L "$dir" -type f \( "${find_args[@]}" \) -print 2>/dev/null | sort
 }
 
+# yazi owns the terminal while it runs, so it can ask the terminal what it
+# draws and answer with sixels or the kitty protocol at the pane's real pixel
+# size. fzf hands its preview command a pipe, that question goes unanswered, and
+# the image comes back as coloured text cells - the grain. So yazi picks when it
+# is here and fzf is the fallback.
 choose() {
-    command -v fzf >/dev/null || {
-        echo "background.sh: no fzf; pass the image as an argument" >&2
-        exit 1
-    }
     [[ -d $dir ]] || {
         echo "background.sh: no directory at $dir" >&2
         exit 1
     }
 
+    if command -v yazi >/dev/null; then
+        choose_yazi
+    elif command -v fzf >/dev/null; then
+        choose_fzf
+    else
+        echo "background.sh: no yazi or fzf; pass the image as an argument" >&2
+        exit 1
+    fi
+}
+
+# yazi draws on the terminal, so it is pointed at /dev/tty and the picked path
+# is the only thing this leaves on stdout for the caller to read.
+choose_yazi() {
+    local out chosen
+    out=$(mktemp)
+    yazi --chooser-file="$out" "$dir" >/dev/tty 2>/dev/tty </dev/tty || true
+    chosen=$(head -n 1 "$out" 2>/dev/null || true)
+    rm -f "$out"
+
+    [[ -n $chosen ]] || {
+        echo "Nothing picked." >&2
+        exit 1
+    }
+    printf '%s\n' "$chosen"
+}
+
+choose_fzf() {
     local chosen
     chosen=$(list_pictures | fzf \
         --prompt='background> ' \

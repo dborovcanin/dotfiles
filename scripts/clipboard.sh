@@ -13,6 +13,26 @@
 here=$(dirname "$(realpath "${BASH_SOURCE[0]}")")
 self=$(realpath "${BASH_SOURCE[0]}")
 
+# --preview <file> <row> runs detached, after the menu has closed. rofi draws
+# itself on the layer-shell overlay and holds an exclusive keyboard grab, so a
+# viewer started while the menu is up lands under it and never sees a key. The
+# preview therefore waits for rofi to go away, shows the image in the
+# foreground, and reopens the menu on the row it came from once feh exits.
+if [ "$1" = "--preview" ]; then
+    for _ in {1..60}; do
+        pgrep -x rofi > /dev/null || break
+        sleep 0.05
+    done
+    feh --auto-zoom --scale-down "$2" > /dev/null 2>&1
+    exec env -u ROFI_RETV -u ROFI_INFO -u ROFI_DATA "$self" --row "$3"
+fi
+
+# --row <n> reopens the menu with the cursor already on row n.
+start_row=0
+if [ "$1" = "--row" ]; then
+    start_row=$2
+fi
+
 # theme:begin clipboard
 key_color="#e5e9f0"
 # theme:end
@@ -34,6 +54,7 @@ if [ -z "$ROFI_RETV" ]; then
                     mainbox {spacing: 10px;}
                     listview {lines: 14; spacing: 2px;}
                     element {padding: 3px 12px;}' \
+        -selected-row "$start_row" \
         -kb-remove-word-back 'Control+Alt+h' \
         -kb-custom-1 'Alt+p' \
         -kb-custom-2 'Control+BackSpace'
@@ -82,14 +103,17 @@ case "$ROFI_RETV" in
     1)
         printf '%s' "$id" | cliphist decode | wl-copy
         ;;
-    # Alt+p: feh is detached, or rofi would sit waiting for it to write output.
+    # Alt+p: hand the image to a detached copy of this script and print no rows,
+    # which closes the menu and lets the viewer take the focus. Nothing is
+    # detached for a non-image entry, so the menu just redraws where it was.
     10)
         tmp=/tmp/cliphist-preview.png
         printf '%s' "$id" | cliphist decode > "$tmp" 2>/dev/null
         if [ -s "$tmp" ] && file -b --mime-type "$tmp" | grep -q '^image/'; then
-            setsid feh --auto-zoom --scale-down "$tmp" > /dev/null 2>&1 &
+            setsid "$self" --preview "$tmp" "$(row_of "$id")" > /dev/null 2>&1 &
+        else
+            menu "$(row_of "$id")"
         fi
-        menu "$(row_of "$id")"
         ;;
     # Ctrl+Backspace.
     11)
