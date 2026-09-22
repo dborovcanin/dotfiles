@@ -562,7 +562,11 @@ source = "audio"
 scroll = "5%"
 format = "$volume.n(d:0)"
 format_alt = "$volume.n(d:0)  $device"
-min_width = 77
+# Wide enough for two digits and no wider. A box wider than what is written in it
+# centres the wording and leaves the slack beside the icon, which at a muted 0%
+# read as a hole; 100% is the one reading that widens the block, and a block that
+# grows by one digit once is better than one padded for it all day.
+min_width = 72
 style = "tile"
 icon = "$volume"
 
