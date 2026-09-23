@@ -85,6 +85,7 @@ surface = "#3b4252"
 raised = "#434c5e"
 text = "#e5e9f0"
 subtext = "#d8dee9"
+dim = "#7b88a1"
 accent = "#81a1c1"
 warning = "#ebcb8b"
 critical = "#bf616a"
@@ -542,15 +543,22 @@ alt_animation = "180ms"
 # toggling between two: what it is on, what it is doing, and how well it can
 # hear it. The icon grades on the signal, so it says that much without a click.
 format = "$ssid|' '"
-format_alt = ["$down{  $up}", "$signal.n(d:0){  $dbm.n(d:0) dBm}"]
+format_alt = [
+  "$down|' '{  $up}",
+  "$signal.n(d:0)|' '{  $dbm.n(d:0) dBm}",
+]
 style = "tile_alt"
 icon = "$wifi"
+# Keep the leading edge aligned with the keyboard and add room only after the wording.
+padding = { right = 8 }
 
 [module.network.states.offline]
 field = "state"
 equals = "down"
 icon = "$wifi-off"
-foreground = "$subtext"
+foreground = "$dim"
+# A lone icon stays centred rather than inheriting the connected wording's extra room.
+padding = 4
 
 # PipeWire says when the volume moves, so this is never sampled: it follows the
 # default output, which is what the volume keys move, and follows it to a headset
@@ -579,13 +587,13 @@ icon = "$volume"
 # when they are both true.
 [module.volume.states.headphones_muted]
 fields = { muted = "yes", port = "headphones" }
-foreground = "$subtext"
+foreground = "$dim"
 icon = "$headphones-muted"
 
 [module.volume.states.muted]
 field = "muted"
 equals = "yes"
-foreground = "$subtext"
+foreground = "$dim"
 icon = "$volume-muted"
 
 # Which socket the sound is leaving by. PipeWire says so the moment a jack is
@@ -608,6 +616,12 @@ format = "$brightness.n(d:0)"
 min_width = 77
 style = "tile_alt"
 icon = "$brightness"
+
+# A reading displayed as zero leaves the empty brightness ring subdued rather
+# than giving an inactive control the same weight as the live ones beside it.
+[module.brightness.states.off]
+below = 0.5
+foreground = "$dim"
 
 # Braces hold what should disappear rather than draw half a sentence: a machine
 # on mains has no time remaining to report and does not mention one.
