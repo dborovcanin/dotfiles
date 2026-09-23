@@ -287,7 +287,7 @@ input type:keyboard {
 exec kdeconnectd > /dev/null
 
 # Used by the clipboard manager
-exec wl-paste --watch cliphist store --max-items=10000
+exec wl-paste --watch cliphist -max-items 5000 store
 bindsym $mod+c exec $dotfiles/scripts/clipboard.sh
 
 bindsym $mod+Shift+g mode "gaps_inner"

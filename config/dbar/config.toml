@@ -535,13 +535,13 @@ icon = "$keyboard"
 source = "network"
 interval = "2s"
 alt_animation = "180ms"
-# The network's name when there is one, falling back to the interface: a cable
-# has no name to give, and neither has a card that has joined nothing.
+# The network's name when there is one. The blank fallback keeps the module
+# present when Wi-Fi is disconnected, leaving the offline icon on its own.
 #
 # `format_alt` is a list, so a left click goes round three views rather than
 # toggling between two: what it is on, what it is doing, and how well it can
 # hear it. The icon grades on the signal, so it says that much without a click.
-format = "$ssid "
+format = "$ssid|' '"
 format_alt = ["$down{  $up}", "$signal.n(d:0){  $dbm.n(d:0) dBm}"]
 style = "tile_alt"
 icon = "$wifi"
@@ -550,6 +550,7 @@ icon = "$wifi"
 field = "state"
 equals = "down"
 icon = "$wifi-off"
+foreground = "$subtext"
 
 # PipeWire says when the volume moves, so this is never sampled: it follows the
 # default output, which is what the volume keys move, and follows it to a headset

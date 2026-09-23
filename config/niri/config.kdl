@@ -132,7 +132,7 @@ spawn-sh-at-startup "dunst -config $HOME/dotfiles/config/dunst/dunstrc > /dev/nu
 spawn-sh-at-startup "$HOME/dotfiles/scripts/startup.sh > /dev/null"
 spawn-sh-at-startup "foot --server"
 spawn-sh-at-startup "kdeconnectd > /dev/null"
-spawn-sh-at-startup "wl-paste --watch cliphist store --max-items=10000"
+spawn-sh-at-startup "wl-paste --watch cliphist -max-items 5000 store"
 spawn-sh-at-startup "swayidle -w timeout 300 'pgrep -x swaylock >/dev/null || swaylock -f -i $HOME/dotfiles/themes/bg-blur.jpg' timeout 600 'niri msg action power-off-monitors' before-sleep 'pgrep -x swaylock >/dev/null || swaylock -f -i $HOME/dotfiles/themes/bg-blur.jpg'"
 
 // Named workspaces, so windows can be assigned to them like in sway
