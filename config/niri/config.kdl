@@ -67,6 +67,7 @@ layout {
     gaps 10
     // theme:end
     center-focused-column "never"
+    always-center-single-column
     // theme:begin niri-background
     background-color "#2e3440"
     // theme:end
@@ -152,6 +153,7 @@ workspace "scratch"
 window-rule {
     match app-id=r#"(?i)^slack$"#
     open-on-workspace "1"
+    open-maximized true
 }
 
 window-rule {
@@ -162,6 +164,7 @@ window-rule {
 window-rule {
     match app-id=r#"^brave-browser$"#
     open-on-workspace "3"
+    open-maximized true
 }
 
 window-rule {
@@ -259,6 +262,7 @@ binds {
 
     // Resize (no binding modes in niri)
     Mod+R             { switch-preset-column-width; }
+    Mod+Shift+R       { maximize-column; }
     Mod+Minus         { set-column-width "-10%"; }
     Mod+Equal         { set-column-width "+10%"; }
     Mod+Shift+Minus   { set-window-height "-10%"; }
