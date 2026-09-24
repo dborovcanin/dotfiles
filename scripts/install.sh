@@ -17,7 +17,7 @@ set -euo pipefail
 # i3status bar, hyprland's hyprlock, hypridle and hyprpaper files, bin/search and
 # all of scripts/ — is referenced as $HOME/dotfiles/... from the sway, i3, niri
 # and hyprland configs, so it runs from the clone and must not be duplicated into
-# ~/.config, where it would go stale. hyprland.conf itself is copied, because
+# ~/.config, where it would go stale. hyprland.lua itself is copied, because
 # that is the one path hyprland reads without being told.
 #
 # Anything already identical is left alone, so a second run reports nothing.
@@ -94,7 +94,7 @@ targets() {
     cat <<EOF
 config/niri/config.kdl|$HOME/.config/niri/config.kdl
 config/sway/config|$HOME/.config/sway/config
-config/hypr/hyprland.conf|$HOME/.config/hypr/hyprland.conf
+config/hypr/hyprland.lua|$HOME/.config/hypr/hyprland.lua
 config/i3/config|$HOME/.config/i3/config
 config/foot/foot.ini|$HOME/.config/foot/foot.ini
 config/alacritty/alacritty.toml|$HOME/.config/alacritty/alacritty.toml

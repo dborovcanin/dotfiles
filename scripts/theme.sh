@@ -82,30 +82,30 @@ render_niri_tabs() {
 EOF
 }
 
-# Hyprland writes a colour as rgb(RRGGBB), with no '#' and no quotes. It has no
-# urgent colour to set: an urgent window is reached with focusurgentorlast
-# rather than shown.
+# Hyprland writes a colour as rgb(RRGGBB), with no '#', and hyprland.lua takes
+# it as a quoted string. It has no urgent colour to set: an urgent window is
+# reached with the urgent_or_last focus dispatcher rather than shown.
 hypr_rgb() { printf 'rgb(%s)' "${1#\#}"; }
 
 render_hypr_background() {
-  printf '    background_color = %s\n' "$(hypr_rgb "$THEME_BG")"
+  printf '        background_color = "%s",\n' "$(hypr_rgb "$THEME_BG")"
 }
 
 render_hypr_border() {
-  printf '    col.active_border = %s\n' "$(hypr_rgb "$THEME_BORDER")"
-  printf '    col.inactive_border = %s\n' "$(hypr_rgb "$THEME_BG_ALT")"
+  printf '            active_border = "%s",\n' "$(hypr_rgb "$THEME_BORDER")"
+  printf '            inactive_border = "%s",\n' "$(hypr_rgb "$THEME_BG_ALT")"
 }
 
 render_hypr_group() {
-  printf '    col.border_active = %s\n' "$(hypr_rgb "$THEME_BORDER")"
-  printf '    col.border_inactive = %s\n' "$(hypr_rgb "$THEME_BG_ALT")"
+  printf '            border_active = "%s",\n' "$(hypr_rgb "$THEME_BORDER")"
+  printf '            border_inactive = "%s",\n' "$(hypr_rgb "$THEME_BG_ALT")"
 }
 
 # The tab strip on a grouped window, which is what $mod+w makes. Inactive tabs
 # take the dim colour the niri tab indicator uses, so the two agree on screen.
 render_hypr_groupbar() {
-  printf '        col.active = %s\n' "$(hypr_rgb "$THEME_BORDER")"
-  printf '        col.inactive = %s\n' "$(hypr_rgb "$THEME_DIM")"
+  printf '                active = "%s",\n' "$(hypr_rgb "$THEME_BORDER")"
+  printf '                inactive = "%s",\n' "$(hypr_rgb "$THEME_DIM")"
 }
 
 # hyprlock. The password box borrows the window border colour, so the thing that
@@ -477,20 +477,20 @@ render_niri_corners() {
 # this far apart; it is halved here to sit the same distance apart as in sway.
 render_hypr_geometry() {
   cat <<EOF
-    gaps_in = $((THEME_GAPS_IN / 2))
-    gaps_out = $THEME_GAPS_OUT
-    border_size = $THEME_BORDER_WIDTH
+        gaps_in = $((THEME_GAPS_IN / 2)),
+        gaps_out = $THEME_GAPS_OUT,
+        border_size = $THEME_BORDER_WIDTH,
 EOF
 }
 
 render_hypr_rounding() {
-  printf '    rounding = %s\n' "$THEME_RADIUS"
+  printf '        rounding = %s,\n' "$THEME_RADIUS"
 }
 
 render_hypr_groupbar_font() {
   cat <<EOF
-        font_family = $THEME_FONT
-        font_size = $THEME_FONT_SIZE
+            font_family = "$THEME_FONT",
+            font_size = $THEME_FONT_SIZE,
 EOF
 }
 

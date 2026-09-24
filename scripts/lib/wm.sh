@@ -20,7 +20,7 @@ wm_exec() {
     case $WM in
         sway) swaymsg exec "$1" ;;
         niri) niri msg action spawn-sh -- "$1" ;;
-        hyprland) hyprctl dispatch exec -- "$1" ;;
+        hyprland) hyprctl dispatch "hl.dsp.exec_cmd([==[$1]==])" ;;
         i3) i3-msg -q exec "$1" ;;
         *) setsid -f sh -c "$1" ;;
     esac >/dev/null
@@ -44,8 +44,8 @@ wm_monitors_cmd() {
         sway:off) echo "swaymsg 'output * dpms off'" ;;
         niri:on) echo "niri msg action power-on-monitors" ;;
         niri:off) echo "niri msg action power-off-monitors" ;;
-        hyprland:on) echo "hyprctl dispatch dpms on" ;;
-        hyprland:off) echo "hyprctl dispatch dpms off" ;;
+        hyprland:on) echo "hyprctl dispatch 'hl.dsp.dpms({ action = \"enable\" })'" ;;
+        hyprland:off) echo "hyprctl dispatch 'hl.dsp.dpms({ action = \"disable\" })'" ;;
         *) echo true ;;
     esac
 }

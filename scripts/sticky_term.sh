@@ -47,8 +47,11 @@ case $WM in
   hyprland)
     footclient --app-id "sticky_term" &
     sleep 0.2
-    hyprctl dispatch resizewindowpixel "exact $size,class:^(sticky_term)$" >/dev/null
-    hyprctl dispatch movewindowpixel "exact $position,class:^(sticky_term)$" >/dev/null
+    read -r w h <<<"$size"
+    read -r x y <<<"$position"
+    win='window = "class:^(sticky_term)$"'
+    hyprctl dispatch "hl.dsp.window.resize({ $win, x = $w, y = $h })" >/dev/null
+    hyprctl dispatch "hl.dsp.window.move({ $win, x = $x, y = $y })" >/dev/null
     ;;
   sway)
     footclient --app-id "sticky_term" &

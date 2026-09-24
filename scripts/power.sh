@@ -128,7 +128,7 @@ logout_cmd() {
     case $WM in
         sway) swaymsg exit ;;
         niri) niri msg action quit --skip-confirmation ;;
-        hyprland) hyprctl dispatch exit ;;
+        hyprland) hyprctl dispatch 'hl.dsp.exit()' ;;
         i3) i3-msg exit ;;
         *) loginctl terminate-session "${XDG_SESSION_ID:-}" ;;
     esac
