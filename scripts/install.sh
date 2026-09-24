@@ -65,6 +65,13 @@ set -euo pipefail
 # seeing it. Reloading is cheap and
 # repeatable; --no-reload turns it off.
 #
+# The xdg-desktop-portal files pick backends per desktop: gtk and wlr on sway,
+# gnome and gtk on niri, hyprland and gtk on hyprland, gtk and wlr for the rest.
+# gtk or gnome has to be in each list, since those serve the Settings interface
+# Chromium-based browsers read light or dark from; wlr alone, which only does
+# screen capture, left Brave light. A compositor installed without its own
+# backend is reported at the end, since its screen sharing will not work.
+#
 # Two things are left to do by hand, printed on the way out: tlp.conf belongs to
 # /etc and needs root, and a running helix re-reads its config on `:config-reload`
 # - it is not signalled here, because an editor that does not handle the signal
@@ -107,6 +114,10 @@ config/gtk-4.0/settings.ini|$HOME/.config/gtk-4.0/settings.ini
 config/gtk-2.0/gtkrc.mine|$HOME/.gtkrc-2.0.mine
 config/qt/kdeglobals|$HOME/.config/kdeglobals
 config/qt/Dotfiles.colors|$HOME/.local/share/color-schemes/Dotfiles.colors
+config/xdg-desktop-portal/portals.conf|$HOME/.config/xdg-desktop-portal/portals.conf
+config/xdg-desktop-portal/sway-portals.conf|$HOME/.config/xdg-desktop-portal/sway-portals.conf
+config/xdg-desktop-portal/niri-portals.conf|$HOME/.config/xdg-desktop-portal/niri-portals.conf
+config/xdg-desktop-portal/hyprland-portals.conf|$HOME/.config/xdg-desktop-portal/hyprland-portals.conf
 tmux/.tmux.conf|$HOME/.tmux.conf
 zsh/.zshrc|$HOME/.zshrc
 .Xresources|$HOME/.Xresources
@@ -123,6 +134,7 @@ fish_line="source \$HOME/dotfiles/config/fish/config.fish"
 installed=0
 skipped=0
 backed_up=0
+portal_changed=0
 
 say() { printf '  %-10s %s\n' "$1" "$2"; }
 
@@ -162,6 +174,7 @@ put() {
         say "create" "${dst/#"$HOME"/\~}"
     fi
     ((++installed))
+    [[ $dst == "$HOME"/.config/xdg-desktop-portal/* ]] && portal_changed=1
     ((dry_run)) && return 0
     mkdir -p "$(dirname "$dst")"
     # The link is removed rather than written through. cp follows a symlink and
@@ -412,6 +425,17 @@ restart_dbar() {
     setsid "${argv[@]}" >/dev/null 2>&1 &
 }
 
+# xdg-desktop-portal reads its backend choice once, at startup. Unlike the rest,
+# it is restarted only when one of its files changed: a restart drops any screen
+# share in progress. Apps that already asked it for the colour scheme, Brave and
+# the other Chromiums included, want restarting too.
+reload_portal() {
+    ((portal_changed)) || return 0
+    systemctl --user -q is-active xdg-desktop-portal.service 2>/dev/null || return 0
+    say "restart" "xdg-desktop-portal"
+    ((dry_run)) || systemctl --user restart xdg-desktop-portal.service || true
+}
+
 reload_running() {
     ((do_reload)) || return 0
     # niri watches its own config file and has already reloaded from the copy
@@ -426,11 +450,27 @@ reload_running() {
     reload_foot
     reload_ghostty
     reload_dbar
+    reload_portal
+}
+
+# The backend each compositor's portal file names first, as compositor|backend.
+check_portals() {
+    local wm backend
+    while IFS='|' read -r wm backend; do
+        command -v "$wm" >/dev/null || continue
+        [[ -f /usr/share/xdg-desktop-portal/portals/$backend.portal ]] && continue
+        say "missing" "xdg-desktop-portal-$backend, for $wm: pacman -S xdg-desktop-portal-$backend" >&2
+    done <<EOF
+sway|wlr
+niri|gnome
+Hyprland|hyprland
+EOF
 }
 
 sync_scheme
 sync_xrdb
 reload_running
+check_portals
 
 printf '\n%d %s, %d already current' "$installed" \
     "$( ((dry_run)) && echo "to install" || echo installed )" "$skipped"
@@ -447,10 +487,11 @@ Not copied, on purpose:
                         read from the clone by the window manager configs
 
 Reloaded above, where the program was running: sway, i3, hyprland, dunst, picom,
-polybar, tmux, foot's colour block, ghostty, and dbar on its reload signal, or by
-restarting it when the running bar predates the signal. niri, alacritty and kitty
-watch their own config files. Left by hand: a running helix wants
-`:config-reload` typed into it, since an editor that does not handle the signal
-dies of it, and GTK and Qt apps pick up colours when they next start. The
+polybar, tmux, foot's colour block, ghostty, dbar on its reload signal, or by
+restarting it when the running bar predates the signal, and xdg-desktop-portal
+when its config changed. niri, alacritty and kitty watch their own config
+files. Left by hand: a running helix wants `:config-reload` typed into it,
+since an editor that does not handle the signal dies of it, and GTK and Qt
+apps, and browsers, pick up colours when they next start. The
 desktop colour scheme and the X resource database were handled above.
 EOF
