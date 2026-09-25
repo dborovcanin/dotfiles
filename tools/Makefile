@@ -1,4 +1,4 @@
-# Go tools in tools/<name>/ build into bin/<name> at the repo root, where the
+# Go and Rust tools in tools/<name>/ build into bin/<name> at the repo root, where the
 # sway and niri configs run them from, and install into $(PREFIX) so they are
 # on PATH too. Run from tools/, or from anywhere with make -C tools.
 #
@@ -12,7 +12,9 @@
 
 PREFIX ?= $(HOME)/.local/bin
 BIN    := ../bin
-TOOLS  := $(patsubst %/,%,$(wildcard */))
+GO     := $(patsubst %/,%,$(dir $(wildcard */*.go)))
+RUST   := $(patsubst %/,%,$(dir $(wildcard */Cargo.toml)))
+TOOLS  := $(sort $(GO) $(RUST))
 
 .PHONY: all build install uninstall clean $(TOOLS)
 
@@ -20,9 +22,13 @@ all: build
 
 build: $(TOOLS)
 
-# Always handed to go build, which knows better than make what is out of date.
-$(TOOLS):
+# Always handed to go build and cargo, which know better than make what is out of date.
+$(GO):
 	go build -trimpath -ldflags="-s -w" -o $(BIN)/$@ ./$@
+
+$(RUST):
+	cargo build --release --manifest-path $@/Cargo.toml
+	mkdir -p $(BIN) && cp $@/target/release/$@ $(BIN)/$@
 
 # rm first: an old symlink back into bin/ would make install copy a file onto itself.
 install: build
@@ -35,4 +41,4 @@ uninstall:
 	for tool in $(TOOLS); do rm -f $(PREFIX)/$$tool; done
 
 clean:
-	rm -rf $(BIN)
+	rm -rf $(BIN) $(RUST:%=%/target)

@@ -43,6 +43,10 @@ input {
         tap-button-map "left-right-middle"
         middle-emulation
     }
+
+    // Sway defaults: focus follows the pointer. max-scroll-amount 0% stops
+    // hovering a partly visible column from scrolling the view to it.
+    focus-follows-mouse max-scroll-amount="0%"
 }
 
 output "eDP-1" {
@@ -106,7 +110,7 @@ layout {
 
 blur {
     passes 1
-    offset 8
+    offset 4
     noise 0.02
 }
 
@@ -128,6 +132,8 @@ spawn-sh-at-startup "swaybg -i $HOME/dotfiles/themes/bg.jpg -m fill"
 // niri draws bottom-layer surfaces inside each workspace, so they slide on a
 // switch. Run dbar on the top layer here to keep it fixed; sway keeps "bottom".
 spawn-sh-at-startup r#"sed 's/^layer = "bottom"$/layer = "top"/' $HOME/dotfiles/config/dbar/config.toml > $XDG_RUNTIME_DIR/dbar-niri.toml && dbar -c $XDG_RUNTIME_DIR/dbar-niri.toml"#
+// A lone column fills the screen, two split it in half, like sway
+spawn-sh-at-startup "$HOME/dotfiles/bin/niri-autofill"
 spawn-sh-at-startup "xrdb -merge ~/.Xresources"
 spawn-sh-at-startup "dunst -config $HOME/dotfiles/config/dunst/dunstrc > /dev/null"
 spawn-sh-at-startup "$HOME/dotfiles/scripts/startup.sh > /dev/null"
@@ -230,22 +236,23 @@ binds {
     Mod+D { spawn-sh "$HOME/dotfiles/scripts/launcher.sh"; }
 
     // Focus
-    Mod+J     { focus-column-left; }
-    Mod+K     { focus-column-right; }
-    Mod+Left  { focus-column-left; }
-    Mod+Down  { focus-window-down; }
-    Mod+Up    { focus-window-up; }
-    Mod+Right { focus-column-right; }
+    // Focus crosses to the next output at the edge, like sway
+    Mod+J     { focus-column-or-monitor-left; }
+    Mod+K     { focus-column-or-monitor-right; }
+    Mod+Left  { focus-column-or-monitor-left; }
+    Mod+Down  { focus-window-or-monitor-down; }
+    Mod+Up    { focus-window-or-monitor-up; }
+    Mod+Right { focus-column-or-monitor-right; }
 
     // Move
-    Mod+Shift+J         { move-column-left; }
+    Mod+Shift+J         { move-column-left-or-to-monitor-left; }
     Mod+Shift+K         { move-window-down; }
     Mod+Shift+L         { move-window-up; }
-    Mod+Shift+Semicolon { move-column-right; }
-    Mod+Shift+Left      { move-column-left; }
+    Mod+Shift+Semicolon { move-column-right-or-to-monitor-right; }
+    Mod+Shift+Left      { move-column-left-or-to-monitor-left; }
     Mod+Shift+Down      { move-window-down; }
     Mod+Shift+Up        { move-window-up; }
-    Mod+Shift+Right     { move-column-right; }
+    Mod+Shift+Right     { move-column-right-or-to-monitor-right; }
 
     // Closest thing to split h / split v: pull windows out of or into a column
     Mod+H { expel-window-from-column; }
@@ -279,16 +286,17 @@ binds {
     Mod+9 { focus-workspace "9"; }
     Mod+0 { focus-workspace "0"; }
 
-    Mod+Shift+1 { move-column-to-workspace "1"; }
-    Mod+Shift+2 { move-column-to-workspace "2"; }
-    Mod+Shift+3 { move-column-to-workspace "3"; }
-    Mod+Shift+4 { move-column-to-workspace "4"; }
-    Mod+Shift+5 { move-column-to-workspace "5"; }
-    Mod+Shift+6 { move-column-to-workspace "6"; }
-    Mod+Shift+7 { move-column-to-workspace "7"; }
-    Mod+Shift+8 { move-column-to-workspace "8"; }
-    Mod+Shift+9 { move-column-to-workspace "9"; }
-    Mod+Shift+0 { move-column-to-workspace "0"; }
+    // Send the window away and stay put, like sway's move container
+    Mod+Shift+1 { move-window-to-workspace "1" focus=false; }
+    Mod+Shift+2 { move-window-to-workspace "2" focus=false; }
+    Mod+Shift+3 { move-window-to-workspace "3" focus=false; }
+    Mod+Shift+4 { move-window-to-workspace "4" focus=false; }
+    Mod+Shift+5 { move-window-to-workspace "5" focus=false; }
+    Mod+Shift+6 { move-window-to-workspace "6" focus=false; }
+    Mod+Shift+7 { move-window-to-workspace "7" focus=false; }
+    Mod+Shift+8 { move-window-to-workspace "8" focus=false; }
+    Mod+Shift+9 { move-window-to-workspace "9" focus=false; }
+    Mod+Shift+0 { move-window-to-workspace "0" focus=false; }
 
     // Move workspace to another output (replaces sway's move_workspace mode)
     Mod+Ctrl+Shift+Left  { move-workspace-to-monitor-left; }
@@ -339,8 +347,29 @@ binds {
     Mod+Tab repeat=false { toggle-overview; }
 }
 
+// Short, plain animations to match swayfx's animation_duration_ms 150
 animations {
-    workspace-switch { 
+    workspace-switch {
         off
+    }
+    window-open {
+        duration-ms 150
+        curve "ease-out-cubic"
+    }
+    window-close {
+        duration-ms 150
+        curve "ease-out-cubic"
+    }
+    window-movement {
+        duration-ms 150
+        curve "ease-out-cubic"
+    }
+    window-resize {
+        duration-ms 150
+        curve "ease-out-cubic"
+    }
+    horizontal-view-movement {
+        duration-ms 150
+        curve "ease-out-cubic"
     }
 }

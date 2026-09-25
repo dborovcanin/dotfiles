@@ -8,3 +8,6 @@ themes/bg.jpg
 themes/bg.png
 themes/bg-blur.jpg
 themes/bg-blur.png
+
+# Cargo build output of the Rust tools
+tools/*/target/

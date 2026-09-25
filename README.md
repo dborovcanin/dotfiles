@@ -12,7 +12,7 @@ from one style file, so a single command restyles the whole desktop.
 | `config/`               | per-program configs (niri, sway, hypr, i3, foot, alacritty, kitty, ghostty, fish, helix, nvim, rofi, dunst, polybar, dbar, btop, gtk, qt, starship) |
 | `scripts/`              | launcher, screenshot, clipboard, power, brightness, background, theme, startup                                                                      |
 | `themes/`               | colour themes (`nord.sh`, `gruvbox-dark.sh`, …), `style.sh` for fonts and geometry, and the wallpaper                                               |
-| `tools/`                | Go helpers, built into `bin/`                                                                                                                       |
+| `tools/`                | Go and Rust helpers, built into `bin/`                                                                                                              |
 | `zsh/`, `tmux/`, `etc/` | shell, tmux and system files                                                                                                                        |
 
 ## Requirements
@@ -23,7 +23,7 @@ from one style file, so a single command restyles the whole desktop.
   `kitty`, `ghostty`)
 - Scripts: `fzf`, `jq`, `fd`, `magick` (ImageMagick), `wl-clipboard` or `xclip`,
   `swaybg`/`feh`, `gsettings`, `xrdb` (X11)
-- Tools: Go 1.26+ to build `tools/`
+- Tools: Go 1.26+ and Rust (cargo) to build `tools/`
 
 Everything is probed at runtime; missing programs are skipped, not fatal.
 
@@ -48,7 +48,8 @@ those are deliberately not copied.
 
 ## Setup
 
-Build the Go tools (`bin/search`, used by the launcher):
+Build the tools (`bin/search`, used by the launcher, and `bin/niri-autofill`,
+which niri starts):
 
 ```sh
 make -C tools install       # builds bin/, installs into ~/.local/bin
