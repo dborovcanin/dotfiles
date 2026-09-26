@@ -1,0 +1,7 @@
+[screencast]
+# The default chooser is slurp when it is installed, and slurp can only click
+# out a monitor. A dmenu-style chooser is handed every monitor and every window
+# ("Monitor: ..." / "Window: ...") on stdin, so windows become shareable too.
+# scripts/share.sh draws that list like the other rofi menus.
+chooser_type=dmenu
+chooser_cmd=$HOME/dotfiles/scripts/share.sh

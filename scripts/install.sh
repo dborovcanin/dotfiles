@@ -118,6 +118,7 @@ config/xdg-desktop-portal/portals.conf|$HOME/.config/xdg-desktop-portal/portals.
 config/xdg-desktop-portal/sway-portals.conf|$HOME/.config/xdg-desktop-portal/sway-portals.conf
 config/xdg-desktop-portal/niri-portals.conf|$HOME/.config/xdg-desktop-portal/niri-portals.conf
 config/xdg-desktop-portal/hyprland-portals.conf|$HOME/.config/xdg-desktop-portal/hyprland-portals.conf
+config/xdg-desktop-portal-wlr/config|$HOME/.config/xdg-desktop-portal-wlr/config
 tmux/.tmux.conf|$HOME/.tmux.conf
 zsh/.zshrc|$HOME/.zshrc
 .Xresources|$HOME/.Xresources
@@ -174,7 +175,7 @@ put() {
         say "create" "${dst/#"$HOME"/\~}"
     fi
     ((++installed))
-    [[ $dst == "$HOME"/.config/xdg-desktop-portal/* ]] && portal_changed=1
+    [[ $dst == "$HOME"/.config/xdg-desktop-portal/* || $dst == "$HOME"/.config/xdg-desktop-portal-wlr/* ]] && portal_changed=1
     ((dry_run)) && return 0
     mkdir -p "$(dirname "$dst")"
     # The link is removed rather than written through. cp follows a symlink and
@@ -434,6 +435,10 @@ reload_portal() {
     systemctl --user -q is-active xdg-desktop-portal.service 2>/dev/null || return 0
     say "restart" "xdg-desktop-portal"
     ((dry_run)) || systemctl --user restart xdg-desktop-portal.service || true
+    # xdg-desktop-portal-wlr reads its chooser config at startup as well
+    systemctl --user -q is-active xdg-desktop-portal-wlr.service 2>/dev/null || return 0
+    say "restart" "xdg-desktop-portal-wlr"
+    ((dry_run)) || systemctl --user restart xdg-desktop-portal-wlr.service || true
 }
 
 reload_running() {

@@ -44,6 +44,7 @@ floating_modifier $mod
 # outside: they say when to draw these, not how big they are.
 smart_borders on
 smart_gaps on
+smart_corner_radius on
 # theme:begin sway-look
 font pango:JetBrainsMonoNL NF 12
 titlebar_padding 6 1
@@ -344,9 +345,9 @@ bindsym Mod1+grave exec dunstctl history-pop
 bindsym Ctrl+Shift+period exec dunstctl context
 
 # Enable blur
-blur disabled
-# blur_radius 4
-# blur_passes 1
+blur enabled
+blur_radius 4
+blur_passes 1
 
 # Slight rounded corners
 # theme:begin sway-corners

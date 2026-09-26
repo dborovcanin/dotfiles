@@ -1,7 +1,8 @@
 /*
- * The list menus - scripts/launcher.sh and scripts/clipboard.sh - drawn
- * like the tiles of scripts/power.sh: one rounded frame in the middle of the
- * screen, and the row under the cursor raised with a frame of its own.
+ * The list menus - scripts/launcher.sh, scripts/clipboard.sh and
+ * scripts/share.sh - drawn like the tiles of scripts/power.sh: one rounded
+ * frame in the middle of the screen, and the row under the cursor raised with
+ * a frame of its own.
  *
  * The colours are written by scripts/theme.sh between the theme markers, and
  * so are the fonts and the metrics below them: @bw, @radius and @radius-item
