@@ -63,7 +63,7 @@ THEME_BORDER_WIDTH=4
 # the same shape: a window is a working surface and stays nearly square, while
 # the things that appear over it for a moment are rounder, so that they read as
 # temporary.
-THEME_RADIUS=5       # tiled and floating windows, hyprlock's input field
+THEME_RADIUS=5        # tiled and floating windows, hyprlock's input field
 THEME_RADIUS_POPUP=10 # notifications
 THEME_RADIUS_MENU=16  # the frame around a rofi menu
 THEME_RADIUS_ITEM=12  # a row or a tile inside one
@@ -81,7 +81,7 @@ THEME_GAPS_OUT=10
 
 # Terminals. The compositors blur what is behind a transparent window, which is
 # what keeps text on top of it readable.
-THEME_ALPHA=1.0
+THEME_ALPHA=0.9
 
 # Menus and notifications. Opaque by default: these are read in a glance and
 # sit over whatever was already on the screen.
