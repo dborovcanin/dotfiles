@@ -184,6 +184,12 @@ bindsym XF86AudioMute exec pactl set-sink-mute @DEFAULT_SINK@ toggle
 # emoji
 bindsym $mod+e exec --no-startup-id $dotfiles/scripts/emoji.sh
 
+# YT player
+bindsym $mod+y exec --no-startup-id $dotfiles/tools/yt/toggle
+for_window [app_id="yt"] floating enable, resize set 720 368, move position center
+for_window [app_id="mpv" title="yt"] floating enable, resize set 720 368, move position 100 ppt 0 ppt, move left 720 px
+
+
 # search
 bindsym $mod+Shift+f exec footclient --app-id content-search sh -c "$dotfiles/scripts/content_search.sh"
 for_window [app_id="content-search"] floating enable, resize set 1500 950, move position center

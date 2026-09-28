@@ -1,0 +1,76 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+script_dir=$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)
+
+start_terminal() {
+    exec footclient --app-id yt --title yt sh -c "$script_dir/yt --no-video"
+}
+
+toggle_sway() {
+    local tree
+    tree=$(swaymsg -t get_tree -r)
+
+    if ! jq -e 'first(.. | objects | select(.app_id? == "yt"))' >/dev/null <<< "$tree"; then
+        start_terminal
+    fi
+
+    if jq -e '
+        first(
+            .. | objects
+            | select(.type? == "workspace" and .name? == "__i3_scratch")
+            | .. | objects
+            | select(.app_id? == "yt")
+        )
+    ' >/dev/null <<< "$tree"; then
+        exec swaymsg '[app_id="yt"] scratchpad show, move position center'
+    fi
+
+    exec swaymsg '[app_id="yt"] move scratchpad'
+}
+
+toggle_niri() {
+    local windows id workspace_id workspaces scratch_id target_idx
+    windows=$(niri msg --json windows)
+    id=$(jq -r 'first(.[] | select(.app_id == "yt") | .id) // empty' <<< "$windows")
+    [[ -n "$id" ]] || start_terminal
+
+    workspace_id=$(jq -r --argjson id "$id" 'first(.[] | select(.id == $id) | .workspace_id) // empty' <<< "$windows")
+    workspaces=$(niri msg --json workspaces)
+    scratch_id=$(jq -r 'first(.[] | select(.name == "scratch") | .id) // empty' <<< "$workspaces")
+
+    if [[ -n "$scratch_id" && "$workspace_id" == "$scratch_id" ]]; then
+        target_idx=$(jq -r 'first(.[] | select(.is_focused) | .idx) // empty' <<< "$workspaces")
+        [[ -n "$target_idx" ]] || exit 1
+        niri msg action move-window-to-workspace --window-id "$id" --focus false "$target_idx"
+        niri msg action focus-window --id "$id"
+        exec niri msg action center-window --id "$id"
+    fi
+
+    exec niri msg action move-window-to-workspace --window-id "$id" --focus false scratch
+}
+
+toggle_hyprland() {
+    local clients address workspace
+    clients=$(hyprctl -j clients)
+    address=$(jq -r 'first(.[] | select(.class == "yt") | .address) // empty' <<< "$clients")
+    [[ -n "$address" ]] || start_terminal
+
+    workspace=$(jq -r --arg address "$address" 'first(.[] | select(.address == $address) | .workspace.name) // empty' <<< "$clients")
+    if [[ "$workspace" == "special:yt" ]]; then
+        exec hyprctl dispatch togglespecialworkspace yt
+    fi
+
+    exec hyprctl dispatch movetoworkspacesilent "special:yt,address:$address"
+}
+
+if [[ -n ${SWAYSOCK:-} ]]; then
+    toggle_sway
+elif [[ -n ${NIRI_SOCKET:-} ]]; then
+    toggle_niri
+elif [[ -n ${HYPRLAND_INSTANCE_SIGNATURE:-} ]]; then
+    toggle_hyprland
+else
+    printf 'yt: unsupported desktop: %s\n' "${XDG_CURRENT_DESKTOP:-unknown}" >&2
+    exit 1
+fi

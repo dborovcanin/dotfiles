@@ -1,0 +1,129 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+mpv_options=()
+while (($#)); do
+    case "$1" in
+        --no-video)
+            mpv_options+=(--no-video '--ytdl-format=bestvideo+bestaudio/best')
+            ;;
+        *)
+            printf 'Usage: yt [--no-video]\n' >&2
+            exit 2
+            ;;
+    esac
+    shift
+done
+
+for dependency in yt-dlp fzf mpv; do
+    if ! command -v "$dependency" >/dev/null 2>&1; then
+        printf 'yt: required command not found: %s\n' "$dependency" >&2
+        exit 1
+    fi
+done
+
+fetch_page() {
+    local query=$1 page=$2 start end
+    start=$(((page - 1) * 20 + 1))
+    end=$((page * 20))
+    yt-dlp "ytsearch${end}:$query" --flat-playlist \
+        --playlist-start "$start" --playlist-end "$end" \
+        --print $'%(title)s\t%(channel)s\t%(duration_string)s\t%(webpage_url)s'
+}
+
+play_selection() {
+    local query_status=0 query
+    query=$(fzf --phony --print-query --no-info \
+        --prompt='Search YouTube: ' --bind='enter:accept' </dev/null) || query_status=$?
+    if ((query_status == 130)); then
+        printf 'yt: search cancelled\n' >&2
+        return 1
+    fi
+    if [[ -z "$query" ]]; then
+        printf 'yt: search query cannot be empty\n' >&2
+        return 1
+    fi
+
+    local page=1 results
+    results=$(fetch_page "$query" "$page") || {
+        printf 'yt: search failed\n' >&2
+        return 1
+    }
+    if [[ -z "$results" ]]; then
+        printf 'yt: no results found\n' >&2
+        return 1
+    fi
+
+    local -a urls=()
+    local -A seen_urls=()
+    local notice= selection key selected line url next_page next_results
+    while :; do
+        selection=$(printf '%s\n' "$results" | fzf --multi --no-sort \
+            --delimiter=$'\t' --with-nth=1..3 --expect=left,right \
+            --header="Page $page  Enter: play  Tab: multi-select  Left/Right: page  Esc: cancel  Selected: ${#urls[@]}$notice") || {
+            printf 'yt: selection cancelled\n' >&2
+            return 1
+        }
+
+        if [[ "$selection" == *$'\n'* ]]; then
+            key=${selection%%$'\n'*}
+            selected=${selection#*$'\n'}
+        else
+            key=$selection
+            selected=
+        fi
+        while IFS= read -r line; do
+            url=${line##*$'\t'}
+            if [[ -n "$url" && -z ${seen_urls["$url"]+x} ]]; then
+                seen_urls["$url"]=1
+                urls+=("$url")
+            fi
+        done <<< "$selected"
+
+        case "$key" in
+            right|left)
+                if [[ "$key" == right ]]; then
+                    next_page=$((page + 1))
+                else
+                    next_page=$((page - 1))
+                fi
+                if ((next_page < 1)); then
+                    notice=' | first page'
+                    continue
+                fi
+                next_results=$(fetch_page "$query" "$next_page") || {
+                    printf 'yt: search failed\n' >&2
+                    return 1
+                }
+                if [[ -z "$next_results" ]]; then
+                    notice=' | no more results'
+                    continue
+                fi
+                page=$next_page
+                results=$next_results
+                notice=
+                ;;
+            *)
+                break
+                ;;
+        esac
+    done
+
+    if ((${#urls[@]} == 0)); then
+        printf 'yt: no videos selected\n' >&2
+        return 0
+    fi
+
+    printf 'Controls: v toggle video | n/p next/previous | Esc/Ctrl+C stop\n'
+    trap ':' INT
+    mpv --title=yt --input-conf="$script_dir/input.conf" \
+        "${mpv_options[@]}" \
+        '--term-playing-msg=Now playing: ${media-title} — ${metadata/by-key/uploader:unknown channel}' \
+        "${urls[@]}" || true
+    trap - INT
+}
+
+script_dir=$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)
+while play_selection; do
+    :
+done

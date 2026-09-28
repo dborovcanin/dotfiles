@@ -163,6 +163,13 @@ hl.window_rule({ match = { class = "^sticky_term$" }, pin = true })
 hl.window_rule({ match = { class = "^(content-search|file-search)$" }, float = true, size = { 1500, 950 }, center = true })
 hl.window_rule({ match = { class = "^slight$" }, float = true, size = { 1400, 950 }, center = true, pin = true })
 hl.window_rule({ match = { class = "^system-monitor$" }, float = true, size = { 1800, 900 }, center = true })
+hl.window_rule({ match = { class = "^yt$" }, float = true, size = { 720, 368 }, center = true })
+hl.window_rule({
+    match = { class = "^mpv$", title = "^yt$" },
+    float = true,
+    size = { 720, 368 },
+    move = { "monitor_w-window_w-10", 44 },
+})
 hl.window_rule({ match = { class = "^(satty|feh|fzf-menu)$" }, float = true })
 
 -- Meetings keep the screen awake and follow you between workspaces.
@@ -354,6 +361,7 @@ hl.bind("XF86AudioMute", exec("pactl set-sink-mute @DEFAULT_SINK@ toggle"), lock
 
 -- Tools
 hl.bind(key(mod, "e"), exec(dotfiles .. "/scripts/emoji.sh"))
+hl.bind(key(mod, "y"), exec(dotfiles .. "/tools/yt/toggle"))
 hl.bind(key(mod .. " + SHIFT", "f"), exec("footclient --app-id content-search sh -c \"" .. dotfiles .. "/scripts/content_search.sh\""))
 hl.bind(key(mod .. " + CTRL", "f"), exec("footclient --app-id file-search sh -c \"" .. dotfiles .. "/bin/search\""))
 hl.bind(key(mod, "n"), exec("footclient -w 1400x950 --app-id slight ~/.local/bin/slight"))

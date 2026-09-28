@@ -212,6 +212,21 @@ window-rule {
 }
 
 window-rule {
+    match app-id=r#"^yt$"#
+    open-floating true
+    default-column-width { fixed 720; }
+    default-window-height { fixed 368; }
+}
+
+window-rule {
+    match app-id=r#"^mpv$"# title=r#"^yt$"#
+    open-floating true
+    default-column-width { fixed 720; }
+    default-window-height { fixed 368; }
+    default-floating-position x=10 y=10 relative-to="top-right"
+}
+
+window-rule {
     match app-id=r#"^(satty|feh|fzf-menu)$"#
     open-floating true
     open-focused true
@@ -329,6 +344,7 @@ binds {
 
     // Tools
     Mod+E { spawn-sh "$HOME/dotfiles/scripts/emoji.sh"; }
+    Mod+Y repeat=false { spawn-sh "$HOME/dotfiles/tools/yt/toggle"; }
     Mod+Shift+F { spawn-sh "footclient --app-id content-search sh -c $HOME/dotfiles/scripts/content_search.sh"; }
     Mod+Ctrl+F { spawn-sh "footclient --app-id file-search sh -c $HOME/dotfiles/bin/search"; }
     Mod+N { spawn "footclient" "-w" "1400x950" "--app-id" "slight" "/home/dusan/.local/bin/slight"; }
