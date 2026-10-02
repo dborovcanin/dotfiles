@@ -1,12 +1,30 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-# Copies the configs that programs insist on reading from their own locations.
+# Installs the programs the configs call, then copies the configs that programs
+# insist on reading from their own locations.
 #
-# Usage: install.sh [--dry-run] [--no-backup] [--no-reload]
-#        --dry-run   print what would happen and change nothing
-#        --no-backup overwrite without keeping the file that was there
-#        --no-reload copy the files and leave running programs alone
+# Usage: install.sh [--wm WM[,WM...]] [--dry-run] [--no-backup] [--no-reload]
+#                   [--no-packages]
+#        --wm          the window managers to install for: sway (the default,
+#                      as swayfx), niri, hyprland, i3, or all
+#        --dry-run     print what would happen and change nothing
+#        --no-backup   overwrite without keeping the file that was there
+#        --no-reload   copy the files and leave running programs alone
+#        --no-packages copy the files and install nothing
+#
+# The packages come first, so that a fresh install ends with every program the
+# window manager configs, keybindings and scripts start actually there. Most are
+# wanted whatever the desktop; the compositor, its bar, locker, idler, wallpaper
+# and portal backend, and the clipboard and screenshot tools of its display
+# server come only with the window managers --wm names. The configs for all four
+# are copied regardless, being small and inert where nothing reads them. Only
+# what is missing is asked for - pacman -T says which, provides included - so a
+# second run asks for nothing and does not touch sudo. Repo packages go through
+# sudo pacman, the AUR ones through yay or paru, both left interactive so a
+# conflict (swayfx replacing sway) is a question and not a surprise. With no
+# AUR helper, or not on Arch at all, the missing ones are listed and skipped. A
+# failed or declined install is reported and the configs are copied anyway.
 #
 # Colours, fonts and the rest of the look are not written here: scripts/theme.sh
 # writes them into the repo, and this copies the result out. Run theme.sh first
@@ -88,6 +106,62 @@ backup=$HOME/.config/dotfiles-backup-$(date +%Y%m%d-%H%M%S)
 dry_run=0
 keep_backup=1
 do_reload=1
+do_packages=1
+wms=sway
+
+# What every desktop runs, whichever window manager it is, from the Arch repos.
+repo_packages=(
+    # shells
+    git base-devel fish zsh zsh-autosuggestions zsh-syntax-highlighting tmux starship
+    # launcher, notifications, clipboard previews, X resources, portals
+    rofi dunst libnotify feh xorg-xrdb xdg-desktop-portal xdg-desktop-portal-gtk
+    # terminals and what runs in them
+    foot alacritty kitty ghostty helix neovim btop yazi
+    fzf jq fd ripgrep bat imagemagick chafa libsixel curl mpv yt-dlp
+    # volume keys, the phone, the desktop colour scheme
+    libpulse kdeconnect glib2 gsettings-desktop-schemas
+    # the fonts and icons themes/style.sh names
+    ttf-jetbrains-mono-nerd adwaita-fonts adwaita-icon-theme noto-fonts-emoji
+    # to build tools/
+    go rust
+)
+
+# From the AUR, as package|command. A command already on PATH counts as
+# installed, for what was built by hand or came from somewhere else; swayfx has
+# none, because plain sway does not understand the blur and corners the sway
+# config asks for.
+aur_packages=(
+    "breezex-cursor-theme|"
+    "zsh-theme-powerlevel10k|"
+    "brave-bin|brave"
+    "vscodium-bin|codium"
+)
+
+# Adds what window manager $1 runs on top of the above: the compositor, its bar,
+# locker, idler, wallpaper and portal backend, and the clipboard, screenshot and
+# monitor tools of its display server. False for a name it does not know.
+add_wm_packages() {
+    local wayland=(wl-clipboard cliphist grim slurp satty ddcutil)
+    case $1 in
+        sway)
+            repo_packages+=("${wayland[@]}" swaybg swayidle swaylock xdg-desktop-portal-wlr)
+            aur_packages+=("swayfx|" "dbar|dbar")
+            ;;
+        niri)
+            repo_packages+=("${wayland[@]}" niri swaybg swayidle swaylock xdg-desktop-portal-gnome)
+            aur_packages+=("dbar|dbar")
+            ;;
+        hyprland)
+            repo_packages+=("${wayland[@]}" hyprland hyprlock hypridle hyprpaper xdg-desktop-portal-hyprland)
+            aur_packages+=("dbar|dbar")
+            ;;
+        i3)
+            repo_packages+=(i3-wm i3status-rust i3lock picom flameshot xclip xsel xdotool xorg-xrandr)
+            aur_packages+=("kbdd-git|kbdd")
+            ;;
+        *) return 1 ;;
+    esac
+}
 
 # src|dst, one per line. src is relative to the repo, dst absolute.
 targets() {
@@ -205,18 +279,83 @@ put_fish() {
     printf '%s\n' "$fish_line" >"$dst"
 }
 
+# The names in $@ that nothing installed provides. pacman -T prints exactly
+# those, and exits non-zero when there are any.
+unsatisfied() {
+    pacman -T "$@" || true
+}
+
+# $@ once each, in order: two window managers ask for the same Wayland tools.
+uniq_args() {
+    printf '%s\n' "$@" | awk '!seen[$0]++'
+}
+
+install_packages() {
+    local wanted=() missing=() entries=() aur=() entry pkg cmd helper
+    ((do_packages)) || return 0
+    mapfile -t wanted < <(uniq_args "${repo_packages[@]}")
+    if ! command -v pacman >/dev/null; then
+        say "skip" "packages: no pacman here; install by hand: ${wanted[*]}" >&2
+        return 0
+    fi
+
+    mapfile -t missing < <(unsatisfied "${wanted[@]}")
+    if ((${#missing[@]})); then
+        say "package" "${missing[*]}"
+        if ! ((dry_run)) && ! sudo pacman -S --needed "${missing[@]}"; then
+            say "failed" "pacman; carrying on with the configs" >&2
+        fi
+    fi
+
+    mapfile -t entries < <(uniq_args "${aur_packages[@]}")
+    for entry in "${entries[@]}"; do
+        IFS='|' read -r pkg cmd <<<"$entry"
+        [[ -n $cmd ]] && command -v "$cmd" >/dev/null && continue
+        [[ -n $(unsatisfied "$pkg") ]] && aur+=("$pkg")
+    done
+    ((${#aur[@]})) || return 0
+    helper=$(command -v paru || command -v yay || true)
+    if [[ -z $helper ]]; then
+        say "missing" "no AUR helper (paru or yay) for: ${aur[*]}" >&2
+        return 0
+    fi
+    say "aur" "${aur[*]}"
+    if ! ((dry_run)) && ! "$helper" -S --needed "${aur[@]}"; then
+        say "failed" "${helper##*/}; carrying on with the configs" >&2
+    fi
+}
+
 while (($#)); do
     case $1 in
         --dry-run) dry_run=1 ;;
         --no-backup) keep_backup=0 ;;
         --no-reload) do_reload=0 ;;
+        --no-packages) do_packages=0 ;;
+        --wm)
+            (($# > 1)) || { usage >&2; exit 2; }
+            wms=$2
+            shift
+            ;;
+        --wm=*) wms=${1#--wm=} ;;
         -h | --help) usage; exit 0 ;;
         *) usage >&2; exit 2 ;;
     esac
     shift
 done
 
+[[ $wms == all ]] && wms=sway,niri,hyprland,i3
+IFS=, read -ra wm_list <<<"$wms"
+((${#wm_list[@]})) || { usage >&2; exit 2; }
+for wm in "${wm_list[@]}"; do
+    if ! add_wm_packages "$wm"; then
+        echo "install.sh: unknown window manager '$wm'; want sway, niri, hyprland, i3 or all" >&2
+        exit 2
+    fi
+done
+
 ((dry_run)) && echo "Dry run; nothing is written."
+
+install_packages
 
 while IFS='|' read -r src dst; do
     [[ -n $src ]] || continue

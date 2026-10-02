@@ -25,6 +25,15 @@ from one style file, so a single command restyles the whole desktop.
   `swaybg`/`feh`, `gsettings`, `xrdb` (X11)
 - Tools: Go 1.26+ and Rust (cargo) to build `tools/`
 
+On Arch, `install.sh` installs these for the window manager it is given with
+`--wm` (`sway`, the default and installed as `swayfx`, `niri`, `hyprland`, `i3`,
+a comma-separated list, or `all`): the shared programs plus that compositor's
+bar, locker, idler, wallpaper, portal backend and clipboard and screenshot
+tools. Repo packages go through `sudo pacman`; `swayfx`, `dbar`, `kbdd-git`,
+`breezex-cursor-theme`, `zsh-theme-powerlevel10k`, `brave-bin` and
+`vscodium-bin` come from the AUR through `paru` or `yay` (install one first).
+Only what is missing is asked for. Elsewhere, install them by hand.
+
 Everything is probed at runtime; missing programs are skipped, not fatal.
 
 ## Install
@@ -32,13 +41,14 @@ Everything is probed at runtime; missing programs are skipped, not fatal.
 ```sh
 git clone https://github.com/dborovcanin/dotfiles ~/dotfiles
 cd ~/dotfiles
-./scripts/install.sh --dry-run   # see what would be replaced
-./scripts/install.sh
+./scripts/install.sh --dry-run   # see what would be installed and replaced
+./scripts/install.sh             # sway; or --wm niri, --wm hyprland,i3, --wm all
 ```
 
-`install.sh` copies the configs that programs insist on reading from their own
-paths, backs up what it replaces under `~/.config/dotfiles-backup-<timestamp>`,
-and reloads whatever is running. Flags: `--dry-run`, `--no-backup`, `--no-reload`.
+`install.sh` installs the missing packages, copies the configs that programs
+insist on reading from their own paths, backs up what it replaces under
+`~/.config/dotfiles-backup-<timestamp>`, and reloads whatever is running. Flags:
+`--wm`, `--dry-run`, `--no-backup`, `--no-reload`, `--no-packages`.
 
 The clone must live at `~/dotfiles`: the window manager configs run `scripts/`,
 `bin/` and the bar, notification and launcher configs straight out of it, so
