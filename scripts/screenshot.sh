@@ -4,7 +4,7 @@ set -euo pipefail
 # Select an area, annotate it, and copy the result to the clipboard.
 #
 # Wayland (sway, niri, hyprland): grim + slurp, annotated in satty, copied with
-# wl-copy.
+# wl-copy. Escape and Ctrl+C both copy and close the window.
 # X11 (i3): flameshot, copied with xclip, then focus goes back where it was.
 
 if [[ -n ${WAYLAND_DISPLAY:-} ]]; then
@@ -12,11 +12,19 @@ if [[ -n ${WAYLAND_DISPLAY:-} ]]; then
     dir=/tmp/screenshots
     mkdir -p "$dir"
     tmp=$(mktemp "$dir/screenshot-XXXX.png")
-    trap 'rm -f "$tmp"' EXIT
+    out=${tmp%.png}-annotated.png
+    trap 'rm -f "$tmp" "$out"' EXIT
 
     grim -g "$(slurp)" "$tmp" || exit 1
-    satty --actions-on-escape=save-to-file,exit -f "$tmp" -o "$tmp" || exit 1
-    wl-copy <"$tmp"
+    # Ctrl+C copies through wl-copy, which outlives satty, and exits at once;
+    # satty's own clipboard would go with its window. Escape saves to $out
+    # instead, copied below - so $out existing means Escape, and copying the
+    # grab when it does not would replace what Ctrl+C put on the clipboard.
+    satty --actions-on-escape=save-to-file,exit --copy-command wl-copy --early-exit copy \
+        -f "$tmp" -o "$out" || exit 1
+    if [[ -s $out ]]; then
+        wl-copy <"$out"
+    fi
 else
     focused_win=$(xdotool getwindowfocus)
     tmp=$(mktemp --suffix=.png)
