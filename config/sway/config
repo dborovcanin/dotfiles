@@ -201,6 +201,9 @@ for_window [app_id="file-search"] floating enable, resize set 1500 950, move pos
 bindsym $mod+n exec footclient -w 1400x950 --app-id slate /home/dusan/.local/bin/slate
 for_window [app_id="slate"] floating enable, sticky enable, resize set 1350 900, move position center
 
+bindsym $mod+Shift+n exec /home/dusan/.local/bin/slate-gui
+for_window [app_id="slate-gui"] floating enable, sticky enable, resize set 1350 900, move position center
+
 # system monitor
 bindsym $mod+b exec footclient --app-id system-monitor btop
 for_window [app_id="system-monitor"] floating enable, resize set 1800 900, move position center
@@ -352,13 +355,18 @@ bindsym Ctrl+Shift+period exec dunstctl context
 
 # Enable blur
 blur enabled
-blur_radius 4
+blur_radius 6
 blur_passes 1
 
 # Slight rounded corners
 # theme:begin sway-corners
 corner_radius 5
 # theme:end
+
+# Make it a bit more responsive
+input type:keyboard {
+    repeat_rate 50
+}
 
 # Switch to urgent
 bindsym $mod+x [urgent=latest] focus

@@ -153,6 +153,7 @@ abbr -a gm 'git merge'
 abbr -a gms 'git merge --squash'
 abbr -a gmf 'git merge --no-ff'
 abbr -a gmt 'git mergetool'
+abbr -a lg 'lazygit'
 
 # other
 abbr -a code codium
