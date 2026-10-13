@@ -80,15 +80,15 @@ icon_size = 20
 
 [colors]
 # theme:begin dbar
-background = "#2e3440"
-surface = "#3b4252"
-raised = "#434c5e"
-text = "#e5e9f0"
-subtext = "#d8dee9"
-dim = "#7b88a1"
-accent = "#81a1c1"
-warning = "#ebcb8b"
-critical = "#bf616a"
+background = "#282828"
+surface = "#3c3836"
+raised = "#504945"
+text = "#d5c4a1"
+subtext = "#a89984"
+dim = "#928374"
+accent = "#83a598"
+warning = "#fabd2f"
+critical = "#fb4934"
 # theme:end
 
 [left]
@@ -115,32 +115,32 @@ groups = ["playing", "weather", "tray", "system", "network", "power"]
 
 [style.panel]
 foreground = "$text"
-padding = 4
-icon_gap = 3
+padding = 2
+icon_gap = 2
 
 [style.tile]
 background = "$surface"
 foreground = "$text"
-padding = 4
-icon_gap = 3
+padding = 2
+icon_gap = 2
 
 [style.tile_alt]
 background = "$raised"
 foreground = "$text"
-padding = 4
-icon_gap = 3
+padding = 2
+icon_gap = 2
 
 [style.warning]
 background = "$warning"
 foreground = "$background"
-padding = 4
-icon_gap = 3
+padding = 2
+icon_gap = 2
 
 [style.critical]
 background = "$critical"
 foreground = "$background"
-padding = 4
-icon_gap = 3
+padding = 2
+icon_gap = 2
 
 # A pill inside a panel: its own rounded background, sitting on the group's. The
 # workspaces use it to say which ones exist on another output.
@@ -152,18 +152,18 @@ icon_gap = 3
 [style.pill]
 background = "$raised"
 foreground = "$text"
-padding = 10
+padding = 6
 radius = 13
 
 [style.focused]
 background = "$accent"
 foreground = "$background"
-padding = 10
+padding = 6
 radius = 13
 
 [style.dim]
 foreground = "$subtext"
-padding = 10
+padding = 6
 
 # The pointer picks a module out without moving anything: hover is paint-only,
 # so nothing resizes as the mouse crosses the bar.
@@ -374,7 +374,7 @@ right = "round"
 [module.workspaces]
 source = "workspaces"
 style = "dim"
-min_width = 28
+min_width = 0
 format = "$name"
 icons = { "1" = "$slack", "2" = "$code", "3" = "$chrome" }
 
@@ -414,7 +414,7 @@ separator = "$raised"
 [module.tray]
 source = "tray"
 style = "panel"
-padding = 6
+padding = 4
 
 # An application asking to be noticed says so, and the icon is left alone while
 # the island around it changes: recolouring someone else's artwork would be
@@ -464,18 +464,21 @@ max_width = 420
 format = " $title "
 
 [module.cpu]
+padding = { left = 4 }
 source = "cpu"
 interval = "2s"
 format = "$utilization.n(d:0)"
-min_width = 77
+min_width = 0
 style = "tile"
 icon = "$cpu"
 
 [module.cpu.states.busy]
+padding = { left = 4 }
 above = 85
 style = "warning"
 
 [module.cpu.states.unreadable]
+padding = { left = 4 }
 state = "error"
 style = "critical"
 
@@ -485,7 +488,7 @@ source = "memory"
 interval = "5s"
 format = "$percent.n(d:0)"
 format_alt = "$used.n(d:1) of $total.n(d:0){  swap $swap_percent}"
-min_width = 77
+min_width = 0
 style = "tile_alt"
 icon = "$memory"
 
@@ -497,25 +500,29 @@ style = "warning"
 # fifties and sixties all day, so the collector's own rating decides when this
 # is worth colouring rather than a number picked here.
 [module.temperature]
+padding = { right = 4 }
 source = "temperature"
 interval = "5s"
 format = "$temp.n(d:0)"
 format_alt = "$temp.n(d:0) $label"
-min_width = 80
+min_width = 0
 style = "tile"
 icon = "$temperature"
 
 [module.temperature.states.warm]
+padding = { right = 4 }
 state = "warning"
 style = "warning"
 
 [module.temperature.states.hot]
+padding = { right = 4 }
 state = "critical"
 style = "critical"
 
 # The compositor says which layout is active, and says so again the moment it is
 # switched, so this is never read on a timer. A click shows the full name.
 [module.language]
+padding = { left = 4 }
 source = "language"
 format = "$short"
 format_alt = "$layout"
@@ -550,7 +557,7 @@ format_alt = [
 style = "tile_alt"
 icon = "$wifi"
 # Keep the leading edge aligned with the keyboard and add room only after the wording.
-padding = { right = 8 }
+padding = { right = 6 }
 
 [module.network.states.offline]
 field = "state"
@@ -558,12 +565,13 @@ equals = "down"
 icon = "$wifi-off"
 foreground = "$dim"
 # A lone icon stays centred rather than inheriting the connected wording's extra room.
-padding = 4
+padding = { top = 2, bottom = 2, left = 2, right = 4 }
 
 # PipeWire says when the volume moves, so this is never sampled: it follows the
 # default output, which is what the volume keys move, and follows it to a headset
 # the moment one is plugged in.
 [module.volume]
+padding = { left = 4 }
 source = "audio"
 # Scroll over it to change the volume, middle click to mute. dbar sets it itself
 # rather than running a helper, and shows what PipeWire accepted rather than what
@@ -575,7 +583,7 @@ format_alt = "$volume.n(d:0)  $device"
 # centres the wording and leaves the slack beside the icon, which at a muted 0%
 # read as a hole; 100% is the one reading that widens the block, and a block that
 # grows by one digit once is better than one padded for it all day.
-min_width = 72
+min_width = 0
 style = "tile"
 icon = "$volume"
 
@@ -613,7 +621,7 @@ source = "backlight"
 # appears is the one the panel accepted, reported back by the kernel.
 scroll = "5%"
 format = "$brightness.n(d:0)"
-min_width = 77
+min_width = 0
 style = "tile_alt"
 icon = "$brightness"
 
@@ -626,6 +634,7 @@ foreground = "$dim"
 # Braces hold what should disappear rather than draw half a sentence: a machine
 # on mains has no time remaining to report and does not mention one.
 [module.battery]
+padding = { right = 4 }
 source = "battery"
 interval = "30s"
 # The percentage is the whole of it at rest; a click asks for the detail, and
@@ -637,7 +646,7 @@ format_alt = [
   "$percent.n(d:0)  $status{  $power.n(d:1)}  health $health.n(d:0)",
   "$percent.n(d:0){  $time.dur(style:short) left}",
 ]
-min_width = 77
+min_width = 0
 style = "tile"
 icon = "$battery"
 
@@ -652,10 +661,12 @@ icon = "$battery-charging"
 # The battery rates its own situation and only alarms while it is draining: the
 # same 10% with the charger in is fine.
 [module.battery.states.warning]
+padding = { right = 4 }
 state = "warning"
 style = "warning"
 
 [module.battery.states.critical]
+padding = { right = 4 }
 state = "critical"
 style = "critical"
 
@@ -672,6 +683,7 @@ style = "critical"
 # Wanting it on a schedule after all is one line - `interval = "30m"` - and the
 # click goes on working.
 [module.weather]
+padding = { left = 4, right = 4 }
 source = "command"
 command = ["/home/dusan/dotfiles/scripts/dbar/weather.sh"]
 # The knobs, in the order the script reads them: $1, $2, then everything left.

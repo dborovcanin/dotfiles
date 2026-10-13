@@ -75,8 +75,8 @@ hl.config({
         layout = "dwindle",
         col = {
             -- theme:begin hypr-border
-            active_border = "rgb(88c0d0)",
-            inactive_border = "rgb(3b4252)",
+            active_border = "rgb(d79921)",
+            inactive_border = "rgb(3c3836)",
             -- theme:end
         },
     },
@@ -99,8 +99,8 @@ hl.config({
     group = {
         col = {
             -- theme:begin hypr-group
-            border_active = "rgb(88c0d0)",
-            border_inactive = "rgb(3b4252)",
+            border_active = "rgb(d79921)",
+            border_inactive = "rgb(3c3836)",
             -- theme:end
         },
 
@@ -111,8 +111,8 @@ hl.config({
             -- theme:end
             col = {
                 -- theme:begin hypr-groupbar
-                active = "rgb(88c0d0)",
-                inactive = "rgb(7b88a1)",
+                active = "rgb(d79921)",
+                inactive = "rgb(928374)",
                 -- theme:end
             },
         },
@@ -123,7 +123,7 @@ hl.config({
         disable_splash_rendering = true,
         force_default_wallpaper = 0,
         -- theme:begin hypr-background
-        background_color = "rgb(2e3440)",
+        background_color = "rgb(282828)",
         -- theme:end
     },
 

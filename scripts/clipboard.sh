@@ -34,7 +34,7 @@ if [ "$1" = "--row" ]; then
 fi
 
 # theme:begin clipboard
-key_color="#e5e9f0"
+key_color="#d5c4a1"
 # theme:end
 
 # nf-md-clipboard_text, spelled as a code point like the icons in power.sh.

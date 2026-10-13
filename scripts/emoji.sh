@@ -10,7 +10,7 @@ set -euo pipefail
 here=$(dirname "$(realpath "${BASH_SOURCE[0]}")")
 
 # theme:begin emoji
-key_color="#e5e9f0"
+key_color="#d5c4a1"
 font="JetBrainsMonoNL NFP 16"
 # theme:end
 
