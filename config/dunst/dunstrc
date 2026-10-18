@@ -17,8 +17,8 @@
     transparency = 0
     # theme:end
     # theme:begin dunst-global
-    frame_color = "#d79921"
-    separator_color = "#504945"
+    frame_color = "#88c0d0"
+    separator_color = "#434c5e"
     # theme:end
     close = ctrl+space
     close_all = ctrl+shift+space
@@ -47,19 +47,19 @@
 
 # theme:begin dunst-urgency
 [urgency_low]
-    background = "#282828"
-    foreground = "#a89984"
+    background = "#2e3440"
+    foreground = "#d8dee9"
     timeout = 20
 
 [urgency_normal]
-    background = "#282828"
-    foreground = "#ebdbb2"
+    background = "#2e3440"
+    foreground = "#eceff4"
     timeout = 20
 
 [urgency_critical]
-    background = "#282828"
-    foreground = "#ebdbb2"
-    frame_color = "#fb4934"
+    background = "#2e3440"
+    foreground = "#eceff4"
+    frame_color = "#bf616a"
     timeout = 0
 # theme:end
 

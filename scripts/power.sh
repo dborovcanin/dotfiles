@@ -55,24 +55,24 @@ KEY_SIZE=${POWER_KEY_SIZE:-10pt}
 # Colours are written by scripts/theme.sh between the theme markers, and every
 # one can still be swapped from the environment without touching the file.
 # theme:begin power
-BG=${POWER_BG:-"#282828"}           # window
+BG=${POWER_BG:-"#2e3440"}           # window
 BG_ALPHA=${POWER_BG_ALPHA:-ff}      # the last byte of the window colour
-FG=${POWER_FG:-"#ebdbb2"}           # tile labels
-BORDER=${POWER_BORDER:-"#d79921"}   # the frame around the window
-TILE=${POWER_TILE:-"#3c3836"}       # behind the tile under the cursor
-ACCENT=${POWER_ACCENT:-"#fabd2f"}   # the frame of the tile under the cursor, the title
-DIM=${POWER_DIM:-"#928374"}         # keys and uptime
-DANGER=${POWER_DANGER:-"#fb4934"}   # the frame of the tile in a confirmation
+FG=${POWER_FG:-"#eceff4"}           # tile labels
+BORDER=${POWER_BORDER:-"#88c0d0"}   # the frame around the window
+TILE=${POWER_TILE:-"#3b4252"}       # behind the tile under the cursor
+ACCENT=${POWER_ACCENT:-"#8fbcbb"}   # the frame of the tile under the cursor, the title
+DIM=${POWER_DIM:-"#7b88a1"}         # keys and uptime
+DANGER=${POWER_DANGER:-"#bf616a"}   # the frame of the tile in a confirmation
 
 # One colour per action, so the tile you want is found by colour before its
 # label is read.
-C_LOCK=${POWER_LOCK_COLOR:-"#83a598"}
-C_TRAVEL=${POWER_TRAVEL_COLOR:-"#b8bb26"}
-C_LOGOUT=${POWER_LOGOUT_COLOR:-"#d3869b"}
-C_SUSPEND=${POWER_SUSPEND_COLOR:-"#fabd2f"}
-C_HIBERNATE=${POWER_HIBERNATE_COLOR:-"#8ec07c"}
-C_REBOOT=${POWER_REBOOT_COLOR:-"#fe8019"}
-C_SHUTDOWN=${POWER_SHUTDOWN_COLOR:-"#fb4934"}
+C_LOCK=${POWER_LOCK_COLOR:-"#81a1c1"}
+C_TRAVEL=${POWER_TRAVEL_COLOR:-"#a3be8c"}
+C_LOGOUT=${POWER_LOGOUT_COLOR:-"#b48ead"}
+C_SUSPEND=${POWER_SUSPEND_COLOR:-"#ebcb8b"}
+C_HIBERNATE=${POWER_HIBERNATE_COLOR:-"#88c0d0"}
+C_REBOOT=${POWER_REBOOT_COLOR:-"#d08770"}
+C_SHUTDOWN=${POWER_SHUTDOWN_COLOR:-"#bf616a"}
 # theme:end
 
 # The blurred background scripts/background.sh renders. i3lock reads only PNG,

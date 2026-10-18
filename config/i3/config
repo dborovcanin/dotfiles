@@ -5,13 +5,13 @@ set $mod Mod4
 new_window pixel
 
 # theme:begin wm
-set $background #282828
-set $background_alt #3c3836
-set $foreground #ebdbb2
-set $primary #d79921
-set $secondary #8ec07c
-set $alert #cc241d
-set $disabled #928374
+set $background #2e3440
+set $background_alt #3b4252
+set $foreground #eceff4
+set $primary #88c0d0
+set $secondary #88c0d0
+set $alert #bf616a
+set $disabled #7b88a1
 # theme:end
 
 set $desktop_env i3

@@ -1,5 +1,5 @@
 # theme:begin helix
-theme = "gruvbox"
+theme = "nord"
 # theme:end
 
 [editor]
