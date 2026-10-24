@@ -66,11 +66,13 @@ fi
 
 # cliphist list gives "id<tab>entry", newest first, one line per entry.
 rows() {
-    local n=0 id entry
-    while IFS=$'\t' read -r id entry; do
-        n=$((n + 1))
-        printf '%s\0display\x1f%2d  %s\x1finfo\x1f%s\n' "$entry" "$n" "$entry" "$id"
-    done < <(cliphist list)
+    # Format in one process and bound the menu even before storage is pruned.
+    cliphist list | awk 'NR <= 1000 {
+        tab = index($0, "\t")
+        id = substr($0, 1, tab - 1)
+        entry = substr($0, tab + 1)
+        printf "%s%cdisplay%c%2d  %s%cinfo%c%s\n", entry, 0, 31, NR, entry, 31, 31, id
+    }'
 }
 
 # $1, when given, is the row to land on, so a delete leaves the cursor on the

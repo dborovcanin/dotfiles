@@ -188,7 +188,7 @@ hl.on("hyprland.start", function()
     hl.exec_cmd(dotfiles .. "/scripts/startup.sh > /dev/null")
     hl.exec_cmd("foot --server")
     hl.exec_cmd("kdeconnectd > /dev/null")
-    hl.exec_cmd("wl-paste --watch cliphist -max-items 5000 store")
+    hl.exec_cmd("wl-paste --watch cliphist -max-items 1000 store")
     hl.exec_cmd("hypridle -c " .. dotfiles .. "/config/hypr/hypridle.conf")
 end)
 

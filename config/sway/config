@@ -297,7 +297,7 @@ input type:keyboard {
 exec kdeconnectd > /dev/null
 
 # Used by the clipboard manager
-exec wl-paste --watch cliphist -max-items 5000 store
+exec wl-paste --watch cliphist -max-items 1000 store
 bindsym $mod+c exec $dotfiles/scripts/clipboard.sh
 
 bindsym $mod+Shift+g mode "gaps_inner"
@@ -348,7 +348,7 @@ exec $dotfiles/scripts/startup.sh > /dev/null # Startup programs
 exec foot --server
 
 # Notification bindings
-bindsym Ctrl+space exec dunstctl close
+bindsym $mod+Ctrl+space exec dunstctl close
 bindsym Ctrl+Shift+space exec dunstctl close-all
 bindsym Mod1+grave exec dunstctl history-pop
 bindsym Ctrl+Shift+period exec dunstctl context
