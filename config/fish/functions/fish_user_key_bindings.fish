@@ -1,8 +1,7 @@
 function fish_user_key_bindings
     # Ctrl-R, Ctrl-T and Alt-C from fzf.
-    if test -r ~/.fzf/shell/key-bindings.fish
-        source ~/.fzf/shell/key-bindings.fish
-        fzf_key_bindings
+    if command -q fzf
+        fzf --fish | source
     end
 
     bind ctrl-f fif

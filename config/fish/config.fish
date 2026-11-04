@@ -155,6 +155,14 @@ abbr -a gmf 'git merge --no-ff'
 abbr -a gmt 'git mergetool'
 abbr -a lg 'lazygit'
 
+# rm moves to the trash, and trash-empty.timer clears it after 30 days. To
+# delete for good, or free disk space now, use `command rm`.
+if command -q trash-put
+    abbr -a rm trash-put
+else
+    abbr -a rm 'rm -I'
+end
+
 # other
 abbr -a code codium
 

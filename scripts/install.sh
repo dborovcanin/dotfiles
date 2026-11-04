@@ -117,7 +117,7 @@ repo_packages=(
     rofi dunst libnotify feh xorg-xrdb xdg-desktop-portal xdg-desktop-portal-gtk
     # terminals and what runs in them
     foot alacritty kitty ghostty helix neovim btop yazi
-    fzf jq fd ripgrep bat imagemagick chafa libsixel curl mpv yt-dlp
+    fzf jq fd ripgrep bat imagemagick chafa libsixel curl mpv yt-dlp trash-cli
     # volume keys, the phone, the desktop colour scheme
     libpulse kdeconnect glib2 gsettings-desktop-schemas
     # the fonts and icons themes/style.sh names
@@ -193,6 +193,8 @@ config/xdg-desktop-portal/sway-portals.conf|$HOME/.config/xdg-desktop-portal/swa
 config/xdg-desktop-portal/niri-portals.conf|$HOME/.config/xdg-desktop-portal/niri-portals.conf
 config/xdg-desktop-portal/hyprland-portals.conf|$HOME/.config/xdg-desktop-portal/hyprland-portals.conf
 config/xdg-desktop-portal-wlr/config|$HOME/.config/xdg-desktop-portal-wlr/config
+config/systemd/user/trash-empty.service|$HOME/.config/systemd/user/trash-empty.service
+config/systemd/user/trash-empty.timer|$HOME/.config/systemd/user/trash-empty.timer
 tmux/.tmux.conf|$HOME/.tmux.conf
 zsh/.zshrc|$HOME/.zshrc
 .Xresources|$HOME/.Xresources
@@ -611,10 +613,19 @@ Hyprland|hyprland
 EOF
 }
 
+# Empties trash older than 30 days. Only once trash-cli is there to do it.
+enable_trash_timer() {
+    command -v trash-empty >/dev/null || return 0
+    say "enable" "trash-empty.timer"
+    ((dry_run)) && return 0
+    { systemctl --user daemon-reload && systemctl --user enable --now trash-empty.timer; } || true
+}
+
 sync_scheme
 sync_xrdb
 reload_running
 check_portals
+enable_trash_timer
 
 printf '\n%d %s, %d already current' "$installed" \
     "$( ((dry_run)) && echo "to install" || echo installed )" "$skipped"
